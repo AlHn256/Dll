@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImgFixingLib", "ImgFixingLib.csproj", "{16F51B15-0473-495F-BFCF-AE679D4C84C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestStartingPr", "..\TestStartingPr\TestStartingPr.csproj", "{A39CD577-CD34-473E-BAE3-5EBD9AEBB9C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16F51B15-0473-495F-BFCF-AE679D4C84C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16F51B15-0473-495F-BFCF-AE679D4C84C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16F51B15-0473-495F-BFCF-AE679D4C84C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16F51B15-0473-495F-BFCF-AE679D4C84C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A39CD577-CD34-473E-BAE3-5EBD9AEBB9C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A39CD577-CD34-473E-BAE3-5EBD9AEBB9C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A39CD577-CD34-473E-BAE3-5EBD9AEBB9C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A39CD577-CD34-473E-BAE3-5EBD9AEBB9C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2BC8D863-0B65-4BBB-AF4F-4F807401102F}
+	EndGlobalSection
+EndGlobal

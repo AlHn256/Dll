@@ -64,6 +64,7 @@
             ExitBtn.TabIndex = 2;
             ExitBtn.Text = "Exit";
             ExitBtn.UseVisualStyleBackColor = true;
+            ExitBtn.Click += ExitBtn_Click;
             // 
             // HidenFixingExampel2Btn
             // 

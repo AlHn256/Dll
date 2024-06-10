@@ -27,6 +27,7 @@ namespace ImgFixingLib
             pictureBox1.AllowDrop = true;
             pictureBox1.DragEnter += new DragEventHandler(WindowsForm_DragEnter);
             pictureBox1.DragDrop += new DragEventHandler(WindowsForm_DragDrop);
+            DistortionMetodComBox.Enabled = false;
         }
 
         public ImgFixingForm(string imgFixingPlan, string directory, bool fileLoad = false)

@@ -16,7 +16,6 @@ namespace TestStartingPr
             ShowImgFixingForm();
         }
 
-
         // Запуск формы для создания файла с параметрами коррекции изображений
         private void ShowImgFixingForm()
         {
@@ -58,5 +57,6 @@ namespace TestStartingPr
 
         private void worker_ProcessChang(int progress) => progressBar1.Value = progress;
         private void worker_TextChang(string text) => label1.Text = text;
+        private void ExitBtn_Click(object sender, EventArgs e)=>Close();
     }
 }

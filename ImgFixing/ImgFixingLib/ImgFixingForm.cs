@@ -17,7 +17,7 @@ namespace ImgFixingLib
         public ImgFixingForm(string directory)
         {
             InitializeComponent();
-           
+
             InputDirTxtBox.Text = directory;
             Load += OnLoad;
 
@@ -74,9 +74,10 @@ namespace ImgFixingLib
 
             return;
         }
-        private void button1_Click(object sender, EventArgs e) => FixImges();
+        private void CorrectFiles_Click(object sender, EventArgs e) => FixImges();
         public bool FixImges(string outputDir = "")
         {
+            ShowGridСhckBox.Checked = false;
             if (string.IsNullOrEmpty(outputDir))
             {
                 if (!Directory.Exists(InputDirTxtBox.Text)) return false;
@@ -98,7 +99,7 @@ namespace ImgFixingLib
         public bool FixImges(object param, string outputDir = "")
         {
             SynchronizationContext context = (SynchronizationContext)param;
-
+            ShowGridСhckBox.Checked = false;
             if (string.IsNullOrEmpty(outputDir))
             {
                 if (!Directory.Exists(InputDirTxtBox.Text)) return false;
@@ -123,7 +124,7 @@ namespace ImgFixingLib
 
             return true;
         }
-        public bool CheckFixigImg(string imgFixingDir = "")
+        public bool CheckFixingImg(string imgFixingDir = "")
         {
             // ??todo перенести это в fileEdit
             if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
@@ -154,9 +155,6 @@ namespace ImgFixingLib
                 (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Arc) return;
 
             distortMethod = (DistortMethod)DistortionMetodComBox.SelectedItem;
-
-            //string outputFile = "D:\\Development\\3.avi";
-            //var AccessToFile =  fileEdit.CheckAccessToFile(outputFile);
 
             MagickImage magickImage = EditImg(file, distortMethod);
             var imageData = magickImage.ToByteArray();
@@ -291,7 +289,6 @@ namespace ImgFixingLib
         private void label5_Click(object sender, EventArgs e) => CropBeforeChkBox.Checked = !CropBeforeChkBox.Checked;
         private void label3_Click(object sender, EventArgs e) => RotationChkBox.Checked = !RotationChkBox.Checked;
         private void DistortionMetodLabel_Click(object sender, EventArgs e) => DistortionChkBox.Checked = !DistortionChkBox.Checked;
-
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -466,6 +463,21 @@ namespace ImgFixingLib
                 geometry.Y = Y;
                 image.Crop(geometry);
             }
+
+            if (ShowGridСhckBox.Checked)
+            {
+                IDrawable[] drawables = 
+                            [
+                                new DrawableFillColor(MagickColors.Red),
+                                new DrawableLine(80 * image.Width / 100, 0, 80 * image.Width / 100, image.Height),
+                                new DrawableLine(20 * image.Width / 100, 0, 20 * image.Width / 100, image.Height),
+                                new DrawableLine(0, 80 * image.Height / 100, image.Width, 80 * image.Height / 100),
+                                new DrawableLine(0, 20 * image.Height / 100, image.Width, 20 * image.Height / 100)
+                            ];
+
+                image.Draw(drawables);
+            }
+
             return image;
         }
 
@@ -544,5 +556,6 @@ namespace ImgFixingLib
                 }
             }
         }
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)=>ReloadImg();
     }
 }

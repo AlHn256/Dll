@@ -89,6 +89,7 @@
             LoadBtn = new Button();
             SaveAsBtn = new Button();
             LoadFrBtn = new Button();
+            ShowGridСhckBox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -116,7 +117,7 @@
             CorrectFilesBtn.TabIndex = 1;
             CorrectFilesBtn.Text = "Correct Files";
             CorrectFilesBtn.UseVisualStyleBackColor = true;
-            CorrectFilesBtn.Click += button1_Click;
+            CorrectFilesBtn.Click += CorrectFiles_Click;
             // 
             // ABtnUp
             // 
@@ -346,7 +347,7 @@
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label3.Location = new Point(1337, 155);
+            label3.Location = new Point(1321, 152);
             label3.Name = "label3";
             label3.Size = new Size(66, 19);
             label3.TabIndex = 28;
@@ -379,7 +380,7 @@
             DistortionMetodLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             DistortionMetodLabel.AutoSize = true;
             DistortionMetodLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            DistortionMetodLabel.Location = new Point(1297, 217);
+            DistortionMetodLabel.Location = new Point(1295, 215);
             DistortionMetodLabel.Name = "DistortionMetodLabel";
             DistortionMetodLabel.Size = new Size(123, 19);
             DistortionMetodLabel.TabIndex = 31;
@@ -391,7 +392,7 @@
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label5.Location = new Point(1297, 10);
+            label5.Location = new Point(1305, 8);
             label5.Name = "label5";
             label5.Size = new Size(91, 19);
             label5.TabIndex = 33;
@@ -404,7 +405,7 @@
             CropBeforeChkBox.AutoSize = true;
             CropBeforeChkBox.Checked = true;
             CropBeforeChkBox.CheckState = CheckState.Checked;
-            CropBeforeChkBox.Location = new Point(1390, 13);
+            CropBeforeChkBox.Location = new Point(1398, 11);
             CropBeforeChkBox.Name = "CropBeforeChkBox";
             CropBeforeChkBox.Size = new Size(15, 14);
             CropBeforeChkBox.TabIndex = 34;
@@ -414,7 +415,7 @@
             // 
             RotationChkBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             RotationChkBox.AutoSize = true;
-            RotationChkBox.Location = new Point(1408, 159);
+            RotationChkBox.Location = new Point(1392, 156);
             RotationChkBox.Name = "RotationChkBox";
             RotationChkBox.Size = new Size(15, 14);
             RotationChkBox.TabIndex = 35;
@@ -424,7 +425,7 @@
             // 
             DistortionChkBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             DistortionChkBox.AutoSize = true;
-            DistortionChkBox.Location = new Point(1422, 221);
+            DistortionChkBox.Location = new Point(1420, 219);
             DistortionChkBox.Name = "DistortionChkBox";
             DistortionChkBox.Size = new Size(15, 14);
             DistortionChkBox.TabIndex = 36;
@@ -535,7 +536,7 @@
             // ApplyBtn
             // 
             ApplyBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            ApplyBtn.Location = new Point(1292, 536);
+            ApplyBtn.Location = new Point(1292, 559);
             ApplyBtn.Name = "ApplyBtn";
             ApplyBtn.Size = new Size(143, 42);
             ApplyBtn.TabIndex = 48;
@@ -660,7 +661,7 @@
             CropAfterChkBox.AutoSize = true;
             CropAfterChkBox.Checked = true;
             CropAfterChkBox.CheckState = CheckState.Checked;
-            CropAfterChkBox.Location = new Point(1391, 394);
+            CropAfterChkBox.Location = new Point(1390, 390);
             CropAfterChkBox.Name = "CropAfterChkBox";
             CropAfterChkBox.Size = new Size(15, 14);
             CropAfterChkBox.TabIndex = 51;
@@ -671,7 +672,7 @@
             label18.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label18.AutoSize = true;
             label18.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label18.Location = new Point(1298, 391);
+            label18.Location = new Point(1307, 386);
             label18.Name = "label18";
             label18.Size = new Size(80, 19);
             label18.TabIndex = 50;
@@ -692,7 +693,7 @@
             // SaveBtn
             // 
             SaveBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            SaveBtn.Location = new Point(1293, 584);
+            SaveBtn.Location = new Point(1293, 607);
             SaveBtn.Name = "SaveBtn";
             SaveBtn.Size = new Size(62, 26);
             SaveBtn.TabIndex = 63;
@@ -703,7 +704,7 @@
             // LoadBtn
             // 
             LoadBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            LoadBtn.Location = new Point(1372, 584);
+            LoadBtn.Location = new Point(1372, 607);
             LoadBtn.Name = "LoadBtn";
             LoadBtn.Size = new Size(62, 26);
             LoadBtn.TabIndex = 64;
@@ -714,7 +715,7 @@
             // SaveAsBtn
             // 
             SaveAsBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            SaveAsBtn.Location = new Point(1294, 616);
+            SaveAsBtn.Location = new Point(1294, 639);
             SaveAsBtn.Name = "SaveAsBtn";
             SaveAsBtn.Size = new Size(62, 26);
             SaveAsBtn.TabIndex = 65;
@@ -725,7 +726,7 @@
             // LoadFrBtn
             // 
             LoadFrBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            LoadFrBtn.Location = new Point(1372, 616);
+            LoadFrBtn.Location = new Point(1372, 639);
             LoadFrBtn.Name = "LoadFrBtn";
             LoadFrBtn.Size = new Size(62, 26);
             LoadFrBtn.TabIndex = 66;
@@ -733,11 +734,23 @@
             LoadFrBtn.UseVisualStyleBackColor = true;
             LoadFrBtn.Click += LoadFrBtn_Click;
             // 
+            // ShowGridСhckBox
+            // 
+            ShowGridСhckBox.AutoSize = true;
+            ShowGridСhckBox.Location = new Point(1297, 530);
+            ShowGridСhckBox.Name = "ShowGridСhckBox";
+            ShowGridСhckBox.Size = new Size(80, 19);
+            ShowGridСhckBox.TabIndex = 67;
+            ShowGridСhckBox.Text = "Show Grid";
+            ShowGridСhckBox.UseVisualStyleBackColor = true;
+            ShowGridСhckBox.CheckedChanged += checkBox1_CheckedChanged;
+            // 
             // ImgFixingForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1445, 1003);
+            Controls.Add(ShowGridСhckBox);
             Controls.Add(LoadFrBtn);
             Controls.Add(SaveAsBtn);
             Controls.Add(LoadBtn);
@@ -874,5 +887,6 @@
         private Button LoadBtn;
         private Button SaveAsBtn;
         private Button LoadFrBtn;
+        private CheckBox ShowGridСhckBox;
     }
 }

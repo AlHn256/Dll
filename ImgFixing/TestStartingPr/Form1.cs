@@ -10,6 +10,7 @@ namespace TestStartingPr
             InitializeComponent();
             if (SynchronizationContext.Current != null) _context = SynchronizationContext.Current;
             else _context = new SynchronizationContext();
+            ShowImgFixingForm();
         }
         private void ImgFixingFormBtn_Click(object sender, EventArgs e)
         {

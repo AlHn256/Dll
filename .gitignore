@@ -65,3 +65,6 @@ dkms.conf
 /WinFormsLib/StartingForm/obj
 /WinFormsLib/WinFormsLib/.vs
 /WinFormsLib/WinFormsLib/obj
+/ImgAssembling/ImgAssembling/obj
+/ImgAssembling/ImgAssembling/.vs
+/ImgAssembling/TestProgram/obj

@@ -27,9 +27,9 @@ namespace TestStartingPr
         // Пример запуска исправления всех изображений в папке по настройкам из файла
         private void HidenFixingExampelBtn_Click(object sender, EventArgs e)
         {
-            string ImgFixingPlan = "3179.fip";// Файл с параментрами корректировки изображений
-            string WorkingDirectory = "E:\\ImageArchive\\3179_4_0";// Парака изображений для испраления
-            string outputDir = "E:\\ImageArchive\\3179_4_0AutoOut";// Результирующая папка
+            string ImgFixingPlan = "Left.fip";// Файл с параментрами корректировки изображений
+            string WorkingDirectory = "D:\\Work\\Exampels\\Left";// Парака изображений для испраления
+            string outputDir = "D:\\Work\\Exampels\\LeftAutoOut";// Результирующая папка
             ImgFixingForm distortionTest = new ImgFixingForm(ImgFixingPlan, WorkingDirectory, false);
             if (string.IsNullOrEmpty(ImgFixingPlan)) ImgFixingPlan = distortionTest.GetImgFixingPlan();
             distortionTest.FixImges(outputDir);
@@ -42,9 +42,9 @@ namespace TestStartingPr
         }
         public async Task<bool> StartFixing()
         {
-            string ImgFixingPlan = "3179.fip";// Файл с параментрами корректировки изображений
-            string WorkingDirectory = "E:\\ImageArchive\\3179_2_0";// Парака изображений для испраления
-            string outputDir = "E:\\ImageArchive\\3179_2_0AutoOut";// Результирующая папка
+            string ImgFixingPlan = "Left.fip";// Файл с параментрами корректировки изображений
+            string WorkingDirectory = "D:\\Work\\Exampels\\Left";// Парака изображений для испраления
+            string outputDir = "D:\\Work\\Exampels\\LeftAutoOut";// Результирующая папка
             ImgFixingForm distortionTest = new ImgFixingForm(ImgFixingPlan, WorkingDirectory, false);
             distortionTest.ProcessChanged += worker_ProcessChang;
             distortionTest.TextChanged += worker_TextChang;

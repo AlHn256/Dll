@@ -6,5 +6,10 @@ namespace TestProgram
         {
             InitializeComponent();
         }
+
+        private void StartBtn_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -276,13 +276,12 @@ namespace ImgFixingLib.Models
             return true;
         }
 
-        public FileInfo[] SearchFiles()=>SearchFiles(GetDefoltDirectory());
+        public FileInfo[] SearchFiles() => SearchFiles(GetDefoltDirectory());
         public FileInfo[] SearchFiles(string dir)
         {
-            if(FileFilter.Length == 0)return SearchFiles(dir, ["*.*"]);
+            if (FileFilter.Length == 0) return SearchFiles(dir, ["*.*"]);
             else return SearchFiles(dir, FileFilter);
         }
-
         public FileInfo[] SearchFiles(string dir, string[] filter, int Lv = 0)
         {
             //Lv

@@ -85,8 +85,6 @@
             CropAfterChkBox = new CheckBox();
             label18 = new Label();
             DistZeroBtn = new Button();
-            SaveBtn = new Button();
-            LoadBtn = new Button();
             SaveAsBtn = new Button();
             LoadFrBtn = new Button();
             ShowGridСhckBox = new CheckBox();
@@ -111,9 +109,9 @@
             // CorrectFilesBtn
             // 
             CorrectFilesBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            CorrectFilesBtn.Location = new Point(1296, 960);
+            CorrectFilesBtn.Location = new Point(1296, 965);
             CorrectFilesBtn.Name = "CorrectFilesBtn";
-            CorrectFilesBtn.Size = new Size(140, 32);
+            CorrectFilesBtn.Size = new Size(140, 28);
             CorrectFilesBtn.TabIndex = 1;
             CorrectFilesBtn.Text = "Correct Files";
             CorrectFilesBtn.UseVisualStyleBackColor = true;
@@ -547,9 +545,9 @@
             // RezultRTB
             // 
             RezultRTB.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            RezultRTB.Location = new Point(1296, 752);
+            RezultRTB.Location = new Point(1294, 671);
             RezultRTB.Name = "RezultRTB";
-            RezultRTB.Size = new Size(140, 148);
+            RezultRTB.Size = new Size(140, 286);
             RezultRTB.TabIndex = 49;
             RezultRTB.Text = "";
             // 
@@ -690,54 +688,32 @@
             DistZeroBtn.UseVisualStyleBackColor = true;
             DistZeroBtn.Click += DistZeroBtn_Click;
             // 
-            // SaveBtn
-            // 
-            SaveBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            SaveBtn.Location = new Point(1293, 607);
-            SaveBtn.Name = "SaveBtn";
-            SaveBtn.Size = new Size(62, 26);
-            SaveBtn.TabIndex = 63;
-            SaveBtn.Text = "Save";
-            SaveBtn.UseVisualStyleBackColor = true;
-            SaveBtn.Click += SaveSettingsBtn_Click;
-            // 
-            // LoadBtn
-            // 
-            LoadBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            LoadBtn.Location = new Point(1372, 607);
-            LoadBtn.Name = "LoadBtn";
-            LoadBtn.Size = new Size(62, 26);
-            LoadBtn.TabIndex = 64;
-            LoadBtn.Text = "Load";
-            LoadBtn.UseVisualStyleBackColor = true;
-            LoadBtn.Click += LoadSettingsBtn_Click;
-            // 
             // SaveAsBtn
             // 
             SaveAsBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            SaveAsBtn.Location = new Point(1294, 639);
+            SaveAsBtn.Location = new Point(1292, 607);
             SaveAsBtn.Name = "SaveAsBtn";
-            SaveAsBtn.Size = new Size(62, 26);
+            SaveAsBtn.Size = new Size(62, 58);
             SaveAsBtn.TabIndex = 65;
-            SaveAsBtn.Text = "Save As";
+            SaveAsBtn.Text = "Save";
             SaveAsBtn.UseVisualStyleBackColor = true;
             SaveAsBtn.Click += SaveAsBtn_Click;
             // 
             // LoadFrBtn
             // 
             LoadFrBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            LoadFrBtn.Location = new Point(1372, 639);
+            LoadFrBtn.Location = new Point(1373, 607);
             LoadFrBtn.Name = "LoadFrBtn";
-            LoadFrBtn.Size = new Size(62, 26);
+            LoadFrBtn.Size = new Size(62, 58);
             LoadFrBtn.TabIndex = 66;
-            LoadFrBtn.Text = "Load Fr";
+            LoadFrBtn.Text = "Load";
             LoadFrBtn.UseVisualStyleBackColor = true;
             LoadFrBtn.Click += LoadFrBtn_Click;
             // 
             // ShowGridСhckBox
             // 
             ShowGridСhckBox.AutoSize = true;
-            ShowGridСhckBox.Location = new Point(1297, 530);
+            ShowGridСhckBox.Location = new Point(1297, 531);
             ShowGridСhckBox.Name = "ShowGridСhckBox";
             ShowGridСhckBox.Size = new Size(80, 19);
             ShowGridСhckBox.TabIndex = 67;
@@ -753,8 +729,6 @@
             Controls.Add(ShowGridСhckBox);
             Controls.Add(LoadFrBtn);
             Controls.Add(SaveAsBtn);
-            Controls.Add(LoadBtn);
-            Controls.Add(SaveBtn);
             Controls.Add(DistZeroBtn);
             Controls.Add(label12);
             Controls.Add(label13);
@@ -883,8 +857,6 @@
         private CheckBox CropAfterChkBox;
         private Label label18;
         private Button DistZeroBtn;
-        private Button SaveBtn;
-        private Button LoadBtn;
         private Button SaveAsBtn;
         private Button LoadFrBtn;
         private CheckBox ShowGridСhckBox;

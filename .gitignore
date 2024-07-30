@@ -68,3 +68,9 @@ dkms.conf
 /ImgAssembling/ImgAssembling/obj
 /ImgAssembling/ImgAssembling/.vs
 /ImgAssembling/TestProgram/obj
+/NewImgFixingLib/NewImgFixingLib/.vs
+/NewImgFixingLib/NewImgFixingLib/bin
+/NewImgFixingLib/NewImgFixingLib/obj
+/NewImgFixingLib/NewImgFixingLib/packages
+/NewImgFixingLib/TestStartingPr/bin
+/NewImgFixingLib/TestStartingPr/obj

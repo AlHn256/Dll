@@ -80,7 +80,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.ExitBtn.TabIndex = 0;
             this.ExitBtn.Text = "Exit";
             this.ExitBtn.UseVisualStyleBackColor = true;
-            this.ExitBtn.Click += ExitBtn_Click;
+            this.ExitBtn.Click += new System.EventHandler(this.ExitBtn_Click);
             // 
             // SaveBtn
             // 
@@ -90,7 +90,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.SaveBtn.TabIndex = 1;
             this.SaveBtn.Text = "Save";
             this.SaveBtn.UseVisualStyleBackColor = true;
-            this.SaveBtn.Click += new System.EventHandler(SaveBtn_Click);
+            this.SaveBtn.Click += new System.EventHandler(this.SaveBtn_Click);
             // 
             // label1
             // 
@@ -116,11 +116,11 @@ namespace ImgAssemblingLib.AditionalForms
             this.SaveToBtn.TabIndex = 4;
             this.SaveToBtn.Text = "Save to";
             this.SaveToBtn.UseVisualStyleBackColor = true;
-            this.SaveToBtn.Click += SaveToBtn_Click;
+            this.SaveToBtn.Click += new System.EventHandler(this.SaveToBtn_Click);
             // 
             // OpenWorkDirectoryBtn
             // 
-            this.OpenWorkDirectoryBtn.Location = new System.Drawing.Point(494, 5);
+            this.OpenWorkDirectoryBtn.Location = new System.Drawing.Point(495, 5);
             this.OpenWorkDirectoryBtn.Name = "OpenWorkDirectoryBtn";
             this.OpenWorkDirectoryBtn.Size = new System.Drawing.Size(23, 20);
             this.OpenWorkDirectoryBtn.TabIndex = 5;
@@ -136,7 +136,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.FixImgChckBox.TabIndex = 8;
             this.FixImgChckBox.Text = "Fix Imgs";
             this.FixImgChckBox.UseVisualStyleBackColor = true;
-            this.FixImgChckBox.CheckedChanged += new System.EventHandler(FixImgChckBox_CheckedChanged);
+            this.FixImgChckBox.CheckedChanged += new System.EventHandler(this.FixImgChckBox_CheckedChanged);
             // 
             // AutoChckBox
             // 
@@ -147,7 +147,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.AutoChckBox.TabIndex = 9;
             this.AutoChckBox.Text = "Auto";
             this.AutoChckBox.UseVisualStyleBackColor = true;
-            this.AutoChckBox.CheckedChanged += new System.EventHandler(AutoChckBox_CheckedChanged);
+            this.AutoChckBox.CheckedChanged += new System.EventHandler(this.AutoChckBox_CheckedChanged);
             // 
             // ChekFixedImgsChckBox
             // 
@@ -161,7 +161,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             // OpenFixingImgDirectoryBtn
             // 
-            this.OpenFixingImgDirectoryBtn.Location = new System.Drawing.Point(494, 55);
+            this.OpenFixingImgDirectoryBtn.Location = new System.Drawing.Point(495, 55);
             this.OpenFixingImgDirectoryBtn.Name = "OpenFixingImgDirectoryBtn";
             this.OpenFixingImgDirectoryBtn.Size = new System.Drawing.Size(23, 20);
             this.OpenFixingImgDirectoryBtn.TabIndex = 14;
@@ -186,13 +186,13 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             // OpenImgFixingPlanBtn
             // 
-            this.OpenImgFixingPlanBtn.Location = new System.Drawing.Point(494, 80);
+            this.OpenImgFixingPlanBtn.Location = new System.Drawing.Point(495, 80);
             this.OpenImgFixingPlanBtn.Name = "OpenImgFixingPlanBtn";
             this.OpenImgFixingPlanBtn.Size = new System.Drawing.Size(23, 20);
             this.OpenImgFixingPlanBtn.TabIndex = 17;
             this.OpenImgFixingPlanBtn.Text = "...";
             this.OpenImgFixingPlanBtn.UseVisualStyleBackColor = true;
-            this.OpenImgFixingPlanBtn.Click += new System.EventHandler(OpenImgFixingPlanBtn_Click);
+            this.OpenImgFixingPlanBtn.Click += new System.EventHandler(this.OpenImgFixingPlanBtn_Click);
             // 
             // ImgFixingPlanTxtBox
             // 
@@ -219,7 +219,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.StitchСhckBox.TabIndex = 18;
             this.StitchСhckBox.Text = "Stitch Imgs";
             this.StitchСhckBox.UseVisualStyleBackColor = true;
-            this.StitchСhckBox.CheckedChanged += new System.EventHandler(StitchСhckBox_CheckedChanged);
+            this.StitchСhckBox.CheckedChanged += new System.EventHandler(this.StitchСhckBox_CheckedChanged);
             // 
             // ChekStitchPlanСhckBox
             // 
@@ -240,7 +240,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.DefaultParametersCheckBox.TabIndex = 20;
             this.DefaultParametersCheckBox.Text = "Default Parameters";
             this.DefaultParametersCheckBox.UseVisualStyleBackColor = true;
-            this.DefaultParametersCheckBox.CheckedChanged += new System.EventHandler(LoadParametrsCheckBox_CheckedChanged);
+            this.DefaultParametersCheckBox.CheckedChanged += new System.EventHandler(this.LoadParametrsCheckBox_CheckedChanged);
             // 
             // label6
             // 
@@ -251,7 +251,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.label6.Size = new System.Drawing.Size(18, 15);
             this.label6.TabIndex = 42;
             this.label6.Text = "%";
-            this.label6.Click += new System.EventHandler(label6_Click);
+            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // label5
             // 
@@ -262,7 +262,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.label5.Size = new System.Drawing.Size(18, 15);
             this.label5.TabIndex = 41;
             this.label5.Text = "%";
-            this.label5.Click += new System.EventHandler(label5_Click);
+            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // ToLb
             // 
@@ -344,6 +344,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.LoadBtn.TabIndex = 48;
             this.LoadBtn.Text = "Load";
             this.LoadBtn.UseVisualStyleBackColor = true;
+            this.LoadBtn.Click += new System.EventHandler(this.LoadBtn_Click);
             // 
             // SaveResultChckBox
             // 
@@ -366,7 +367,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             // OpenStitchingDirectoryBtn
             // 
-            this.OpenStitchingDirectoryBtn.Location = new System.Drawing.Point(494, 125);
+            this.OpenStitchingDirectoryBtn.Location = new System.Drawing.Point(495, 125);
             this.OpenStitchingDirectoryBtn.Name = "OpenStitchingDirectoryBtn";
             this.OpenStitchingDirectoryBtn.Size = new System.Drawing.Size(23, 20);
             this.OpenStitchingDirectoryBtn.TabIndex = 52;
@@ -399,7 +400,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.SpeedCountingСhckBox.TabIndex = 54;
             this.SpeedCountingСhckBox.Text = "Count Speed";
             this.SpeedCountingСhckBox.UseVisualStyleBackColor = true;
-            this.SpeedCountingСhckBox.CheckedChanged += new System.EventHandler(SpeedCountingСhckBox_CheckedChanged);
+            this.SpeedCountingСhckBox.CheckedChanged += new System.EventHandler(this.SpeedCountingСhckBox_CheckedChanged);
             // 
             // MillimetersInPixelTxtBox
             // 
@@ -408,7 +409,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.MillimetersInPixelTxtBox.Size = new System.Drawing.Size(30, 20);
             this.MillimetersInPixelTxtBox.TabIndex = 56;
             this.MillimetersInPixelTxtBox.Text = "5.5";
-            this.MillimetersInPixelTxtBox.TextChanged += new System.EventHandler(MillimetersInPixelTxtBox_TextChanged);
+            this.MillimetersInPixelTxtBox.TextChanged += new System.EventHandler(this.MillimetersInPixelTxtBox_TextChanged);
             // 
             // TimePerFrameTxtBox
             // 
@@ -417,7 +418,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.TimePerFrameTxtBox.Size = new System.Drawing.Size(30, 20);
             this.TimePerFrameTxtBox.TabIndex = 55;
             this.TimePerFrameTxtBox.Text = "40.0";
-            this.TimePerFrameTxtBox.TextChanged += new System.EventHandler(TimePerFrameTxtBox_TextChanged);
+            this.TimePerFrameTxtBox.TextChanged += new System.EventHandler(this.TimePerFrameTxtBox_TextChanged);
             // 
             // label9
             // 

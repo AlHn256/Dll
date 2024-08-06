@@ -84,6 +84,7 @@ namespace ImgAssemblingLib.AditionalForms
         {
             if (SavePlan(AssemblyPlan.defaultAssemblingFile)) Close();
         }
+
         private void SaveToBtn_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -255,7 +256,7 @@ namespace ImgAssemblingLib.AditionalForms
         }
         private void label5_Click(object sender, EventArgs e) => PersentInvok();
         private void label6_Click(object sender, EventArgs e) => PersentInvok();
-        private void EditingStitchingPlan_MouseClick(object sender, MouseEventArgs e) { if (e.X > 333 && e.X < 351 && e.Y > 255 && e.Y < 298) PersentInvok(); }
+        private void EditingStitchingPlan_MouseClick(object sender, MouseEventArgs e) { if (e.X > 305 && e.X < 330 && e.Y > 147 && e.Y < 200) PersentInvok(); }
         private void StitchСhckBox_CheckedChanged(object sender, EventArgs e) => CheckFKPoins();
         private void SpeedCountingСhckBox_CheckedChanged(object sender, EventArgs e) => CheckFKPoins();
 

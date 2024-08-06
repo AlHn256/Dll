@@ -141,6 +141,9 @@
     <EmbeddedResource Include="AditionalForms\EditingStitchingPlan.resx">
       <DependentUpon>EditingStitchingPlan.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AditionalForms\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AditionalForms\ImgFixingForm.resx">
       <DependentUpon>ImgFixingForm.cs</DependentUpon>
     </EmbeddedResource>

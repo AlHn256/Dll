@@ -37,6 +37,16 @@ namespace StartTestProject
 
         private string text = string.Empty;
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Left)
+            {
+                MessageBox.Show("You pressed Left arrow key");
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void TestingForm_KeyDown(object sender, KeyEventArgs e)
         {
             Button buttonToClick = null;
@@ -45,6 +55,12 @@ namespace StartTestProject
             string checkTxt = text.Length - 4 > 0 ? text.Skip(text.Length-4).Take(4).ToString() : string.Empty;
             var gdfg = text.Skip(text.Length - 4).Take(4);
             if (checkTxt == "test" || checkTxt == "TEST") ShowImgFixingForm();
+
+            if (e.Control && e.KeyCode == Keys.S)
+            {
+                //RTB labelResult.Text = "Ctrl + S pressed";
+                e.SuppressKeyPress = true; // Prevents the event from being passed to the control with focus
+            }
 
             switch (e.KeyCode)
             {
@@ -71,7 +87,7 @@ namespace StartTestProject
                     break;
                 case Keys.X:
                     //buttonToClick = button8;
-                    break;
+                    break; 
             }
 
             if (buttonToClick != null)

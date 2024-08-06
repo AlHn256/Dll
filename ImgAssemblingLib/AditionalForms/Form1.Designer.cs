@@ -31,435 +31,447 @@ namespace ImgAssemblingLib.AditionalForms
         /// </summary>
         private void InitializeComponent()
         {
-            picBox_Display = new PictureBox();
-            TestBtn = new Button();
-            Test2Btn = new Button();
-            PeriodTxtBox = new TextBox();
-            RTB = new RichTextBox();
-            FileDirTxtBox = new TextBox();
-            label4 = new Label();
-            ZoomLabel = new Label();
-            ShowPointsBtn = new Button();
-            StitchImgsBtn = new Button();
-            AllPointsChkBox = new CheckBox();
-            SaveBtn = new Button();
-            progressBar = new ProgressBar();
-            StopBtn = new Button();
-            progressBarLabel = new Label();
-            SaveThisImgBtn = new Button();
-            menuStrip1 = new MenuStrip();
-            menuToolStripMenuItem = new ToolStripMenuItem();
-            imgFixingToolStripMenuItem = new ToolStripMenuItem();
-            fileNameFixingToolStripMenuItem = new ToolStripMenuItem();
-            deleteFileCopyToolStripMenuItem = new ToolStripMenuItem();
-            deleteResultesToolStripMenuItem = new ToolStripMenuItem();
-            deletePlanToolStripMenuItem = new ToolStripMenuItem();
-            exitToolStripMenuItem = new ToolStripMenuItem();
-            ToTxtBox = new TextBox();
-            FromTxtBox = new TextBox();
-            FrLb = new Label();
-            label1 = new Label();
-            label5 = new Label();
-            label6 = new Label();
-            TestImgFixingBtn = new Button();
-            StitchingByPlanBtn = new Button();
-            Period = new Label();
-            GetSpeedBtn = new Button();
-            RndBtn = new Button();
-            OpenDirDtn = new Button();
-            ((System.ComponentModel.ISupportInitialize)picBox_Display).BeginInit();
-            menuStrip1.SuspendLayout();
-            SuspendLayout();
+            this.picBox_Display = new System.Windows.Forms.PictureBox();
+            this.TestBtn = new System.Windows.Forms.Button();
+            this.Test2Btn = new System.Windows.Forms.Button();
+            this.PeriodTxtBox = new System.Windows.Forms.TextBox();
+            this.RTB = new System.Windows.Forms.RichTextBox();
+            this.FileDirTxtBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ZoomLabel = new System.Windows.Forms.Label();
+            this.ShowPointsBtn = new System.Windows.Forms.Button();
+            this.StitchImgsBtn = new System.Windows.Forms.Button();
+            this.AllPointsChkBox = new System.Windows.Forms.CheckBox();
+            this.SaveBtn = new System.Windows.Forms.Button();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.StopBtn = new System.Windows.Forms.Button();
+            this.progressBarLabel = new System.Windows.Forms.Label();
+            this.SaveThisImgBtn = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imgFixingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileNameFixingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteFileCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteResultesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deletePlanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToTxtBox = new System.Windows.Forms.TextBox();
+            this.FromTxtBox = new System.Windows.Forms.TextBox();
+            this.FrLb = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.TestImgFixingBtn = new System.Windows.Forms.Button();
+            this.StitchingByPlanBtn = new System.Windows.Forms.Button();
+            this.Period = new System.Windows.Forms.Label();
+            this.GetSpeedBtn = new System.Windows.Forms.Button();
+            this.RndBtn = new System.Windows.Forms.Button();
+            this.OpenDirDtn = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_Display)).BeginInit();
+            this.menuStrip1.SuspendLayout();
+            this.SuspendLayout();
             // 
             // picBox_Display
             // 
-            picBox_Display.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            picBox_Display.Location = new Point(12, 85);
-            picBox_Display.Name = "picBox_Display";
-            picBox_Display.Size = new Size(1841, 799);
-            picBox_Display.TabIndex = 1;
-            picBox_Display.TabStop = false;
-            picBox_Display.MouseDown += picBox_Display_MouseDown;
-            picBox_Display.MouseUp += picBox_Display_MouseUp;
-            picBox_Display.MouseWheel += panel1_MouseWheel;
+            this.picBox_Display.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picBox_Display.Location = new System.Drawing.Point(10, 74);
+            this.picBox_Display.Name = "picBox_Display";
+            this.picBox_Display.Size = new System.Drawing.Size(1578, 692);
+            this.picBox_Display.TabIndex = 1;
+            this.picBox_Display.TabStop = false;
+            this.picBox_Display.MouseDown += picBox_Display_MouseDown;
+            this.picBox_Display.MouseUp += picBox_Display_MouseUp;
+            this.picBox_Display.MouseWheel += panel1_MouseWheel;
             // 
             // TestBtn
             // 
-            TestBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            TestBtn.Location = new Point(1754, 54);
-            TestBtn.Name = "TestBtn";
-            TestBtn.Size = new Size(96, 23);
-            TestBtn.TabIndex = 3;
-            TestBtn.Text = "Match Pic By Sift";
-            TestBtn.UseVisualStyleBackColor = true;
-            TestBtn.Click += TestBtn_Click;
+            this.TestBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.TestBtn.Location = new System.Drawing.Point(1506, 47);
+            this.TestBtn.Name = "TestBtn";
+            this.TestBtn.Size = new System.Drawing.Size(82, 23);
+            this.TestBtn.TabIndex = 3;
+            this.TestBtn.Text = "Match Pic By Sift";
+            this.TestBtn.UseVisualStyleBackColor = true;
+            this.TestBtn.Click += TestBtn_Click;
             // 
             // Test2Btn
             // 
-            Test2Btn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            Test2Btn.Location = new Point(1754, 27);
-            Test2Btn.Name = "Test2Btn";
-            Test2Btn.Size = new Size(96, 24);
-            Test2Btn.TabIndex = 4;
-            Test2Btn.Text = "Match Pic v2";
-            Test2Btn.UseVisualStyleBackColor = true;
-            Test2Btn.Click += Test2Btn_Click;
+            this.Test2Btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Test2Btn.Location = new System.Drawing.Point(1506, 23);
+            this.Test2Btn.Name = "Test2Btn";
+            this.Test2Btn.Size = new System.Drawing.Size(82, 21);
+            this.Test2Btn.TabIndex = 4;
+            this.Test2Btn.Text = "Match Pic v2";
+            this.Test2Btn.UseVisualStyleBackColor = true;
+            this.Test2Btn.Click += Test2Btn_Click;
             // 
             // PeriodTxtBox
             // 
-            PeriodTxtBox.Location = new Point(605, 59);
-            PeriodTxtBox.Name = "PeriodTxtBox";
-            PeriodTxtBox.Size = new Size(34, 23);
-            PeriodTxtBox.TabIndex = 5;
-            PeriodTxtBox.Text = "1";
-            PeriodTxtBox.TextChanged += PeriodTxtBox_TextChanged;
+            this.PeriodTxtBox.Location = new System.Drawing.Point(519, 51);
+            this.PeriodTxtBox.Name = "PeriodTxtBox";
+            this.PeriodTxtBox.Size = new System.Drawing.Size(30, 20);
+            this.PeriodTxtBox.TabIndex = 5;
+            this.PeriodTxtBox.Text = "1";
+            this.PeriodTxtBox.TextChanged += PeriodTxtBox_TextChanged;
             // 
             // RTB
             // 
-            RTB.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            RTB.Location = new Point(664, 11);
-            RTB.Name = "RTB";
-            RTB.Size = new Size(867, 71);
-            RTB.TabIndex = 7;
-            RTB.Text = "";
-            RTB.KeyPress += key_Down;
+            this.RTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RTB.Location = new System.Drawing.Point(569, 10);
+            this.RTB.Name = "RTB";
+            this.RTB.Size = new System.Drawing.Size(744, 62);
+            this.RTB.TabIndex = 7;
+            this.RTB.Text = "";
+            this.RTB.KeyPress += key_Down;
             // 
             // FileDirTxtBox
             // 
-            FileDirTxtBox.Location = new Point(12, 30);
-            FileDirTxtBox.Name = "FileDirTxtBox";
-            FileDirTxtBox.Size = new Size(509, 23);
-            FileDirTxtBox.TabIndex = 8;
+            this.FileDirTxtBox.Location = new System.Drawing.Point(10, 26);
+            this.FileDirTxtBox.Name = "FileDirTxtBox";
+            this.FileDirTxtBox.Size = new System.Drawing.Size(437, 20);
+            this.FileDirTxtBox.TabIndex = 8;
             // 
             // label4
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            label4.Location = new Point(399, 61);
-            label4.Name = "label4";
-            label4.Size = new Size(40, 15);
-            label4.TabIndex = 14;
-            label4.Text = "Zoom";
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label4.Location = new System.Drawing.Point(350, 52);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(40, 15);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Zoom";
             // 
             // ZoomLabel
             // 
-            ZoomLabel.AutoSize = true;
-            ZoomLabel.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            ZoomLabel.Location = new Point(444, 62);
-            ZoomLabel.Name = "ZoomLabel";
-            ZoomLabel.Size = new Size(13, 15);
-            ZoomLabel.TabIndex = 15;
-            ZoomLabel.Text = "1";
+            this.ZoomLabel.AutoSize = true;
+            this.ZoomLabel.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ZoomLabel.Location = new System.Drawing.Point(389, 53);
+            this.ZoomLabel.Name = "ZoomLabel";
+            this.ZoomLabel.Size = new System.Drawing.Size(13, 15);
+            this.ZoomLabel.TabIndex = 15;
+            this.ZoomLabel.Text = "1";
             // 
             // ShowPointsBtn
             // 
-            ShowPointsBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            ShowPointsBtn.Location = new Point(1664, 27);
-            ShowPointsBtn.Name = "ShowPointsBtn";
-            ShowPointsBtn.Size = new Size(86, 24);
-            ShowPointsBtn.TabIndex = 16;
-            ShowPointsBtn.Text = "Show Points";
-            ShowPointsBtn.UseVisualStyleBackColor = true;
-            ShowPointsBtn.Click += ShowPointsBtn_Click;
+            this.ShowPointsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShowPointsBtn.Location = new System.Drawing.Point(1429, 23);
+            this.ShowPointsBtn.Name = "ShowPointsBtn";
+            this.ShowPointsBtn.Size = new System.Drawing.Size(74, 21);
+            this.ShowPointsBtn.TabIndex = 16;
+            this.ShowPointsBtn.Text = "Show Points";
+            this.ShowPointsBtn.UseVisualStyleBackColor = true;
+            this.ShowPointsBtn.Click += ShowPointsBtn_Click;
             // 
             // StitchImgsBtn
             // 
-            StitchImgsBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            StitchImgsBtn.Location = new Point(1664, 54);
-            StitchImgsBtn.Name = "StitchImgsBtn";
-            StitchImgsBtn.Size = new Size(86, 23);
-            StitchImgsBtn.TabIndex = 22;
-            StitchImgsBtn.Text = "Stitch Imgs";
-            StitchImgsBtn.UseVisualStyleBackColor = true;
-            StitchImgsBtn.Click += Stitch2ImgsBtn_Click;
+            this.StitchImgsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.StitchImgsBtn.Location = new System.Drawing.Point(1429, 47);
+            this.StitchImgsBtn.Name = "StitchImgsBtn";
+            this.StitchImgsBtn.Size = new System.Drawing.Size(74, 23);
+            this.StitchImgsBtn.TabIndex = 22;
+            this.StitchImgsBtn.Text = "Stitch Imgs";
+            this.StitchImgsBtn.UseVisualStyleBackColor = true;
+            this.StitchImgsBtn.Click += Stitch2ImgsBtn_Click;
             // 
             // AllPointsChkBox
             // 
-            AllPointsChkBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            AllPointsChkBox.AutoSize = true;
-            AllPointsChkBox.Location = new Point(1582, 31);
-            AllPointsChkBox.Name = "AllPointsChkBox";
-            AllPointsChkBox.Size = new Size(76, 19);
-            AllPointsChkBox.TabIndex = 23;
-            AllPointsChkBox.Text = "All Points";
-            AllPointsChkBox.UseVisualStyleBackColor = true;
+            this.AllPointsChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.AllPointsChkBox.AutoSize = true;
+            this.AllPointsChkBox.Location = new System.Drawing.Point(1355, 27);
+            this.AllPointsChkBox.Name = "AllPointsChkBox";
+            this.AllPointsChkBox.Size = new System.Drawing.Size(69, 17);
+            this.AllPointsChkBox.TabIndex = 23;
+            this.AllPointsChkBox.Text = "All Points";
+            this.AllPointsChkBox.UseVisualStyleBackColor = true;
             // 
             // SaveBtn
             // 
-            SaveBtn.Location = new Point(178, 56);
-            SaveBtn.Name = "SaveBtn";
-            SaveBtn.Size = new Size(75, 26);
-            SaveBtn.TabIndex = 24;
-            SaveBtn.Text = "Save Rezult";
-            SaveBtn.UseVisualStyleBackColor = true;
-            SaveBtn.Click += SaveBtn_Click;
+            this.SaveBtn.Location = new System.Drawing.Point(153, 49);
+            this.SaveBtn.Name = "SaveBtn";
+            this.SaveBtn.Size = new System.Drawing.Size(64, 23);
+            this.SaveBtn.TabIndex = 24;
+            this.SaveBtn.Text = "Save Rezult";
+            this.SaveBtn.UseVisualStyleBackColor = true;
+            this.SaveBtn.Click += SaveBtn_Click;
             // 
             // progressBar
             // 
-            progressBar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            progressBar.Location = new Point(12, 890);
-            progressBar.Name = "progressBar";
-            progressBar.Size = new Size(1762, 23);
-            progressBar.TabIndex = 26;
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(10, 771);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(1510, 20);
+            this.progressBar.TabIndex = 26;
             // 
             // StopBtn
             // 
-            StopBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            StopBtn.Location = new Point(1780, 890);
-            StopBtn.Name = "StopBtn";
-            StopBtn.Size = new Size(73, 23);
-            StopBtn.TabIndex = 27;
-            StopBtn.Text = "Stop";
-            StopBtn.UseVisualStyleBackColor = true;
+            this.StopBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.StopBtn.Location = new System.Drawing.Point(1526, 771);
+            this.StopBtn.Name = "StopBtn";
+            this.StopBtn.Size = new System.Drawing.Size(63, 20);
+            this.StopBtn.TabIndex = 27;
+            this.StopBtn.Text = "Stop";
+            this.StopBtn.UseVisualStyleBackColor = true;
             // 
             // progressBarLabel
             // 
-            progressBarLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            progressBarLabel.AutoSize = true;
-            progressBarLabel.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            progressBarLabel.Location = new Point(887, 894);
-            progressBarLabel.Name = "progressBarLabel";
-            progressBarLabel.Size = new Size(39, 15);
-            progressBarLabel.TabIndex = 28;
-            progressBarLabel.Text = "Point";
+            this.progressBarLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarLabel.AutoSize = true;
+            this.progressBarLabel.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.progressBarLabel.Location = new System.Drawing.Point(760, 775);
+            this.progressBarLabel.Name = "progressBarLabel";
+            this.progressBarLabel.Size = new System.Drawing.Size(39, 15);
+            this.progressBarLabel.TabIndex = 28;
+            this.progressBarLabel.Text = "Point";
             // 
             // SaveThisImgBtn
             // 
-            SaveThisImgBtn.Location = new Point(259, 56);
-            SaveThisImgBtn.Name = "SaveThisImgBtn";
-            SaveThisImgBtn.Size = new Size(85, 26);
-            SaveThisImgBtn.TabIndex = 29;
-            SaveThisImgBtn.Text = "Save this Img";
-            SaveThisImgBtn.UseVisualStyleBackColor = true;
-            SaveThisImgBtn.Click += SaveThisImgBtn_Click;
+            this.SaveThisImgBtn.Location = new System.Drawing.Point(222, 49);
+            this.SaveThisImgBtn.Name = "SaveThisImgBtn";
+            this.SaveThisImgBtn.Size = new System.Drawing.Size(73, 23);
+            this.SaveThisImgBtn.TabIndex = 29;
+            this.SaveThisImgBtn.Text = "Save this Img";
+            this.SaveThisImgBtn.UseVisualStyleBackColor = true;
+            this.SaveThisImgBtn.Click += SaveThisImgBtn_Click;
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { menuToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1862, 24);
-            menuStrip1.TabIndex = 30;
-            menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1596, 24);
+            this.menuStrip1.TabIndex = 30;
+            this.menuStrip1.Text = "menuStrip1";
             // 
             // menuToolStripMenuItem
             // 
-            menuToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { imgFixingToolStripMenuItem, fileNameFixingToolStripMenuItem, deleteFileCopyToolStripMenuItem, deleteResultesToolStripMenuItem, deletePlanToolStripMenuItem, exitToolStripMenuItem });
-            menuToolStripMenuItem.Name = "menuToolStripMenuItem";
-            menuToolStripMenuItem.Size = new Size(50, 20);
-            menuToolStripMenuItem.Text = "Menu";
+            this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.imgFixingToolStripMenuItem,
+            this.fileNameFixingToolStripMenuItem,
+            this.deleteFileCopyToolStripMenuItem,
+            this.deleteResultesToolStripMenuItem,
+            this.deletePlanToolStripMenuItem,
+            this.exitToolStripMenuItem});
+            this.menuToolStripMenuItem.Name = "menuToolStripMenuItem";
+            this.menuToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.menuToolStripMenuItem.Text = "Menu";
             // 
             // imgFixingToolStripMenuItem
             // 
-            imgFixingToolStripMenuItem.Name = "imgFixingToolStripMenuItem";
-            imgFixingToolStripMenuItem.Size = new Size(162, 22);
-            imgFixingToolStripMenuItem.Text = "Img Fixing";
-            imgFixingToolStripMenuItem.Click += imgFixingToolStripMenuItem_Click;
+            this.imgFixingToolStripMenuItem.Name = "imgFixingToolStripMenuItem";
+            this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.imgFixingToolStripMenuItem.Text = "Img Fixing";
+            this.imgFixingToolStripMenuItem.Click += imgFixingToolStripMenuItem_Click;
             // 
             // fileNameFixingToolStripMenuItem
             // 
-            fileNameFixingToolStripMenuItem.Name = "fileNameFixingToolStripMenuItem";
-            fileNameFixingToolStripMenuItem.Size = new Size(162, 22);
-            fileNameFixingToolStripMenuItem.Text = "File Name Fixing";
-            fileNameFixingToolStripMenuItem.Click += FileNameFixingToolStripMenuItemClick;
+            this.fileNameFixingToolStripMenuItem.Name = "fileNameFixingToolStripMenuItem";
+            this.fileNameFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.fileNameFixingToolStripMenuItem.Text = "File Name Fixing";
+            this.fileNameFixingToolStripMenuItem.Click += FileNameFixingToolStripMenuItemClick;
             // 
             // deleteFileCopyToolStripMenuItem
             // 
-            deleteFileCopyToolStripMenuItem.Name = "deleteFileCopyToolStripMenuItem";
-            deleteFileCopyToolStripMenuItem.Size = new Size(162, 22);
-            deleteFileCopyToolStripMenuItem.Text = "Delete FileCopy";
-            deleteFileCopyToolStripMenuItem.Click += deleteFileCopyToolStripMenuItem_Click;
+            this.deleteFileCopyToolStripMenuItem.Name = "deleteFileCopyToolStripMenuItem";
+            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deleteFileCopyToolStripMenuItem.Text = "Delete FileCopy";
+            this.deleteFileCopyToolStripMenuItem.Click += deleteFileCopyToolStripMenuItem_Click;
             // 
             // deleteResultesToolStripMenuItem
             // 
-            deleteResultesToolStripMenuItem.Name = "deleteResultesToolStripMenuItem";
-            deleteResultesToolStripMenuItem.Size = new Size(162, 22);
-            deleteResultesToolStripMenuItem.Text = "Delete Resultes";
-            deleteResultesToolStripMenuItem.Click += deleteResultesToolStripMenuItem_Click;
+            this.deleteResultesToolStripMenuItem.Name = "deleteResultesToolStripMenuItem";
+            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deleteResultesToolStripMenuItem.Text = "Delete Resultes";
+            this.deleteResultesToolStripMenuItem.Click += deleteResultesToolStripMenuItem_Click;
             // 
             // deletePlanToolStripMenuItem
             // 
-            deletePlanToolStripMenuItem.Name = "deletePlanToolStripMenuItem";
-            deletePlanToolStripMenuItem.Size = new Size(162, 22);
-            deletePlanToolStripMenuItem.Text = "Delete Plan";
-            deletePlanToolStripMenuItem.Click += deletePlanToolStripMenuItem_Click;
+            this.deletePlanToolStripMenuItem.Name = "deletePlanToolStripMenuItem";
+            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deletePlanToolStripMenuItem.Text = "Delete Plan";
+            this.deletePlanToolStripMenuItem.Click += deletePlanToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
-            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(162, 22);
-            exitToolStripMenuItem.Text = "Exit";
-            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
             // ToTxtBox
             // 
-            ToTxtBox.Location = new Point(605, 35);
-            ToTxtBox.Name = "ToTxtBox";
-            ToTxtBox.Size = new Size(34, 23);
-            ToTxtBox.TabIndex = 31;
-            ToTxtBox.Text = "100";
-            ToTxtBox.TextChanged += ToTxtBox_TextChanged;
+            this.ToTxtBox.Location = new System.Drawing.Point(519, 30);
+            this.ToTxtBox.Name = "ToTxtBox";
+            this.ToTxtBox.Size = new System.Drawing.Size(30, 20);
+            this.ToTxtBox.TabIndex = 31;
+            this.ToTxtBox.Text = "100";
+            this.ToTxtBox.TextChanged += ToTxtBox_TextChanged;
             // 
             // FromTxtBox
             // 
-            FromTxtBox.Location = new Point(605, 11);
-            FromTxtBox.Name = "FromTxtBox";
-            FromTxtBox.Size = new Size(34, 23);
-            FromTxtBox.TabIndex = 32;
-            FromTxtBox.Text = "0";
-            FromTxtBox.TextChanged += FromTxtBox_TextChanged;
+            this.FromTxtBox.Location = new System.Drawing.Point(519, 10);
+            this.FromTxtBox.Name = "FromTxtBox";
+            this.FromTxtBox.Size = new System.Drawing.Size(30, 20);
+            this.FromTxtBox.TabIndex = 32;
+            this.FromTxtBox.Text = "0";
+            this.FromTxtBox.TextChanged += FromTxtBox_TextChanged;
             // 
             // FrLb
             // 
-            FrLb.AutoSize = true;
-            FrLb.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            FrLb.Location = new Point(561, 14);
-            FrLb.Name = "FrLb";
-            FrLb.Size = new Size(36, 15);
-            FrLb.TabIndex = 33;
-            FrLb.Text = "From";
+            this.FrLb.AutoSize = true;
+            this.FrLb.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.FrLb.Location = new System.Drawing.Point(475, 14);
+            this.FrLb.Name = "FrLb";
+            this.FrLb.Size = new System.Drawing.Size(36, 15);
+            this.FrLb.TabIndex = 33;
+            this.FrLb.Text = "From";
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            label1.Location = new Point(568, 39);
-            label1.Name = "label1";
-            label1.Size = new Size(21, 15);
-            label1.TabIndex = 34;
-            label1.Text = "To";
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Location = new System.Drawing.Point(483, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(21, 15);
+            this.label1.TabIndex = 34;
+            this.label1.Text = "To";
             // 
             // label5
             // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            label5.Location = new Point(640, 15);
-            label5.Name = "label5";
-            label5.Size = new Size(18, 15);
-            label5.TabIndex = 35;
-            label5.Text = "%";
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label5.Location = new System.Drawing.Point(549, 13);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(18, 15);
+            this.label5.TabIndex = 35;
+            this.label5.Text = "%";
             // 
             // label6
             // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            label6.Location = new Point(640, 41);
-            label6.Name = "label6";
-            label6.Size = new Size(18, 15);
-            label6.TabIndex = 36;
-            label6.Text = "%";
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label6.Location = new System.Drawing.Point(549, 36);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(18, 15);
+            this.label6.TabIndex = 36;
+            this.label6.Text = "%";
             // 
             // TestImgFixingBtn
             // 
-            TestImgFixingBtn.Location = new Point(109, 56);
-            TestImgFixingBtn.Name = "TestImgFixingBtn";
-            TestImgFixingBtn.Size = new Size(63, 26);
-            TestImgFixingBtn.TabIndex = 37;
-            TestImgFixingBtn.Text = "Edit plan";
-            TestImgFixingBtn.UseVisualStyleBackColor = true;
-            TestImgFixingBtn.Click += TestImgFixingBtn_Click;
+            this.TestImgFixingBtn.Location = new System.Drawing.Point(93, 49);
+            this.TestImgFixingBtn.Name = "TestImgFixingBtn";
+            this.TestImgFixingBtn.Size = new System.Drawing.Size(54, 23);
+            this.TestImgFixingBtn.TabIndex = 37;
+            this.TestImgFixingBtn.Text = "Edit plan";
+            this.TestImgFixingBtn.UseVisualStyleBackColor = true;
+            this.TestImgFixingBtn.Click += TestImgFixingBtn_Click;
             // 
             // StitchingByPlanBtn
             // 
-            StitchingByPlanBtn.Location = new Point(12, 56);
-            StitchingByPlanBtn.Name = "StitchingByPlanBtn";
-            StitchingByPlanBtn.Size = new Size(91, 26);
-            StitchingByPlanBtn.TabIndex = 38;
-            StitchingByPlanBtn.Text = "Stitch";
-            StitchingByPlanBtn.UseVisualStyleBackColor = true;
-            StitchingByPlanBtn.Click += StitchingByPlanBtn_Click;
+            this.StitchingByPlanBtn.Location = new System.Drawing.Point(10, 49);
+            this.StitchingByPlanBtn.Name = "StitchingByPlanBtn";
+            this.StitchingByPlanBtn.Size = new System.Drawing.Size(78, 23);
+            this.StitchingByPlanBtn.TabIndex = 38;
+            this.StitchingByPlanBtn.Text = "Stitch";
+            this.StitchingByPlanBtn.UseVisualStyleBackColor = true;
+            this.StitchingByPlanBtn.Click += StitchingByPlanBtn_Click;
             // 
             // Period
             // 
-            Period.AutoSize = true;
-            Period.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            Period.Location = new Point(557, 63);
-            Period.Name = "Period";
-            Period.Size = new Size(46, 15);
-            Period.TabIndex = 39;
-            Period.Text = "Period";
+            this.Period.AutoSize = true;
+            this.Period.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.Period.Location = new System.Drawing.Point(469, 54);
+            this.Period.Name = "Period";
+            this.Period.Size = new System.Drawing.Size(46, 15);
+            this.Period.TabIndex = 39;
+            this.Period.Text = "Period";
             // 
             // GetSpeedBtn
             // 
-            GetSpeedBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            GetSpeedBtn.Location = new Point(1580, 54);
-            GetSpeedBtn.Name = "GetSpeedBtn";
-            GetSpeedBtn.Size = new Size(78, 23);
-            GetSpeedBtn.TabIndex = 40;
-            GetSpeedBtn.Text = "Get Speed";
-            GetSpeedBtn.UseVisualStyleBackColor = true;
-            GetSpeedBtn.Click += GetSpeedBtn_Click;
+            this.GetSpeedBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.GetSpeedBtn.Location = new System.Drawing.Point(1357, 47);
+            this.GetSpeedBtn.Name = "GetSpeedBtn";
+            this.GetSpeedBtn.Size = new System.Drawing.Size(67, 23);
+            this.GetSpeedBtn.TabIndex = 40;
+            this.GetSpeedBtn.Text = "Get Speed";
+            this.GetSpeedBtn.UseVisualStyleBackColor = true;
+            OpenDirDtn.Click += OpenDirDtn_Click;
             // 
             // RndBtn
             // 
-            RndBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            RndBtn.Location = new Point(1537, 54);
-            RndBtn.Name = "RndBtn";
-            RndBtn.Size = new Size(37, 23);
-            RndBtn.TabIndex = 41;
-            RndBtn.Text = "Rnd";
-            RndBtn.UseVisualStyleBackColor = true;
-            RndBtn.Click += Random_Click;
+            this.RndBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.RndBtn.Location = new System.Drawing.Point(1320, 47);
+            this.RndBtn.Name = "RndBtn";
+            this.RndBtn.Size = new System.Drawing.Size(32, 23);
+            this.RndBtn.TabIndex = 41;
+            this.RndBtn.Text = "Rnd";
+            this.RndBtn.UseVisualStyleBackColor = true;
+            this.OpenDirDtn.Click += OpenDirDtn_Click;
             // 
             // OpenDirDtn
             // 
-            OpenDirDtn.Location = new Point(523, 29);
-            OpenDirDtn.Name = "OpenDirDtn";
-            OpenDirDtn.Size = new Size(28, 24);
-            OpenDirDtn.TabIndex = 43;
-            OpenDirDtn.Text = "...";
-            OpenDirDtn.UseVisualStyleBackColor = true;
-            OpenDirDtn.Click += OpenDirDtn_Click;
+            this.OpenDirDtn.Location = new System.Drawing.Point(449, 26);
+            this.OpenDirDtn.Name = "OpenDirDtn";
+            this.OpenDirDtn.Size = new System.Drawing.Size(24, 21);
+            this.OpenDirDtn.TabIndex = 43;
+            this.OpenDirDtn.Text = "...";
+            this.OpenDirDtn.UseVisualStyleBackColor = true;
+            this.OpenDirDtn.Click += OpenDirDtn_Click;
             // 
             // Form1
             // 
-            AllowDrop = true;
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1862, 925);
-            Controls.Add(OpenDirDtn);
-            Controls.Add(RndBtn);
-            Controls.Add(GetSpeedBtn);
-            Controls.Add(Period);
-            Controls.Add(StitchingByPlanBtn);
-            Controls.Add(TestImgFixingBtn);
-            Controls.Add(label6);
-            Controls.Add(label5);
-            Controls.Add(label1);
-            Controls.Add(FrLb);
-            Controls.Add(FromTxtBox);
-            Controls.Add(ToTxtBox);
-            Controls.Add(SaveThisImgBtn);
-            Controls.Add(progressBarLabel);
-            Controls.Add(StopBtn);
-            Controls.Add(progressBar);
-            Controls.Add(SaveBtn);
-            Controls.Add(AllPointsChkBox);
-            Controls.Add(StitchImgsBtn);
-            Controls.Add(ShowPointsBtn);
-            Controls.Add(ZoomLabel);
-            Controls.Add(label4);
-            Controls.Add(FileDirTxtBox);
-            Controls.Add(RTB);
-            Controls.Add(PeriodTxtBox);
-            Controls.Add(Test2Btn);
-            Controls.Add(TestBtn);
-            Controls.Add(picBox_Display);
-            Controls.Add(menuStrip1);
-            MainMenuStrip = menuStrip1;
-            MinimumSize = new Size(1750, 600);
-            Name = "Form1";
-            Text = "Form1";
-            FormClosing += Form1_FormClosing;
-            Load += Loading;
-            DragDrop += WindowsForm_DragDrop;
-            DragEnter += WindowsForm_DragEnter;
+            this.AllowDrop = true;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1596, 802);
+            this.Controls.Add(this.OpenDirDtn);
+            this.Controls.Add(this.RndBtn);
+            this.Controls.Add(this.GetSpeedBtn);
+            this.Controls.Add(this.Period);
+            this.Controls.Add(this.StitchingByPlanBtn);
+            this.Controls.Add(this.TestImgFixingBtn);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.FrLb);
+            this.Controls.Add(this.FromTxtBox);
+            this.Controls.Add(this.ToTxtBox);
+            this.Controls.Add(this.SaveThisImgBtn);
+            this.Controls.Add(this.progressBarLabel);
+            this.Controls.Add(this.StopBtn);
+            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.SaveBtn);
+            this.Controls.Add(this.AllPointsChkBox);
+            this.Controls.Add(this.StitchImgsBtn);
+            this.Controls.Add(this.ShowPointsBtn);
+            this.Controls.Add(this.ZoomLabel);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.FileDirTxtBox);
+            this.Controls.Add(this.RTB);
+            this.Controls.Add(this.PeriodTxtBox);
+            this.Controls.Add(this.Test2Btn);
+            this.Controls.Add(this.TestBtn);
+            this.Controls.Add(this.picBox_Display);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new Size(1750, 600);
+            this.Name = "Form1";
+            this.Text = "Form1";
+            this.FormClosing += Form1_FormClosing;
+            this.Load += Loading;
+            this.DragDrop += WindowsForm_DragDrop;
+            this.DragEnter += WindowsForm_DragEnter;
             ((System.ComponentModel.ISupportInitialize)picBox_Display).EndInit();
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
-
         }
 
         #endregion

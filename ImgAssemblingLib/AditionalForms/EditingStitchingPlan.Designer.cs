@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace ImgAssemblingLib.AditionalForms
 {
@@ -31,512 +30,475 @@ namespace ImgAssemblingLib.AditionalForms
         /// </summary>
         private void InitializeComponent()
         {
-            ExitBtn = new Button();
-            SaveBtn = new Button();
-            label1 = new Label();
-            WorkingDirectoryTxtBox = new TextBox();
-            SaveToBtn = new Button();
-            OpenWorkDirectoryBtn = new Button();
-            FixFileNamesChckBox = new CheckBox();
-            CheckFileNamesChckBox = new CheckBox();
-            FixImgChckBox = new CheckBox();
-            AutoChckBox = new CheckBox();
-            ChekFixedImgsChckBox = new CheckBox();
-            FindCopyChckBox = new CheckBox();
-            OpenFixingImgDirectoryBtn = new Button();
-            FixingImgDirectoryTxtBox = new TextBox();
-            label2 = new Label();
-            OpenImgFixingPlanBtn = new Button();
-            ImgFixingPlanTxtBox = new TextBox();
-            label3 = new Label();
-            StitchСhckBox = new CheckBox();
-            ChekStitchPlanСhckBox = new CheckBox();
-            DefaultParametersCheckBox = new CheckBox();
-            label6 = new Label();
-            label5 = new Label();
-            ToLb = new Label();
-            FrLb = new Label();
-            FromTxtBox = new TextBox();
-            ToTxtBox = new TextBox();
-            label7 = new Label();
-            label8 = new Label();
-            DeltaTxtBox = new TextBox();
-            PeriodTxtBox = new TextBox();
-            LoadBtn = new Button();
-            SaveResultChckBox = new CheckBox();
-            label4 = new Label();
-            OpenStitchingDirectoryBtn = new Button();
-            StitchingDirectoryTxtBox = new TextBox();
-            FindKeyPointsСhckBox = new CheckBox();
-            SpeedCountingСhckBox = new CheckBox();
-            MillimetersInPixelTxtBox = new TextBox();
-            TimePerFrameTxtBox = new TextBox();
-            label9 = new Label();
-            label10 = new Label();
-            AdditionalFilterChckBox = new CheckBox();
-            SuspendLayout();
+            this.ExitBtn = new System.Windows.Forms.Button();
+            this.SaveBtn = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.WorkingDirectoryTxtBox = new System.Windows.Forms.TextBox();
+            this.SaveToBtn = new System.Windows.Forms.Button();
+            this.OpenWorkDirectoryBtn = new System.Windows.Forms.Button();
+            this.FixImgChckBox = new System.Windows.Forms.CheckBox();
+            this.AutoChckBox = new System.Windows.Forms.CheckBox();
+            this.ChekFixedImgsChckBox = new System.Windows.Forms.CheckBox();
+            this.OpenFixingImgDirectoryBtn = new System.Windows.Forms.Button();
+            this.FixingImgDirectoryTxtBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.OpenImgFixingPlanBtn = new System.Windows.Forms.Button();
+            this.ImgFixingPlanTxtBox = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.StitchСhckBox = new System.Windows.Forms.CheckBox();
+            this.ChekStitchPlanСhckBox = new System.Windows.Forms.CheckBox();
+            this.DefaultParametersCheckBox = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.ToLb = new System.Windows.Forms.Label();
+            this.FrLb = new System.Windows.Forms.Label();
+            this.FromTxtBox = new System.Windows.Forms.TextBox();
+            this.ToTxtBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.DeltaTxtBox = new System.Windows.Forms.TextBox();
+            this.PeriodTxtBox = new System.Windows.Forms.TextBox();
+            this.LoadBtn = new System.Windows.Forms.Button();
+            this.SaveResultChckBox = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.OpenStitchingDirectoryBtn = new System.Windows.Forms.Button();
+            this.StitchingDirectoryTxtBox = new System.Windows.Forms.TextBox();
+            this.FindKeyPointsСhckBox = new System.Windows.Forms.CheckBox();
+            this.SpeedCountingСhckBox = new System.Windows.Forms.CheckBox();
+            this.MillimetersInPixelTxtBox = new System.Windows.Forms.TextBox();
+            this.TimePerFrameTxtBox = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.AdditionalFilterChckBox = new System.Windows.Forms.CheckBox();
+            this.SuspendLayout();
             // 
             // ExitBtn
             // 
-            ExitBtn.Location = new Point(511, 381);
-            ExitBtn.Name = "ExitBtn";
-            ExitBtn.Size = new Size(75, 23);
-            ExitBtn.TabIndex = 0;
-            ExitBtn.Text = "Exit";
-            ExitBtn.UseVisualStyleBackColor = true;
-            ExitBtn.Click += ExitBtn_Click;
+            this.ExitBtn.Location = new System.Drawing.Point(450, 342);
+            this.ExitBtn.Name = "ExitBtn";
+            this.ExitBtn.Size = new System.Drawing.Size(64, 20);
+            this.ExitBtn.TabIndex = 0;
+            this.ExitBtn.Text = "Exit";
+            this.ExitBtn.UseVisualStyleBackColor = true;
+            this.ExitBtn.Click += ExitBtn_Click;
             // 
             // SaveBtn
             // 
-            SaveBtn.Location = new Point(270, 381);
-            SaveBtn.Name = "SaveBtn";
-            SaveBtn.Size = new Size(75, 23);
-            SaveBtn.TabIndex = 1;
-            SaveBtn.Text = "Save";
-            SaveBtn.UseVisualStyleBackColor = true;
-            SaveBtn.Click += SaveBtn_Click;
+            this.SaveBtn.Location = new System.Drawing.Point(8, 342);
+            this.SaveBtn.Name = "SaveBtn";
+            this.SaveBtn.Size = new System.Drawing.Size(64, 20);
+            this.SaveBtn.TabIndex = 1;
+            this.SaveBtn.Text = "Save";
+            this.SaveBtn.UseVisualStyleBackColor = true;
+            this.SaveBtn.Click += new System.EventHandler(SaveBtn_Click);
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(10, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(106, 15);
-            label1.TabIndex = 2;
-            label1.Text = "Working Directory:";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(9, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(95, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Working Directory:";
             // 
             // WorkingDirectoryTxtBox
             // 
-            WorkingDirectoryTxtBox.Location = new Point(121, 6);
-            WorkingDirectoryTxtBox.Name = "WorkingDirectoryTxtBox";
-            WorkingDirectoryTxtBox.Size = new Size(432, 23);
-            WorkingDirectoryTxtBox.TabIndex = 3;
+            this.WorkingDirectoryTxtBox.Location = new System.Drawing.Point(107, 5);
+            this.WorkingDirectoryTxtBox.Name = "WorkingDirectoryTxtBox";
+            this.WorkingDirectoryTxtBox.Size = new System.Drawing.Size(381, 20);
+            this.WorkingDirectoryTxtBox.TabIndex = 3;
             // 
             // SaveToBtn
             // 
-            SaveToBtn.Location = new Point(351, 381);
-            SaveToBtn.Name = "SaveToBtn";
-            SaveToBtn.Size = new Size(75, 23);
-            SaveToBtn.TabIndex = 4;
-            SaveToBtn.Text = "Save to";
-            SaveToBtn.UseVisualStyleBackColor = true;
-            SaveToBtn.Click += SaveToBtn_Click;
+            this.SaveToBtn.Location = new System.Drawing.Point(78, 342);
+            this.SaveToBtn.Name = "SaveToBtn";
+            this.SaveToBtn.Size = new System.Drawing.Size(64, 20);
+            this.SaveToBtn.TabIndex = 4;
+            this.SaveToBtn.Text = "Save to";
+            this.SaveToBtn.UseVisualStyleBackColor = true;
+            this.SaveToBtn.Click += SaveToBtn_Click;
             // 
             // OpenWorkDirectoryBtn
             // 
-            OpenWorkDirectoryBtn.Location = new Point(559, 6);
-            OpenWorkDirectoryBtn.Name = "OpenWorkDirectoryBtn";
-            OpenWorkDirectoryBtn.Size = new Size(27, 23);
-            OpenWorkDirectoryBtn.TabIndex = 5;
-            OpenWorkDirectoryBtn.Text = "...";
-            OpenWorkDirectoryBtn.UseVisualStyleBackColor = true;
-            // 
-            // FixFileNamesChckBox
-            // 
-            FixFileNamesChckBox.AutoSize = true;
-            FixFileNamesChckBox.Location = new Point(12, 71);
-            FixFileNamesChckBox.Name = "FixFileNamesChckBox";
-            FixFileNamesChckBox.Size = new Size(102, 19);
-            FixFileNamesChckBox.TabIndex = 6;
-            FixFileNamesChckBox.Text = "Fix File Names";
-            FixFileNamesChckBox.UseVisualStyleBackColor = true;
-            // 
-            // CheckFileNamesChckBox
-            // 
-            CheckFileNamesChckBox.AutoSize = true;
-            CheckFileNamesChckBox.Location = new Point(12, 46);
-            CheckFileNamesChckBox.Name = "CheckFileNamesChckBox";
-            CheckFileNamesChckBox.Size = new Size(120, 19);
-            CheckFileNamesChckBox.TabIndex = 7;
-            CheckFileNamesChckBox.Text = "Check File Names";
-            CheckFileNamesChckBox.UseVisualStyleBackColor = true;
+            this.OpenWorkDirectoryBtn.Location = new System.Drawing.Point(494, 5);
+            this.OpenWorkDirectoryBtn.Name = "OpenWorkDirectoryBtn";
+            this.OpenWorkDirectoryBtn.Size = new System.Drawing.Size(23, 20);
+            this.OpenWorkDirectoryBtn.TabIndex = 5;
+            this.OpenWorkDirectoryBtn.Text = "...";
+            this.OpenWorkDirectoryBtn.UseVisualStyleBackColor = true;
             // 
             // FixImgChckBox
             // 
-            FixImgChckBox.AutoSize = true;
-            FixImgChckBox.Location = new Point(12, 121);
-            FixImgChckBox.Name = "FixImgChckBox";
-            FixImgChckBox.Size = new Size(70, 19);
-            FixImgChckBox.TabIndex = 8;
-            FixImgChckBox.Text = "Fix Imgs";
-            FixImgChckBox.UseVisualStyleBackColor = true;
-            FixImgChckBox.CheckedChanged += FixImgChckBox_CheckedChanged;
+            this.FixImgChckBox.AutoSize = true;
+            this.FixImgChckBox.Location = new System.Drawing.Point(10, 38);
+            this.FixImgChckBox.Name = "FixImgChckBox";
+            this.FixImgChckBox.Size = new System.Drawing.Size(64, 17);
+            this.FixImgChckBox.TabIndex = 8;
+            this.FixImgChckBox.Text = "Fix Imgs";
+            this.FixImgChckBox.UseVisualStyleBackColor = true;
+            this.FixImgChckBox.CheckedChanged += new System.EventHandler(FixImgChckBox_CheckedChanged);
             // 
             // AutoChckBox
             // 
-            AutoChckBox.AutoSize = true;
-            AutoChckBox.Location = new Point(121, 121);
-            AutoChckBox.Name = "AutoChckBox";
-            AutoChckBox.Size = new Size(52, 19);
-            AutoChckBox.TabIndex = 9;
-            AutoChckBox.Text = "Auto";
-            AutoChckBox.UseVisualStyleBackColor = true;
-            AutoChckBox.CheckedChanged += AutoChckBox_CheckedChanged;
+            this.AutoChckBox.AutoSize = true;
+            this.AutoChckBox.Location = new System.Drawing.Point(109, 38);
+            this.AutoChckBox.Name = "AutoChckBox";
+            this.AutoChckBox.Size = new System.Drawing.Size(48, 17);
+            this.AutoChckBox.TabIndex = 9;
+            this.AutoChckBox.Text = "Auto";
+            this.AutoChckBox.UseVisualStyleBackColor = true;
+            this.AutoChckBox.CheckedChanged += new System.EventHandler(AutoChckBox_CheckedChanged);
             // 
             // ChekFixedImgsChckBox
             // 
-            ChekFixedImgsChckBox.AutoSize = true;
-            ChekFixedImgsChckBox.Location = new Point(179, 121);
-            ChekFixedImgsChckBox.Name = "ChekFixedImgsChckBox";
-            ChekFixedImgsChckBox.Size = new Size(113, 19);
-            ChekFixedImgsChckBox.TabIndex = 10;
-            ChekFixedImgsChckBox.Text = "Chek Fixed Imgs";
-            ChekFixedImgsChckBox.UseVisualStyleBackColor = true;
-            // 
-            // FindCopyChckBox
-            // 
-            FindCopyChckBox.AutoSize = true;
-            FindCopyChckBox.Location = new Point(12, 96);
-            FindCopyChckBox.Name = "FindCopyChckBox";
-            FindCopyChckBox.Size = new Size(123, 19);
-            FindCopyChckBox.TabIndex = 11;
-            FindCopyChckBox.Text = "Find and Del Copy";
-            FindCopyChckBox.UseVisualStyleBackColor = true;
+            this.ChekFixedImgsChckBox.AutoSize = true;
+            this.ChekFixedImgsChckBox.Location = new System.Drawing.Point(216, 38);
+            this.ChekFixedImgsChckBox.Name = "ChekFixedImgsChckBox";
+            this.ChekFixedImgsChckBox.Size = new System.Drawing.Size(104, 17);
+            this.ChekFixedImgsChckBox.TabIndex = 10;
+            this.ChekFixedImgsChckBox.Text = "Chek Fixed Imgs";
+            this.ChekFixedImgsChckBox.UseVisualStyleBackColor = true;
             // 
             // OpenFixingImgDirectoryBtn
             // 
-            OpenFixingImgDirectoryBtn.Location = new Point(559, 141);
-            OpenFixingImgDirectoryBtn.Name = "OpenFixingImgDirectoryBtn";
-            OpenFixingImgDirectoryBtn.Size = new Size(27, 23);
-            OpenFixingImgDirectoryBtn.TabIndex = 14;
-            OpenFixingImgDirectoryBtn.Text = "...";
-            OpenFixingImgDirectoryBtn.UseVisualStyleBackColor = true;
+            this.OpenFixingImgDirectoryBtn.Location = new System.Drawing.Point(494, 55);
+            this.OpenFixingImgDirectoryBtn.Name = "OpenFixingImgDirectoryBtn";
+            this.OpenFixingImgDirectoryBtn.Size = new System.Drawing.Size(23, 20);
+            this.OpenFixingImgDirectoryBtn.TabIndex = 14;
+            this.OpenFixingImgDirectoryBtn.Text = "...";
+            this.OpenFixingImgDirectoryBtn.UseVisualStyleBackColor = true;
             // 
             // FixingImgDirectoryTxtBox
             // 
-            FixingImgDirectoryTxtBox.Location = new Point(121, 141);
-            FixingImgDirectoryTxtBox.Name = "FixingImgDirectoryTxtBox";
-            FixingImgDirectoryTxtBox.Size = new Size(432, 23);
-            FixingImgDirectoryTxtBox.TabIndex = 13;
+            this.FixingImgDirectoryTxtBox.Location = new System.Drawing.Point(107, 55);
+            this.FixingImgDirectoryTxtBox.Name = "FixingImgDirectoryTxtBox";
+            this.FixingImgDirectoryTxtBox.Size = new System.Drawing.Size(381, 20);
+            this.FixingImgDirectoryTxtBox.TabIndex = 13;
             // 
             // label2
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(7, 144);
-            label2.Name = "label2";
-            label2.Size = new Size(117, 15);
-            label2.TabIndex = 12;
-            label2.Text = "Fixing Img Directory:";
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 58);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(102, 13);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Fixing Img Directory:";
             // 
             // OpenImgFixingPlanBtn
             // 
-            OpenImgFixingPlanBtn.Location = new Point(559, 170);
-            OpenImgFixingPlanBtn.Name = "OpenImgFixingPlanBtn";
-            OpenImgFixingPlanBtn.Size = new Size(27, 23);
-            OpenImgFixingPlanBtn.TabIndex = 17;
-            OpenImgFixingPlanBtn.Text = "...";
-            OpenImgFixingPlanBtn.UseVisualStyleBackColor = true;
-            OpenImgFixingPlanBtn.Click += OpenImgFixingPlanBtn_Click;
+            this.OpenImgFixingPlanBtn.Location = new System.Drawing.Point(494, 80);
+            this.OpenImgFixingPlanBtn.Name = "OpenImgFixingPlanBtn";
+            this.OpenImgFixingPlanBtn.Size = new System.Drawing.Size(23, 20);
+            this.OpenImgFixingPlanBtn.TabIndex = 17;
+            this.OpenImgFixingPlanBtn.Text = "...";
+            this.OpenImgFixingPlanBtn.UseVisualStyleBackColor = true;
+            this.OpenImgFixingPlanBtn.Click += new System.EventHandler(OpenImgFixingPlanBtn_Click);
             // 
             // ImgFixingPlanTxtBox
             // 
-            ImgFixingPlanTxtBox.Location = new Point(121, 170);
-            ImgFixingPlanTxtBox.Name = "ImgFixingPlanTxtBox";
-            ImgFixingPlanTxtBox.Size = new Size(432, 23);
-            ImgFixingPlanTxtBox.TabIndex = 16;
+            this.ImgFixingPlanTxtBox.Location = new System.Drawing.Point(107, 80);
+            this.ImgFixingPlanTxtBox.Name = "ImgFixingPlanTxtBox";
+            this.ImgFixingPlanTxtBox.Size = new System.Drawing.Size(381, 20);
+            this.ImgFixingPlanTxtBox.TabIndex = 16;
             // 
             // label3
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(9, 172);
-            label3.Name = "label3";
-            label3.Size = new Size(68, 15);
-            label3.TabIndex = 15;
-            label3.Text = "Fixing Plan:";
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 82);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(61, 13);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "Fixing Plan:";
             // 
             // StitchСhckBox
             // 
-            StitchСhckBox.AutoSize = true;
-            StitchСhckBox.Location = new Point(12, 277);
-            StitchСhckBox.Name = "StitchСhckBox";
-            StitchСhckBox.Size = new Size(85, 19);
-            StitchСhckBox.TabIndex = 18;
-            StitchСhckBox.Text = "Stitch Imgs";
-            StitchСhckBox.UseVisualStyleBackColor = true;
-            StitchСhckBox.CheckedChanged += StitchСhckBox_CheckedChanged;
+            this.StitchСhckBox.AutoSize = true;
+            this.StitchСhckBox.Location = new System.Drawing.Point(10, 173);
+            this.StitchСhckBox.Name = "StitchСhckBox";
+            this.StitchСhckBox.Size = new System.Drawing.Size(78, 17);
+            this.StitchСhckBox.TabIndex = 18;
+            this.StitchСhckBox.Text = "Stitch Imgs";
+            this.StitchСhckBox.UseVisualStyleBackColor = true;
+            this.StitchСhckBox.CheckedChanged += new System.EventHandler(StitchСhckBox_CheckedChanged);
             // 
             // ChekStitchPlanСhckBox
             // 
-            ChekStitchPlanСhckBox.AutoSize = true;
-            ChekStitchPlanСhckBox.Location = new Point(123, 199);
-            ChekStitchPlanСhckBox.Name = "ChekStitchPlanСhckBox";
-            ChekStitchPlanСhckBox.Size = new Size(112, 19);
-            ChekStitchPlanСhckBox.TabIndex = 19;
-            ChekStitchPlanСhckBox.Text = "Chek Stitch Plan";
-            ChekStitchPlanСhckBox.UseVisualStyleBackColor = true;
+            this.ChekStitchPlanСhckBox.AutoSize = true;
+            this.ChekStitchPlanСhckBox.Location = new System.Drawing.Point(109, 105);
+            this.ChekStitchPlanСhckBox.Name = "ChekStitchPlanСhckBox";
+            this.ChekStitchPlanСhckBox.Size = new System.Drawing.Size(105, 17);
+            this.ChekStitchPlanСhckBox.TabIndex = 19;
+            this.ChekStitchPlanСhckBox.Text = "Chek Stitch Plan";
+            this.ChekStitchPlanСhckBox.UseVisualStyleBackColor = true;
             // 
             // DefaultParametersCheckBox
             // 
-            DefaultParametersCheckBox.AutoSize = true;
-            DefaultParametersCheckBox.Location = new Point(12, 252);
-            DefaultParametersCheckBox.Name = "DefaultParametersCheckBox";
-            DefaultParametersCheckBox.Size = new Size(126, 19);
-            DefaultParametersCheckBox.TabIndex = 20;
-            DefaultParametersCheckBox.Text = "Default Parameters";
-            DefaultParametersCheckBox.UseVisualStyleBackColor = true;
-            DefaultParametersCheckBox.CheckedChanged += LoadParametrsCheckBox_CheckedChanged;
+            this.DefaultParametersCheckBox.AutoSize = true;
+            this.DefaultParametersCheckBox.Location = new System.Drawing.Point(10, 151);
+            this.DefaultParametersCheckBox.Name = "DefaultParametersCheckBox";
+            this.DefaultParametersCheckBox.Size = new System.Drawing.Size(116, 17);
+            this.DefaultParametersCheckBox.TabIndex = 20;
+            this.DefaultParametersCheckBox.Text = "Default Parameters";
+            this.DefaultParametersCheckBox.UseVisualStyleBackColor = true;
+            this.DefaultParametersCheckBox.CheckedChanged += new System.EventHandler(LoadParametrsCheckBox_CheckedChanged);
             // 
             // label6
             // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            label6.Location = new Point(335, 287);
-            label6.Name = "label6";
-            label6.Size = new Size(18, 15);
-            label6.TabIndex = 42;
-            label6.Text = "%";
-            label6.Click += label6_Click;
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label6.Location = new System.Drawing.Point(308, 179);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(18, 15);
+            this.label6.TabIndex = 42;
+            this.label6.Text = "%";
+            this.label6.Click += new System.EventHandler(label6_Click);
             // 
             // label5
             // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            label5.Location = new Point(335, 258);
-            label5.Name = "label5";
-            label5.Size = new Size(18, 15);
-            label5.TabIndex = 41;
-            label5.Text = "%";
-            label5.Click += label5_Click;
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label5.Location = new System.Drawing.Point(308, 154);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(18, 15);
+            this.label5.TabIndex = 41;
+            this.label5.Text = "%";
+            this.label5.Click += new System.EventHandler(label5_Click);
             // 
             // ToLb
             // 
-            ToLb.AutoSize = true;
-            ToLb.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            ToLb.Location = new Point(246, 282);
-            ToLb.Name = "ToLb";
-            ToLb.Size = new Size(21, 15);
-            ToLb.TabIndex = 40;
-            ToLb.Text = "To";
+            this.ToLb.AutoSize = true;
+            this.ToLb.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ToLb.Location = new System.Drawing.Point(232, 176);
+            this.ToLb.Name = "ToLb";
+            this.ToLb.Size = new System.Drawing.Size(21, 15);
+            this.ToLb.TabIndex = 40;
+            this.ToLb.Text = "To";
             // 
             // FrLb
             // 
-            FrLb.AutoSize = true;
-            FrLb.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            FrLb.Location = new Point(243, 256);
-            FrLb.Name = "FrLb";
-            FrLb.Size = new Size(36, 15);
-            FrLb.TabIndex = 39;
-            FrLb.Text = "From";
+            this.FrLb.AutoSize = true;
+            this.FrLb.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.FrLb.Location = new System.Drawing.Point(229, 154);
+            this.FrLb.Name = "FrLb";
+            this.FrLb.Size = new System.Drawing.Size(36, 15);
+            this.FrLb.TabIndex = 39;
+            this.FrLb.Text = "From";
             // 
             // FromTxtBox
             // 
-            FromTxtBox.Location = new Point(285, 253);
-            FromTxtBox.Name = "FromTxtBox";
-            FromTxtBox.Size = new Size(44, 23);
-            FromTxtBox.TabIndex = 38;
-            FromTxtBox.Text = "0";
+            this.FromTxtBox.Location = new System.Drawing.Point(265, 151);
+            this.FromTxtBox.Name = "FromTxtBox";
+            this.FromTxtBox.Size = new System.Drawing.Size(38, 20);
+            this.FromTxtBox.TabIndex = 38;
+            this.FromTxtBox.Text = "0";
             // 
             // ToTxtBox
             // 
-            ToTxtBox.Location = new Point(285, 282);
-            ToTxtBox.Name = "ToTxtBox";
-            ToTxtBox.Size = new Size(44, 23);
-            ToTxtBox.TabIndex = 37;
-            ToTxtBox.Text = "100";
+            this.ToTxtBox.Location = new System.Drawing.Point(265, 176);
+            this.ToTxtBox.Name = "ToTxtBox";
+            this.ToTxtBox.Size = new System.Drawing.Size(38, 20);
+            this.ToTxtBox.TabIndex = 37;
+            this.ToTxtBox.Text = "100";
             // 
             // label7
             // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            label7.Location = new Point(143, 282);
-            label7.Name = "label7";
-            label7.Size = new Size(46, 15);
-            label7.TabIndex = 46;
-            label7.Text = "Period";
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label7.Location = new System.Drawing.Point(136, 175);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(46, 15);
+            this.label7.TabIndex = 46;
+            this.label7.Text = "Period";
             // 
             // label8
             // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI Black", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
-            label8.Location = new Point(144, 256);
-            label8.Name = "label8";
-            label8.Size = new Size(40, 15);
-            label8.TabIndex = 45;
-            label8.Text = "Delta";
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label8.Location = new System.Drawing.Point(136, 153);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(40, 15);
+            this.label8.TabIndex = 45;
+            this.label8.Text = "Delta";
             // 
             // DeltaTxtBox
             // 
-            DeltaTxtBox.Location = new Point(194, 253);
-            DeltaTxtBox.Name = "DeltaTxtBox";
-            DeltaTxtBox.Size = new Size(34, 23);
-            DeltaTxtBox.TabIndex = 44;
-            DeltaTxtBox.Text = "20";
+            this.DeltaTxtBox.Location = new System.Drawing.Point(187, 151);
+            this.DeltaTxtBox.Name = "DeltaTxtBox";
+            this.DeltaTxtBox.Size = new System.Drawing.Size(30, 20);
+            this.DeltaTxtBox.TabIndex = 44;
+            this.DeltaTxtBox.Text = "20";
             // 
             // PeriodTxtBox
             // 
-            PeriodTxtBox.Location = new Point(194, 282);
-            PeriodTxtBox.Name = "PeriodTxtBox";
-            PeriodTxtBox.Size = new Size(34, 23);
-            PeriodTxtBox.TabIndex = 43;
-            PeriodTxtBox.Text = "1";
+            this.PeriodTxtBox.Location = new System.Drawing.Point(187, 176);
+            this.PeriodTxtBox.Name = "PeriodTxtBox";
+            this.PeriodTxtBox.Size = new System.Drawing.Size(30, 20);
+            this.PeriodTxtBox.TabIndex = 43;
+            this.PeriodTxtBox.Text = "1";
             // 
             // LoadBtn
             // 
-            LoadBtn.Location = new Point(430, 381);
-            LoadBtn.Name = "LoadBtn";
-            LoadBtn.Size = new Size(75, 23);
-            LoadBtn.TabIndex = 48;
-            LoadBtn.Text = "Load";
-            LoadBtn.UseVisualStyleBackColor = true;
-            LoadBtn.Click += LoadBtn_Click;
+            this.LoadBtn.Location = new System.Drawing.Point(146, 342);
+            this.LoadBtn.Name = "LoadBtn";
+            this.LoadBtn.Size = new System.Drawing.Size(64, 20);
+            this.LoadBtn.TabIndex = 48;
+            this.LoadBtn.Text = "Load";
+            this.LoadBtn.UseVisualStyleBackColor = true;
             // 
             // SaveResultChckBox
             // 
-            SaveResultChckBox.AutoSize = true;
-            SaveResultChckBox.Location = new Point(12, 302);
-            SaveResultChckBox.Name = "SaveResultChckBox";
-            SaveResultChckBox.Size = new Size(85, 19);
-            SaveResultChckBox.TabIndex = 49;
-            SaveResultChckBox.Text = "Save Result";
-            SaveResultChckBox.UseVisualStyleBackColor = true;
+            this.SaveResultChckBox.AutoSize = true;
+            this.SaveResultChckBox.Location = new System.Drawing.Point(10, 195);
+            this.SaveResultChckBox.Name = "SaveResultChckBox";
+            this.SaveResultChckBox.Size = new System.Drawing.Size(84, 17);
+            this.SaveResultChckBox.TabIndex = 49;
+            this.SaveResultChckBox.Text = "Save Result";
+            this.SaveResultChckBox.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(8, 224);
-            label4.Name = "label4";
-            label4.Size = new Size(106, 15);
-            label4.TabIndex = 50;
-            label4.Text = "Working Directory:";
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(7, 127);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(95, 13);
+            this.label4.TabIndex = 50;
+            this.label4.Text = "Working Directory:";
             // 
             // OpenStitchingDirectoryBtn
             // 
-            OpenStitchingDirectoryBtn.Location = new Point(559, 221);
-            OpenStitchingDirectoryBtn.Name = "OpenStitchingDirectoryBtn";
-            OpenStitchingDirectoryBtn.Size = new Size(27, 23);
-            OpenStitchingDirectoryBtn.TabIndex = 52;
-            OpenStitchingDirectoryBtn.Text = "...";
-            OpenStitchingDirectoryBtn.UseVisualStyleBackColor = true;
+            this.OpenStitchingDirectoryBtn.Location = new System.Drawing.Point(494, 125);
+            this.OpenStitchingDirectoryBtn.Name = "OpenStitchingDirectoryBtn";
+            this.OpenStitchingDirectoryBtn.Size = new System.Drawing.Size(23, 20);
+            this.OpenStitchingDirectoryBtn.TabIndex = 52;
+            this.OpenStitchingDirectoryBtn.Text = "...";
+            this.OpenStitchingDirectoryBtn.UseVisualStyleBackColor = true;
             // 
             // StitchingDirectoryTxtBox
             // 
-            StitchingDirectoryTxtBox.Location = new Point(121, 221);
-            StitchingDirectoryTxtBox.Name = "StitchingDirectoryTxtBox";
-            StitchingDirectoryTxtBox.Size = new Size(432, 23);
-            StitchingDirectoryTxtBox.TabIndex = 51;
+            this.StitchingDirectoryTxtBox.Location = new System.Drawing.Point(107, 125);
+            this.StitchingDirectoryTxtBox.Name = "StitchingDirectoryTxtBox";
+            this.StitchingDirectoryTxtBox.Size = new System.Drawing.Size(381, 20);
+            this.StitchingDirectoryTxtBox.TabIndex = 51;
             // 
             // FindKeyPointsСhckBox
             // 
-            FindKeyPointsСhckBox.AutoSize = true;
-            FindKeyPointsСhckBox.Location = new Point(12, 199);
-            FindKeyPointsСhckBox.Name = "FindKeyPointsСhckBox";
-            FindKeyPointsСhckBox.Size = new Size(107, 19);
-            FindKeyPointsСhckBox.TabIndex = 53;
-            FindKeyPointsСhckBox.Text = "Find Key Points";
-            FindKeyPointsСhckBox.UseVisualStyleBackColor = true;
+            this.FindKeyPointsСhckBox.AutoSize = true;
+            this.FindKeyPointsСhckBox.Location = new System.Drawing.Point(10, 105);
+            this.FindKeyPointsСhckBox.Name = "FindKeyPointsСhckBox";
+            this.FindKeyPointsСhckBox.Size = new System.Drawing.Size(99, 17);
+            this.FindKeyPointsСhckBox.TabIndex = 53;
+            this.FindKeyPointsСhckBox.Text = "Find Key Points";
+            this.FindKeyPointsСhckBox.UseVisualStyleBackColor = true;
             // 
             // SpeedCountingСhckBox
             // 
-            SpeedCountingСhckBox.AutoSize = true;
-            SpeedCountingСhckBox.Location = new Point(12, 327);
-            SpeedCountingСhckBox.Name = "SpeedCountingСhckBox";
-            SpeedCountingСhckBox.Size = new Size(94, 19);
-            SpeedCountingСhckBox.TabIndex = 54;
-            SpeedCountingСhckBox.Text = "Count Speed";
-            SpeedCountingСhckBox.UseVisualStyleBackColor = true;
-            SpeedCountingСhckBox.CheckedChanged += SpeedCountingСhckBox_CheckedChanged;
+            this.SpeedCountingСhckBox.AutoSize = true;
+            this.SpeedCountingСhckBox.Location = new System.Drawing.Point(10, 216);
+            this.SpeedCountingСhckBox.Name = "SpeedCountingСhckBox";
+            this.SpeedCountingСhckBox.Size = new System.Drawing.Size(88, 17);
+            this.SpeedCountingСhckBox.TabIndex = 54;
+            this.SpeedCountingСhckBox.Text = "Count Speed";
+            this.SpeedCountingСhckBox.UseVisualStyleBackColor = true;
+            this.SpeedCountingСhckBox.CheckedChanged += new System.EventHandler(SpeedCountingСhckBox_CheckedChanged);
             // 
             // MillimetersInPixelTxtBox
             // 
-            MillimetersInPixelTxtBox.Location = new Point(12, 352);
-            MillimetersInPixelTxtBox.Name = "MillimetersInPixelTxtBox";
-            MillimetersInPixelTxtBox.Size = new Size(34, 23);
-            MillimetersInPixelTxtBox.TabIndex = 56;
-            MillimetersInPixelTxtBox.Text = "5.5";
-            MillimetersInPixelTxtBox.TextChanged += MillimetersInPixelTxtBox_TextChanged;
+            this.MillimetersInPixelTxtBox.Location = new System.Drawing.Point(9, 239);
+            this.MillimetersInPixelTxtBox.Name = "MillimetersInPixelTxtBox";
+            this.MillimetersInPixelTxtBox.Size = new System.Drawing.Size(30, 20);
+            this.MillimetersInPixelTxtBox.TabIndex = 56;
+            this.MillimetersInPixelTxtBox.Text = "5.5";
+            this.MillimetersInPixelTxtBox.TextChanged += new System.EventHandler(MillimetersInPixelTxtBox_TextChanged);
             // 
             // TimePerFrameTxtBox
             // 
-            TimePerFrameTxtBox.Location = new Point(12, 381);
-            TimePerFrameTxtBox.Name = "TimePerFrameTxtBox";
-            TimePerFrameTxtBox.Size = new Size(34, 23);
-            TimePerFrameTxtBox.TabIndex = 55;
-            TimePerFrameTxtBox.Text = "40.0";
-            TimePerFrameTxtBox.TextChanged += TimePerFrameTxtBox_TextChanged;
+            this.TimePerFrameTxtBox.Location = new System.Drawing.Point(9, 264);
+            this.TimePerFrameTxtBox.Name = "TimePerFrameTxtBox";
+            this.TimePerFrameTxtBox.Size = new System.Drawing.Size(30, 20);
+            this.TimePerFrameTxtBox.TabIndex = 55;
+            this.TimePerFrameTxtBox.Text = "40.0";
+            this.TimePerFrameTxtBox.TextChanged += new System.EventHandler(TimePerFrameTxtBox_TextChanged);
             // 
             // label9
             // 
-            label9.AutoSize = true;
-            label9.Location = new Point(47, 356);
-            label9.Name = "label9";
-            label9.Size = new Size(118, 15);
-            label9.TabIndex = 57;
-            label9.Text = " - Millimeters In Pixel";
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(42, 243);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(101, 13);
+            this.label9.TabIndex = 57;
+            this.label9.Text = " - Millimeters In Pixel";
             // 
             // label10
             // 
-            label10.AutoSize = true;
-            label10.Location = new Point(46, 385);
-            label10.Name = "label10";
-            label10.Size = new Size(115, 15);
-            label10.TabIndex = 58;
-            label10.Text = " - MilliSek Per Frame";
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(41, 268);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(103, 13);
+            this.label10.TabIndex = 58;
+            this.label10.Text = " - MilliSek Per Frame";
             // 
             // AdditionalFilterChckBox
             // 
-            AdditionalFilterChckBox.AutoSize = true;
-            AdditionalFilterChckBox.Location = new Point(246, 199);
-            AdditionalFilterChckBox.Name = "AdditionalFilterChckBox";
-            AdditionalFilterChckBox.Size = new Size(110, 19);
-            AdditionalFilterChckBox.TabIndex = 59;
-            AdditionalFilterChckBox.Text = "Additional Filter";
-            AdditionalFilterChckBox.UseVisualStyleBackColor = true;
+            this.AdditionalFilterChckBox.AutoSize = true;
+            this.AdditionalFilterChckBox.Location = new System.Drawing.Point(217, 105);
+            this.AdditionalFilterChckBox.Name = "AdditionalFilterChckBox";
+            this.AdditionalFilterChckBox.Size = new System.Drawing.Size(97, 17);
+            this.AdditionalFilterChckBox.TabIndex = 59;
+            this.AdditionalFilterChckBox.Text = "Additional Filter";
+            this.AdditionalFilterChckBox.UseVisualStyleBackColor = true;
             // 
             // EditingStitchingPlan
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(614, 431);
-            Controls.Add(AdditionalFilterChckBox);
-            Controls.Add(label10);
-            Controls.Add(label9);
-            Controls.Add(MillimetersInPixelTxtBox);
-            Controls.Add(TimePerFrameTxtBox);
-            Controls.Add(SpeedCountingСhckBox);
-            Controls.Add(FindKeyPointsСhckBox);
-            Controls.Add(OpenStitchingDirectoryBtn);
-            Controls.Add(StitchingDirectoryTxtBox);
-            Controls.Add(label4);
-            Controls.Add(SaveResultChckBox);
-            Controls.Add(LoadBtn);
-            Controls.Add(label7);
-            Controls.Add(label8);
-            Controls.Add(DeltaTxtBox);
-            Controls.Add(PeriodTxtBox);
-            Controls.Add(label6);
-            Controls.Add(label5);
-            Controls.Add(ToLb);
-            Controls.Add(FrLb);
-            Controls.Add(FromTxtBox);
-            Controls.Add(ToTxtBox);
-            Controls.Add(DefaultParametersCheckBox);
-            Controls.Add(ChekStitchPlanСhckBox);
-            Controls.Add(StitchСhckBox);
-            Controls.Add(OpenImgFixingPlanBtn);
-            Controls.Add(ImgFixingPlanTxtBox);
-            Controls.Add(label3);
-            Controls.Add(OpenFixingImgDirectoryBtn);
-            Controls.Add(FixingImgDirectoryTxtBox);
-            Controls.Add(label2);
-            Controls.Add(FindCopyChckBox);
-            Controls.Add(ChekFixedImgsChckBox);
-            Controls.Add(AutoChckBox);
-            Controls.Add(FixImgChckBox);
-            Controls.Add(CheckFileNamesChckBox);
-            Controls.Add(FixFileNamesChckBox);
-            Controls.Add(OpenWorkDirectoryBtn);
-            Controls.Add(SaveToBtn);
-            Controls.Add(WorkingDirectoryTxtBox);
-            Controls.Add(label1);
-            Controls.Add(SaveBtn);
-            Controls.Add(ExitBtn);
-            MaximumSize = new Size(630, 470);
-            MinimumSize = new Size(630, 470);
-            Name = "EditingStitchingPlan";
-            Text = "EditingStitchingPlan";
-            MouseClick += EditingStitchingPlan_MouseClick;
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(526, 374);
+            this.Controls.Add(this.AdditionalFilterChckBox);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.MillimetersInPixelTxtBox);
+            this.Controls.Add(this.TimePerFrameTxtBox);
+            this.Controls.Add(this.SpeedCountingСhckBox);
+            this.Controls.Add(this.FindKeyPointsСhckBox);
+            this.Controls.Add(this.OpenStitchingDirectoryBtn);
+            this.Controls.Add(this.StitchingDirectoryTxtBox);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.SaveResultChckBox);
+            this.Controls.Add(this.LoadBtn);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.DeltaTxtBox);
+            this.Controls.Add(this.PeriodTxtBox);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.ToLb);
+            this.Controls.Add(this.FrLb);
+            this.Controls.Add(this.FromTxtBox);
+            this.Controls.Add(this.ToTxtBox);
+            this.Controls.Add(this.DefaultParametersCheckBox);
+            this.Controls.Add(this.ChekStitchPlanСhckBox);
+            this.Controls.Add(this.StitchСhckBox);
+            this.Controls.Add(this.OpenImgFixingPlanBtn);
+            this.Controls.Add(this.ImgFixingPlanTxtBox);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.OpenFixingImgDirectoryBtn);
+            this.Controls.Add(this.FixingImgDirectoryTxtBox);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.ChekFixedImgsChckBox);
+            this.Controls.Add(this.AutoChckBox);
+            this.Controls.Add(this.FixImgChckBox);
+            this.Controls.Add(this.OpenWorkDirectoryBtn);
+            this.Controls.Add(this.SaveToBtn);
+            this.Controls.Add(this.WorkingDirectoryTxtBox);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.SaveBtn);
+            this.Controls.Add(this.ExitBtn);
+            this.MaximumSize = new System.Drawing.Size(542, 413);
+            this.MinimumSize = new System.Drawing.Size(542, 413);
+            this.Name = "EditingStitchingPlan";
+            this.Text = "EditingStitchingPlan";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
@@ -547,12 +509,9 @@ namespace ImgAssemblingLib.AditionalForms
         private TextBox WorkingDirectoryTxtBox;
         private Button SaveToBtn;
         private Button OpenWorkingDirectoryBtn;
-        private CheckBox FixFileNamesChckBox;
-        private CheckBox CheckFileNamesChckBox;
         private CheckBox FixImgChckBox;
         private CheckBox AutoChckBox;
         private CheckBox ChekFixedImgsChckBox;
-        private CheckBox FindCopyChckBox;
         private Button OpenFixingImgDirectoryBtn;
         private TextBox FixingImgDirectoryTxtBox;
         private Label label2;

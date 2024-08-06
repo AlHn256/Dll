@@ -1,12 +1,6 @@
 ﻿using ImgAssemblingLib.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ImgAssemblingLib.AditionalForms
@@ -79,22 +73,12 @@ namespace ImgAssemblingLib.AditionalForms
             AutoChckBox.Enabled = @checked;
             FixingImgDirectoryTxtBox.Enabled = @checked;
             ImgFixingPlanTxtBox.Enabled = @checked;
-            //OpenFixingImgDirectoryBtn.Enabled = @checked;
             OpenImgFixingPlanBtn.Enabled = @checked;
             label2.Enabled = @checked;
             label3.Enabled = @checked;
             if (@checked) StitchingDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory + "AutoOut";
             else StitchingDirectoryTxtBox.Text = WorkingDirectoryTxtBox.Text;
         }
-
-
-        //public bool SavePlanToFile(string file = defaultAssemblingFile)
-        //{
-        //    FileEdit fileEdit = new FileEdit();
-        //    if (string.IsNullOrEmpty(file)) fileEdit.SaveJson(this);
-        //    else fileEdit.SaveJson(file, this);
-        //    return true;
-        //}
 
         private void SaveBtn_Click(object sender, EventArgs e)
         {

@@ -2,16 +2,19 @@
 using System.Security.Cryptography;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using OpenCvSharp;
+using System.Drawing.Imaging;
 using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Drawing;
 using Newtonsoft.Json;
 
-namespace NewImgFixingLib.Models
+namespace ImgAssemblingLib.Models
 {
-    public class FileEdit
+    class FileEdit
     {
         private string JsonSaveFile = "SaveJson.txt";
         public bool IsErr { get; set; } = false;
@@ -30,29 +33,6 @@ namespace NewImgFixingLib.Models
         {
             ErrText = err;
             return false;
-        }
-
-        public string AutoLoade()
-        {
-            string LoadeInfo = string.Empty;
-            string[] FiletoLoad = GetAutoSaveFilesList();
-
-            foreach (string LFile in FiletoLoad)
-            {
-                if (File.Exists(LFile))
-                {
-                    try
-                    {
-                        using (StreamReader sr = new StreamReader(LFile))
-                        {
-                            LoadeInfo = sr.ReadToEnd();
-                            sr.Close();
-                        }
-                    }
-                    catch (Exception e) { SetExeption(e); }
-                }
-            }
-            return LoadeInfo;
         }
 
         private bool SetExeption(Exception e)
@@ -77,6 +57,51 @@ namespace NewImgFixingLib.Models
             return false;
         }
 
+        public bool AutoSave<T>(T obj)
+        {
+            string[] FiletoSave = GetAutoSaveFilesList();
+            if (obj == null || FiletoSave.Length == 0) return SetErr("Err AutoSave.obj == null || FiletoSave.Length == 0!!!");
+            foreach (string FtoSave in FiletoSave)
+            {
+                // ToDo Добавить проверку
+                //var sdf = CheckAccessToFolder(FtoSave);
+                SaveJson<T>(FtoSave, obj);
+            }
+            return true;
+        }
+
+        public bool AutoLoade<T>(out T obj)
+        {
+            obj = default(T);
+            string[] FiletoSave = GetAutoSaveFilesList();
+            if (FiletoSave.Length == 0) return SetErr("Err AutoLoade.FiletoSave.Length == 0!!!");
+            foreach (string LFile in FiletoSave)
+                if (LoadeJson(LFile, out obj)) return true;
+
+            return SetErr("Err Autoloade File not found !!!");
+        }
+        public string AutoLoade()
+        {
+            string LoadeInfo = string.Empty;
+            string[] FiletoLoad = GetAutoSaveFilesList();
+
+            foreach (string LFile in FiletoLoad)
+            {
+                if (File.Exists(LFile))
+                {
+                    try
+                    {
+                        using (StreamReader sr = new StreamReader(LFile))
+                        {
+                            LoadeInfo = sr.ReadToEnd();
+                            sr.Close();
+                        }
+                    }
+                    catch (Exception e) { SetExeption(e); }
+                }
+            }
+            return LoadeInfo;
+        }
 
         public bool ChkDir(string dir)
         {
@@ -139,6 +164,7 @@ namespace NewImgFixingLib.Models
             if (CorDir.Exists) return true;
             else return false;
         }
+
         public bool FileRename(string File, string NewFile)
         {
             FileInfo CorFile = new FileInfo(File);
@@ -146,6 +172,7 @@ namespace NewImgFixingLib.Models
             if (CorFile.Exists) return true;
             else return false;
         }
+
         internal bool IsSameDisk(string Dir, string Dir2)
         {
             if (Dir != null && Dir2 != null)
@@ -162,6 +189,7 @@ namespace NewImgFixingLib.Models
             }
             return false;
         }
+
         internal bool IsSameDir(string DirFrom, string DirTo)
         {
             if (DirFrom != null && DirTo != null)
@@ -173,6 +201,7 @@ namespace NewImgFixingLib.Models
             }
             return false;
         }
+
         internal string GetAutoLoadeFirstFile()
         {
             string LoadeFile = "";
@@ -192,7 +221,7 @@ namespace NewImgFixingLib.Models
         {
             string ApplicationFileName = Path.GetFileNameWithoutExtension(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName.Split('\\').Last()) + ".inf";
             string AdditionalFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\" + System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName.Split('\\').Last();
-            string[] AutoSaveFiles = new string[] { @"C:\Windows\Temp", @"D:", @"E:", @"C:" };
+            string[] AutoSaveFiles = new string[] { @"C:\Windows\Temp", @"D:", @"E:" };
             List<string> AutoSaveFilesList = new List<string>() 
             { 
                 Directory.GetCurrentDirectory() + "\\" + ApplicationFileName , 
@@ -203,13 +232,16 @@ namespace NewImgFixingLib.Models
 
             return AutoSaveFilesList.ToArray();
         }
+
         public List<string> GetFileList(string file)
         {
             List<string> FileList = new List<string>();
+            if(string.IsNullOrEmpty(file))return FileList;
             if (File.Exists(file))
                 FileList = File.ReadAllLines(file).ToList();
             return FileList;
         }
+
         public List<string> GetFileList(string file, int nEncoding)
         {
             string encoding = "utf-8";
@@ -223,6 +255,7 @@ namespace NewImgFixingLib.Models
                 FileList = File.ReadAllLines(file, Encoding.GetEncoding(encoding)).ToList();
             return FileList;
         }
+
         public List<string> GetFileList(string file, string encoding)
         {
             if (encoding == null || encoding.Length == 0) return GetFileList(file);
@@ -232,6 +265,7 @@ namespace NewImgFixingLib.Models
                 FileList = File.ReadAllLines(file, Encoding.GetEncoding(encoding)).ToList();
             return FileList;
         }
+
         public bool SetFileList(string file, List<string> fileList, int nEncoding)
         {
             if (nEncoding == 1)
@@ -239,15 +273,14 @@ namespace NewImgFixingLib.Models
             else
                 return SetFileList(file, fileList);
         }
+
         public bool SetFileList(string file, List<string> fileList, string encoding = "utf-8")
         {
             try
             {
                 FileStream f1 = new FileStream(file, FileMode.Truncate, FileAccess.Write, FileShare.Read);
                 using (StreamWriter sw = new StreamWriter(f1, Encoding.GetEncoding(encoding)))
-                {
                     foreach (string txt in fileList) sw.WriteLine(txt);
-                }
             }
             catch (Exception e)
             {
@@ -261,10 +294,21 @@ namespace NewImgFixingLib.Models
             try
             {
                 FileStream fs = new FileStream(file, FileMode.Truncate, FileAccess.Write, FileShare.Read);
-                using (StreamWriter writetext = new StreamWriter(fs))
-                {
-                    writetext.WriteLine(text);
-                }
+                using (StreamWriter writetext = new StreamWriter(fs)){ writetext.WriteLine(text);}
+            }
+            catch (Exception e)
+            {
+                SetExeption(e);
+                return false;
+            }
+            return true;
+        }
+        public async Task<bool> SetFileStringAsync(string file, string text)
+        {
+            try
+            {
+                FileStream fs = new FileStream(file, FileMode.Truncate, FileAccess.Write, FileShare.Read);
+                using (StreamWriter writetext = new StreamWriter(fs)){await writetext.WriteLineAsync(text);}
             }
             catch (Exception e)
             {
@@ -274,10 +318,10 @@ namespace NewImgFixingLib.Models
             return true;
         }
 
-        public FileInfo[] SearchFiles() => SearchFiles(GetDefoltDirectory());
+        public FileInfo[] SearchFiles()=>SearchFiles(GetDefoltDirectory());
         public FileInfo[] SearchFiles(string dir)
         {
-            if (FileFilter.Length == 0) return SearchFiles(dir, new string[] { "*.*" });
+            if(FileFilter.Length == 0)return SearchFiles(dir, new string[] { "*.*" });
             else return SearchFiles(dir, FileFilter);
         }
         public FileInfo[] SearchFiles(string dir, string[] filter, int Lv = 0)
@@ -292,7 +336,7 @@ namespace NewImgFixingLib.Models
 
             if (string.IsNullOrEmpty(dir)) dir = AppDomain.CurrentDomain.BaseDirectory;
 
-            FileInfo[] fileList = new FileInfo[1];
+            FileInfo[] fileList = new FileInfo[0];
 
             if (Directory.Exists(dir))
             {
@@ -332,37 +376,23 @@ namespace NewImgFixingLib.Models
             }
             return rezult;
         }
-        public bool CheckAccessToFile(string file)
+
+        public bool IsFileDirExist(string href)
         {
-            try
-            {
-                //System.Security.AccessControl.FileSecurity ds = File.GetAccessControl(file);
-
-                // Attempt to get a list of security permissions from the folder. 
-                // This will raise an exception if the path is read only or do not have access to view the permissions. 
-
-                var fInfo = new FileInfo(file);
-                FileSecurity fSecurity = fInfo.GetAccessControl();
-                SecurityIdentifier usersSid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-                FileSystemRights fileRights = FileSystemRights.Read | FileSystemRights.Synchronize; //All read only file usually have Synchronize added automatically when allowing access, refer the msdn doc link below
-                var rules = fSecurity.GetAccessRules(true, true, usersSid.GetType()).OfType<FileSystemAccessRule>();
-                var hasRights = rules.Where(r => r.FileSystemRights == fileRights).Any();
-                return true;
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                string text = e.Message;
-                return false;
-            }
+            if(Directory.Exists(href))return true;
+            if(File.Exists(href)) return true;
+            return false;
         }
-        public bool IsFolder(string href)
+
+        public bool IsDirectory(string href)
         {
+            if(string.IsNullOrEmpty(href)) return false;    
             FileAttributes attr = File.GetAttributes(href);
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory) return true; 
             else return false;
         }
-        //public bool LoadeJson<T>(out T obj) => LoadeJson(GetJsonDefoltSaveFile(),out obj);
-        public bool LoadeJson<T>(string file, out T obj)
+        public bool LoadeJson<T>(out T obj) => LoadeJson(GetJsonDefoltSaveFile(),out obj);
+        public bool LoadeJson<T>(string file,out T obj)
         {
             obj = default(T);
             if (File.Exists(file))
@@ -390,20 +420,12 @@ namespace NewImgFixingLib.Models
         }
 
         public string GetJsonDefoltSaveFile() => GetDefoltDirectory() + JsonSaveFile;
-
-        internal async Task<bool> SaveJson(string filename, ImgFixingSettings imgFixingSettings)
+        public bool SaveJson<T>(T obj) => SaveJson<T>(GetJsonDefoltSaveFile(),obj);
+        public bool SaveJson<T>(string file, T obj)
         {
             try
             {
-                using (FileStream fstream = new FileStream(filename, FileMode.OpenOrCreate))
-                {
-                    // преобразуем строку в байты
-                    string json = JsonConvert.SerializeObject(imgFixingSettings, Formatting.Indented);
-                    byte[] buffer = Encoding.Default.GetBytes(json);
-                    // запись массива байтов в файл
-                    await fstream.WriteAsync(buffer, 0, buffer.Length);
-                    fstream.Close();
-                }
+                SetFileString(file, JsonConvert.SerializeObject(obj));
             }
             catch (IOException e)
             {
@@ -412,26 +434,81 @@ namespace NewImgFixingLib.Models
             return true;
         }
 
+        internal async Task<bool> SaveJsonAsync<T>(string filename, T obj)
+        {
+            try
+            {
+                await SetFileStringAsync(filename, JsonConvert.SerializeObject(obj));
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+            return true;
+        }
 
-        //public bool SaveJson<T>(T obj) => SaveJson<T>(GetJsonDefoltSaveFile(), obj);
-        //public bool SaveJson<T>(string file, T obj)
-        //{
-        //    try
-        //    {
-        //        FileStream createStream = File.Create(file);
-        //        System.Text.Json.JsonSerializer.Serialize(createStream, obj);
-        //        createStream.Close();
-        //    }
-        //    catch (IOException e)
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
+        private int SaveId = 0;
+        public bool SaveImg(Mat rezultImg =null, Image DisplayImage = null)
+        {
+            if (DisplayImage == null && rezultImg == null)return SetErr("Err SaveImg = null !!!");
 
+            string FileSaveString = SaveId < 10 ? "Result0" + SaveId + ".jpg" : "Result" + SaveId + ".jpg";
+            bool isSaved = false;
+            if (DisplayImage ==null)
+            {
+                if (rezultImg.Height == 0 && rezultImg.Width == 0) return SetErr("Err SaveImg.Height & Width = 0 !!!");
+
+                if (rezultImg.Height > ushort.MaxValue || rezultImg.Width > ushort.MaxValue)
+                {
+                    //??ToDo
+                    return SetErr("Err Изображение не сохранилось т.к. слишком велико\n" + " RezultImg.Height " + rezultImg.Height + " RezultImg.Width " + rezultImg.Width + "\n");
+                }
+                else
+                {
+                    rezultImg.SaveImage(FileSaveString);
+                    isSaved = true;
+                }
+            }
+            else
+            {
+                try
+                {
+                    if (ChkFile(FileSaveString))
+                    {
+                        using (FileStream ms = new FileStream(FileSaveString, FileMode.Truncate, FileAccess.Write, FileShare.Read))
+                        {
+                            DisplayImage.Save(ms, ImageFormat.Jpeg);
+                            byte[] ar = new byte[ms.Length];
+                            ms.Write(ar, 0, ar.Length);
+                            ms.Close();
+                        }
+                    }
+                    isSaved = true;
+                }
+                catch (Exception e)
+                {
+                    return SetErr("Err Save " + e.Message + " !!!");
+                }
+            }
+
+            if (isSaved)
+            {
+                TextMessag += "   File saved to: \n" + GetDefoltDirectory() + FileSaveString+"\n";
+                SaveId++;
+            }
+            return true;
+        }
+        public void deleteResultes(string filter = "")
+        {
+            FileInfo[] fileList = SearchFiles();
+            if (!string.IsNullOrEmpty(filter)) fileList = fileList.Where(x => x.FullName.Contains(filter)).ToArray();
+            DelAllFileFromList(fileList);
+            TextMessag = fileList.Count() + " файлов удалено!\n";
+            foreach (var file in fileList) TextMessag += file.Name + " - \n";
+            SaveId = 0;
+        }
         public bool CheckFileName(string dir) => true;
         public bool FixFileName(string dir) => true;
-
         public void ClearInformation()
         {
             ErrText = string.Empty;
@@ -459,7 +536,6 @@ namespace NewImgFixingLib.Models
                 if (CheckFileList[i].Copy > -1) continue;
                 string heshI = CheckFileList[i].Hesh;
                 long fileLength = CheckFileList[i].FileLength;
-
 
                 for (j = i + 1; j < CheckFileList.Count(); j++)
                 {
@@ -514,6 +590,100 @@ namespace NewImgFixingLib.Models
             else TextMessag = text;
 
             return true;
+        }
+        public bool CheckAccessToFile(string file)
+        {
+            try
+            {
+                // Attempt to get a list of security permissions from the folder. 
+                // This will raise an exception if the path is read only or do not have access to view the permissions. 
+                var fInfo = new FileInfo(file);
+                FileSecurity fSecurity = fInfo.GetAccessControl();
+                SecurityIdentifier usersSid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+                FileSystemRights fileRights = FileSystemRights.Read | FileSystemRights.Synchronize; //All read only file usually have Synchronize added automatically when allowing access, refer the msdn doc link below
+                var rules = fSecurity.GetAccessRules(true, true, usersSid.GetType()).OfType<FileSystemAccessRule>();
+                var hasRights = rules.Where(r => r.FileSystemRights == fileRights).Any();
+                return true;
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                string text = e.Message;
+                return false;
+            }
+        }
+
+        //public bool CheckAccessToFile(string file)
+        //{
+        //    try
+        //    {
+        //        // Attempt to get a list of security permissions from the folder. 
+        //        // This will raise an exception if the path is read only or do not have access to view the permissions. 
+        //        FileSecurity ds = File.GetAccessControl(file);
+        //        return true;
+        //    }
+        //    catch (UnauthorizedAccessException e)
+        //    {
+        //        string text = e.Message;
+        //        return false;
+        //    }
+        //}
+
+        public bool CheckAccessToFolder(string folderPath)
+        {
+            if(!Directory.Exists(folderPath)) return false;
+            bool hasWriteAccess = false;
+            DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
+            DirectorySecurity directorySecurity = directoryInfo.GetAccessControl();
+            AuthorizationRuleCollection accessRules = directorySecurity.GetAccessRules(true, true, typeof(SecurityIdentifier));
+
+            foreach (FileSystemAccessRule rule in accessRules)
+            {
+                if ((FileSystemRights.Write & rule.FileSystemRights) != 0 && rule.AccessControlType == AccessControlType.Allow)
+                {
+                    hasWriteAccess = true;
+                    break;
+                }
+            }
+
+            return hasWriteAccess;
+        }
+
+        //public bool CheckAccessToFolder(string folderPath)
+        //{
+        //    try
+        //    {
+        //        // Attempt to get a list of security permissions from the folder. 
+        //        // This will raise an exception if the path is read only or do not have access to view the permissions. 
+        //        DirectorySecurity ds = Directory.GetAccessControl(folderPath);
+        //        return true;
+        //    }
+        //    catch (UnauthorizedAccessException e)
+        //    {
+        //        string text = e.Message;
+        //        return false;
+        //    }
+        //}
+
+        public bool IsFileLocked(FileInfo file)
+        {
+            try
+            {
+                using (FileStream stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    stream.Close();
+                }
+            }
+            catch (IOException)
+            {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return true;
+            }
+
+            //file is not locked
+            return false;
         }
 
     }

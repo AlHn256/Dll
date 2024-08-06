@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImgAssemblingLib", "ImgAssemblingLib.csproj", "{78827561-4874-4841-AAF4-BF5316B63821}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartTestProject", "StartTestProject\StartTestProject.csproj", "{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78827561-4874-4841-AAF4-BF5316B63821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78827561-4874-4841-AAF4-BF5316B63821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78827561-4874-4841-AAF4-BF5316B63821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78827561-4874-4841-AAF4-BF5316B63821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89C67BFE-7CC5-4AEF-AE23-D4305B242B4E}
+	EndGlobalSection
+EndGlobal

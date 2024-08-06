@@ -74,3 +74,10 @@ dkms.conf
 /NewImgFixingLib/NewImgFixingLib/packages
 /NewImgFixingLib/TestStartingPr/bin
 /NewImgFixingLib/TestStartingPr/obj
+/Console2/.vs
+/ImgAssemblingLib/.vs
+/ImgAssemblingLib/bin
+/ImgAssemblingLib/obj
+/ImgAssemblingLib/packages
+/ImgAssemblingLib/StartTestProject/bin
+/ImgAssemblingLib/StartTestProject/obj

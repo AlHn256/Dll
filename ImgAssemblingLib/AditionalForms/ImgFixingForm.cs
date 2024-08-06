@@ -1,17 +1,20 @@
 ﻿using ImageMagick;
-using NewImgFixingLib.Models;
+using ImgAssemblingLib.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NewImgFixingLib
+namespace ImgAssemblingLib.AditionalForms
 {
     public partial class ImgFixingForm : Form
     {
@@ -51,7 +54,7 @@ namespace NewImgFixingLib
             InputDirTxtBox.Text = directory;
         }
 
-        
+
         public ImgFixingForm(string imgFixingPlan, MagickImage[] dataArray)
         {
             InitializeComponent();
@@ -59,8 +62,8 @@ namespace NewImgFixingLib
             if (!string.IsNullOrEmpty(imgFixingPlan)) imgFixingFile = imgFixingPlan;
             TryReadSettings(false);
         }
-        
-        public ImgFixingForm(string imgFixingPlan, bool test = false )
+
+        public ImgFixingForm(string imgFixingPlan, bool test = false)
         {
             InitializeComponent();
             if (!string.IsNullOrEmpty(imgFixingPlan)) imgFixingFile = imgFixingPlan;
@@ -120,7 +123,7 @@ namespace NewImgFixingLib
             {
                 string outputFileNumber = outputDir + "\\" + file.Name;
                 File.WriteAllBytes(outputFileNumber, EditImg(file.FullName).ToByteArray());
-               // Image Img = Image.FromFile(outputFileNumber);
+                // Image Img = Image.FromFile(outputFileNumber);
             }
             return true;
         }
@@ -185,7 +188,7 @@ namespace NewImgFixingLib
 
             MagickImage magickImage = EditImg(file);
             var imageData = magickImage.ToByteArray();
-            
+
             using (var ms = new MemoryStream(imageData))
             {
                 Bitmap MyImage = new Bitmap(ms);
@@ -348,7 +351,7 @@ namespace NewImgFixingLib
         {
             if (string.IsNullOrEmpty(InputDirTxtBox.Text)) return;
             var files = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            if (files[0]!=null)
+            if (files[0] != null)
             {
                 InputFileTxtBox.Text = files[0].Name;
                 pictureBox1.BackgroundImage = Image.FromFile(files[0].FullName);
@@ -451,7 +454,7 @@ namespace NewImgFixingLib
             var JpegCodecInfo = ImageCodecInfo.GetImageEncoders().Where(x => x.FormatDescription == "JPEG").First();
             ImageCodecInfo jpegCodec = JpegCodecInfo;
             EncoderParameters encoderParams = new EncoderParameters(1);
-            EncoderParameter qualityParam = new EncoderParameter(Encoder.Quality, quality);
+            EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
             encoderParams.Param[0] = qualityParam;
             MemoryStream mss = new MemoryStream();
             FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
@@ -480,8 +483,8 @@ namespace NewImgFixingLib
 
         public Bitmap[] FixImgArray(Bitmap[] dataArray)
         {
-            var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg",x, 99)); }).ToArray();
-            if(DataArray.Length == 0)return new Bitmap[0];
+            var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg", x, 99)); }).ToArray();
+            if (DataArray.Length == 0) return new Bitmap[0];
             DataArray = FixImgArray(DataArray);
 
             return DataArray.Select(x => MagickImageToBitMap(x)).ToArray();
@@ -586,7 +589,7 @@ namespace NewImgFixingLib
             if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
                 return;
 
-            await fileEdit.SaveJson(saveFileDialog.FileName, GetImgFixingSettings());
+            await fileEdit.SaveJsonAsync(saveFileDialog.FileName, GetImgFixingSettings());
             //fileEdit.SaveJson(imgFixingFile, GetImgFixingSettings());
             RezultRTB.Text = "Settings save in " + saveFileDialog.FileName;
         }
@@ -620,7 +623,7 @@ namespace NewImgFixingLib
 
         private bool SetErr(string errText)
         {
-            IsErr = true;   
+            IsErr = true;
             ErrText = errText;
             RezultRTB.Text = ErrText;
             return false;
@@ -644,5 +647,18 @@ namespace NewImgFixingLib
             }
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e) => ReloadImg();
+
+        internal bool CheckFixigImg(string imgFixingDir = "")
+        {
+            // ??todo перенести это в fileEdit
+            if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
+            if (!Directory.Exists(imgFixingDir)) return false;
+
+            FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
+            for (int i = 0; i < fileList.Count(); i++)
+                if (!File.Exists(imgFixingDir + "\\" + fileList[i].Name)) return false;
+
+            return true;
+        }
     }
 }

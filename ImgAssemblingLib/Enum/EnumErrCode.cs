@@ -1,0 +1,17 @@
+﻿namespace WinFormsApp1.Enum
+{
+    public enum EnumErrCode
+    {
+        NoErr,
+        Err,
+        FileNotFound,
+        Copy, // Копии кадров
+        PointsNotFound, // Не найдены подходящие точки
+        SiftThreshold, // Смещение не превысило порог погрешности
+        WrongDirection, // 
+        F01PointsExceed, // Превышено количество точек F01
+        F05PointsExceed, // Превышено количество точек F05
+        NotEnoughKeyPoints, // Недостаточно подходящих ключевых точек
+        NotEnoughKeyPointsF02 // Недостаточно подходящих ключевых точек  F02
+    }
+}

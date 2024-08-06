@@ -1,8 +1,6 @@
 using NewImgFixingLib;
 using NewImgFixingLib.Models;
 using ImageMagick;
-using System.Drawing.Imaging;
-
 namespace TestStartingPr
 {
     public partial class Form1 : Form
@@ -16,7 +14,38 @@ namespace TestStartingPr
             else _context = new SynchronizationContext();
             ShowImgFixingForm();
         }
+
+
+        // Пример запуска корекции изображений в папке по настройкам из файла используя массив битмапов
         private void FixingImgsUsingDataArrayBtn_Click(object sender, EventArgs e)
+        {
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            TimeSpan ts = stopwatch.Elapsed;
+
+            string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
+            string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
+            //string WorkingDirectory = "D:\\Work\\Exampels\\Left"; // Папка изображений для испраления
+            if (!fileEdit.ChkDir(WorkingDirectory)) return;
+
+            //Для имитации загружаем файлы из папки и создаем массив битмапов
+            FileInfo[] fileList = fileEdit.SearchFiles(WorkingDirectory);
+            if (fileList.Length == 0) return;
+            Bitmap[] dataArray = fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
+
+            ImgFixingForm imgFixingForm = new ImgFixingForm(ImgFixingPlan, false);
+            var respArray = imgFixingForm.FixImgArray(dataArray);
+
+            ts = stopwatch.Elapsed;
+            string text = String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+
+            // Для проверки можно записать один файл из итогового массива
+            // respArray[6].Save("test2060.jpg");
+        }
+
+
+        // Пример запуска корекции изображений в папке по настройкам из файла используя массив картинок
+        private void FixingImgsUsingDataArrayBtn_Click2(object sender, EventArgs e)
         {
             var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
@@ -34,33 +63,8 @@ namespace TestStartingPr
             ts = stopwatch.Elapsed;
             string text = String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
 
-            // Для проверки записываем один файл из итогового массива
-            if (respArray.Length > 0) File.WriteAllBytes("D:\\Work\\Exampels\\rezult.jpg", respArray[0].ToByteArray());
-        }
-        private void FixingImgsUsingDataArrayBtn_Click2(object sender, EventArgs e)
-        {
-            var stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-            TimeSpan ts = stopwatch.Elapsed;
-
-            string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
-            string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
-            //string WorkingDirectory = "D:\\Work\\Exampels\\Left"; // Папка изображений для испраления
-            if (!fileEdit.ChkDir(WorkingDirectory)) return;
-
-            //Для имитации загружаем файлы из папки и создаем массив битмапов
-            FileInfo[] fileList = fileEdit.SearchFiles(WorkingDirectory);
-            if (fileList.Length == 0) return;
-            Bitmap[] dataArray = fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
-
-            ImgFixingForm imgFixingForm = new ImgFixingForm(ImgFixingPlan, true);
-            var respArray = imgFixingForm.FixImgArray(dataArray);
-
-            ts = stopwatch.Elapsed;
-            string text = String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-            
-            //Для проверки записываем один файл из итогового массива
-            respArray[6].Save("test2060.jpg");
+            // Для проверки можно записать один файл из итогового массива
+            //if (respArray.Length > 0) File.WriteAllBytes("D:\\Work\\Exampels\\rezult.jpg", respArray[0].ToByteArray());
         }
         private void ImgFixingFormBtn_Click(object sender, EventArgs e)
         {
@@ -74,7 +78,7 @@ namespace TestStartingPr
             imgFixingForm.ShowDialog();
         }
 
-        // Пример запуска исправления всех изображений в папке по настройкам из файла
+        // Пример запуска корекции изображений в папке по настройкам из файла
         private void HidenFixingExampelBtn_Click(object sender, EventArgs e)
         {
             string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
@@ -93,12 +97,12 @@ namespace TestStartingPr
         private async void HidenFixingExampel2Btn_Click(object sender, EventArgs e) => await StartFixing();
         public async Task<bool> StartFixing()
         {
-            //string ImgFixingPlan = "Left.fip";// Файл с параментрами корректировки изображений
-            //string WorkingDirectory = "D:\\Work\\Exampels\\Left";// Парака изображений для испраления
-            //string outputDir = "D:\\Work\\Exampels\\LeftAutoOut";// Результирующая папка
-            string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
-            string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
-            string outputDir = "D:\\Work\\Exampels\\14(3)AutoOut";// Результирующая папка
+            string ImgFixingPlan = "Left.fip";// Файл с параментрами корректировки изображений
+            string WorkingDirectory = "D:\\Work\\Exampels\\Left";// Парака изображений для испраления
+            string outputDir = "D:\\Work\\Exampels\\LeftAutoOut";// Результирующая папка
+            //string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
+            //string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
+            //string outputDir = "D:\\Work\\Exampels\\14(3)AutoOut";// Результирующая папка
             ImgFixingForm distortionTest = new ImgFixingForm(ImgFixingPlan, WorkingDirectory, false);
             distortionTest.ProcessChanged += worker_ProcessChang;
             distortionTest.TextChanged += worker_TextChang;

@@ -459,6 +459,7 @@ namespace ImgAssemblingLib.AditionalForms
             menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
+
         }
 
         #endregion

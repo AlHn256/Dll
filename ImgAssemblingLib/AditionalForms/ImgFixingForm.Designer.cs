@@ -105,7 +105,7 @@ namespace ImgAssemblingLib.AditionalForms
             pictureBox1.Size = new Size(1278, 925);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
-            pictureBox1.DragDrop += pictur;
+            this.pictureBox1.TabStop = false;
             pictureBox1.MouseDown += pictureBox1_MouseDown;
             pictureBox1.MouseUp += pictureBox1_MouseUp;
             // 
@@ -118,7 +118,7 @@ namespace ImgAssemblingLib.AditionalForms
             CorrectFilesBtn.TabIndex = 1;
             CorrectFilesBtn.Text = "Correct Files";
             CorrectFilesBtn.UseVisualStyleBackColor = true;
-            CorrectFilesBtn.Click += CorrectFiles_Click;
+            this.CorrectFilesBtn.Click += CorrectFiles_Click;
             // 
             // ABtnUp
             // 

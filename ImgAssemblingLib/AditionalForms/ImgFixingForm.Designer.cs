@@ -702,7 +702,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.SaveAsBtn.TabIndex = 65;
             this.SaveAsBtn.Text = "Save";
             this.SaveAsBtn.UseVisualStyleBackColor = true;
-            this.SaveAsBtn.Click += SaveAsBtn_Click;
+            this.SaveAsBtn.Click += new System.EventHandler(this.SaveAsBtn_Click_1);
             // 
             // LoadFrBtn
             // 

@@ -14,7 +14,7 @@ namespace ImgAssemblingLib.Models
     {
         private double[] Precision = new double[] { 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 5, 10, 20, 50, 100, 200, 300 };// Таблица точности ключевых точек
         private int minShift = 10; // минимально смещение картинок которое допускается из за погрешности определения ключевых точек
-        private const int MinSufficientNumberOfPoints = 5, MaxSufficientNumberOfPoints = 65; // минимальное и максимальное необходимое количество ключевых точек 
+        private const int MinSufficientNumberOfPoints = 5; // минимальное и максимальное необходимое количество ключевых точек 
         private bool averageShift { get; set; } = false; // Вычисляемое смещение заменяется на среднее(иногда бывает полезно нпример для того что бы избавится от столбов)
         private bool Percent { get; set; } = false;
         private int From { get; set; } = 0;
@@ -28,7 +28,6 @@ namespace ImgAssemblingLib.Models
         private List<SelectedFiles> SelectedFiles { get; set; }
         public string StitchingInfo { get; set; } = string.Empty;
         public string MainDir { get; set; }
-        
         public bool IsErr { get; set; } = false;
         private EnumErrCode ErrCode { get; set; } = EnumErrCode.NoErr;
         public string ErrText { get; set; } = string.Empty;
@@ -51,7 +50,7 @@ namespace ImgAssemblingLib.Models
                 SetErr("Err StitchingBlock.string.IsNullOrEmpty(File1TxtBox.Text)!!!");
                 return;
             }
-            if (!fileEdit.IsFileDirExist(file))
+            if (!fileEdit.ChkFileDir(file))
             {
                 SetErr("Err StitchingBlock. "+ file + " not Exists!!!");
                 return;
@@ -135,6 +134,7 @@ namespace ImgAssemblingLib.Models
             StopProcess = false;
             List<EnumDirection?> directionsList = new List<EnumDirection?>();
             SynchronizationContext context = (SynchronizationContext)param;
+            bool contextIsOn = context == null? false:true;
             SelectedFiles firstSelectedFiles = new SelectedFiles(), secondSelectedFiles = new SelectedFiles();
             int copy = -1;
 
@@ -143,8 +143,8 @@ namespace ImgAssemblingLib.Models
                 EraseError();
                 if (StopProcess)
                 {
-                    context.Send(OnTextChanged, "Stop Process");
-                    goto End;
+                    if(contextIsOn) context.Send(OnTextChanged, "Stop Process");
+                    return;
                 }
 
                 if (i != 0)
@@ -180,14 +180,19 @@ namespace ImgAssemblingLib.Models
                         directionsList.Add(vectorInfo.Direction);
                     }
                 }
-                context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
-                context.Send(OnTextChanged, "Finding Key Points " + i * 100 / SelectedFiles.Count + " %");
+                if (contextIsOn)
+                {
+                    context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
+                    context.Send(OnTextChanged, "Finding Key Points " + i * 100 / SelectedFiles.Count + " %");
+                }
             }
 
             Direction = GetAverageDirection(SelectedFiles.Where(x=>x.ErrCode!=EnumErrCode.Copy).Select(x => x.Direction).ToList());
-            context.Send(OnProgressChanged, 100);
-            context.Send(OnTextChanged, "100 %");
-        End:;
+            if (contextIsOn)
+            {
+                context.Send(OnProgressChanged, 100);
+                context.Send(OnTextChanged, "100 %");
+            }
         }
 
         public List<Vector> GetVectorList(string file1, string file2, bool makeFotoRezult = false)
@@ -502,7 +507,7 @@ namespace ImgAssemblingLib.Models
         internal Mat Stitch(object param, int Delta = 0)// Сборка кадров в один
         {
             Mat rezult = new Mat();
-            if (SelectedFiles.Count == 0)
+            if (SelectedFiles == null || SelectedFiles.Count == 0)
             {
                 SetErr("Err Stitch.найденных для сборки изображений нет!!!");
                 return rezult;
@@ -522,7 +527,7 @@ namespace ImgAssemblingLib.Models
 
 
             SelectedFiles = SelectedFiles.Where(x => !x.IsErr).ToList(); // Удаляем все ошибочные сектора
-            if (Direction == EnumDirection.Right || Direction == EnumDirection.Down) InvertDirection2(); // Если направление движения правое то делаем инверсию SelectedFiles
+            if (Direction == EnumDirection.Right || Direction == EnumDirection.Down) InvertDirection(); // Если направление движения правое то делаем инверсию SelectedFiles
 
             //if (SelectedFiles.Count > 2)
             //    if (SelectedFiles[SelectedFiles.Count - 2].IsErr)
@@ -540,8 +545,8 @@ namespace ImgAssemblingLib.Models
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
                 if (SelectedFiles[i].IsErr) continue;
-                context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
-                context.Send(OnTextChanged, "Frame Union " + i * 100 / SelectedFiles.Count + " %");
+                if(context!=null) context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
+                if (context != null) context.Send(OnTextChanged, "Frame Union " + i * 100 / SelectedFiles.Count + " %");
 
                 if (SelectedFiles.Count == 2) // Вариант на случай если нужно собрать только 2 картинки
                 {
@@ -592,43 +597,13 @@ namespace ImgAssemblingLib.Models
                 }
             }
 
-            context.Send(OnProgressChanged, 100);
-            context.Send(OnTextChanged, "100 %");
+            if (context != null) context.Send(OnProgressChanged, 100);
+            if (context != null) context.Send(OnTextChanged, "100 %");
             AddErrStitchingInfo();
             return rezult;
         }
+
         private void InvertDirection()
-        {
-            List<SelectedFiles> TempSelectedFiles = new List<SelectedFiles>();
-
-            if (Direction == EnumDirection.Right) Direction = EnumDirection.Left;
-            if (Direction == EnumDirection.Down) Direction = EnumDirection.Up;
-
-            int y = 0;
-            for (int i = SelectedFiles.Count - 2; i > -1; i--)
-            {
-                TempSelectedFiles.Add(new SelectedFiles()
-                {
-                    Id = y++,
-                    Direction = Direction,
-                    AverageShift = SelectedFiles[i].AverageShift,
-                    FullName = SelectedFiles[i].StitchingFile,
-                    StitchingFile = SelectedFiles[i].FullName,
-                    VectorList = SelectedFiles[i].VectorList,
-                    Hint = SelectedFiles[i].Hint
-                });
-            }
-            TempSelectedFiles.Add(new SelectedFiles()
-            {
-                Id = y++,
-                Direction = Direction,
-                AverageShift = SelectedFiles[SelectedFiles.Count - 1].AverageShift,
-                FullName = SelectedFiles[0].FullName
-            });
-
-            SelectedFiles = TempSelectedFiles;
-        }
-        private void InvertDirection2()
         {
             if (Direction == EnumDirection.Right) Direction = EnumDirection.Left;
             if (Direction == EnumDirection.Down) Direction = EnumDirection.Up;
@@ -1011,6 +986,8 @@ namespace ImgAssemblingLib.Models
             {fileEdit.LoadeJson(GetPlanName(), out stitchingPlan);}
             catch (IOException e)
             {SetErr("The file could not be read: " + e.Message + "!!!");}
+
+            if(stitchingPlan == null) return false;
 
             if (MainDir == stitchingPlan.Dir && stitchingPlan.SelectedFiles != null)
             {

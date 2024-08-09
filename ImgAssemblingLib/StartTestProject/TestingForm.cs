@@ -1,6 +1,8 @@
 ﻿using ImgAssemblingLib.AditionalForms;
 using ImgAssemblingLib.Models;
 using System;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -15,8 +17,8 @@ namespace StartTestProject
             KeyPreview = true;
 
             //ShowMainForm();
-            //ShowEditingStitchingForm();
-            ShowImgFixingForm();
+            ShowEditingStitchingForm();
+            //ShowImgFixingForm();
         }
 
         private void ShowMainForm()
@@ -111,6 +113,34 @@ namespace StartTestProject
         private void ImgFixingFormBtn_Click(object sender, EventArgs e)
         {
             ShowImgFixingForm();
+        }
+
+        private FileEdit fileEdit = new FileEdit(new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" });
+        private void FixingImgsUsingDataArrayBtn_Click(object sender, EventArgs e)
+        {
+            //var stopwatch = new System.Diagnostics.Stopwatch();
+            //stopwatch.Start();
+            //TimeSpan ts = stopwatch.Elapsed;
+
+            string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
+            string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
+            //string WorkingDirectory = "E:\All\Side1\Left"; // Папка изображений для испраления
+            if (!fileEdit.ChkDir(WorkingDirectory)) return;
+
+            //Для имитации загружаем файлы из папки и создаем массив битмапов
+            FileInfo[] fileList = fileEdit.SearchFiles(WorkingDirectory);
+            if (fileList.Length == 0) return;
+            Bitmap[] dataArray = fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
+
+            ImgFixingForm imgFixingForm = new ImgFixingForm(ImgFixingPlan, false);
+            var respBitmapArray = imgFixingForm.FixImgArray(dataArray);
+
+
+            // Для проверки можно записать один файл из итогового массива
+            // respArray[22].Save("test2022.jpg");
+
+            //ts = stopwatch.Elapsed;
+            //string text = String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
         }
     }
 }

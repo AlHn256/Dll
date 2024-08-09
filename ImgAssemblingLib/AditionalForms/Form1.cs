@@ -40,6 +40,13 @@ namespace ImgAssemblingLib.AditionalForms
             logger = LogManager.GetCurrentClassLogger();
         }
 
+        public Form1(AssemblyPlan assemblyPlan)
+        {
+            InitializeComponent();
+            this.assemblyPlan = assemblyPlan;
+            logger = LogManager.GetCurrentClassLogger();
+        }
+
         private void Loading(object sender, EventArgs e)
         {
             logger.Info("Programm starting");
@@ -75,7 +82,7 @@ namespace ImgAssemblingLib.AditionalForms
             }
             else
             {
-                FromTxtBox.Text = fileEdit.ErrText;
+                RTB.Text = fileEdit.ErrText;
                 if (formSettings == null) formSettings = new FormSettings();
                 assemblyPlan = new AssemblyPlan();
             }
@@ -512,8 +519,11 @@ namespace ImgAssemblingLib.AditionalForms
             //else FirstFile = File1TxtBox.Text;
 
 
-
-
+            if (string.IsNullOrEmpty(FirstFile) && string.IsNullOrEmpty(FileDirTxtBox.Text))
+            {
+                RTB.Text = "Err необходимо добавить каталог поиска!!!";
+                return;
+            }
             if (string.IsNullOrEmpty(FirstFile)) FirstFile = FileDirTxtBox.Text;
             if (File.Exists(FirstFile) && File.Exists(SecondFile))
             {
@@ -572,8 +582,8 @@ namespace ImgAssemblingLib.AditionalForms
             else
             {
                 RTB.Text = string.Empty;
-                if (!File.Exists(FileDirTxtBox.Text)) RTB.Text = "Файл " + FileDirTxtBox.Text + " не найден!!!\n";
-                if (!File.Exists(SecondFile)) RTB.Text += "Файл " + SecondFile + " не найден!!!\n";
+                if (!File.Exists(FileDirTxtBox.Text)) RTB.Text = "First File :" + FileDirTxtBox.Text + " не найден!!!\n";
+                if (!File.Exists(SecondFile)) RTB.Text += "Second File :" + SecondFile + " не найден!!!\n";
             }
         }
         private void ShowPointsBtn_Click(object sender, EventArgs e)
@@ -737,17 +747,24 @@ namespace ImgAssemblingLib.AditionalForms
         private bool SaveImg(bool usinOSV = true)
         {
             fileEdit.ClearInformation();
-            bool isSaved = false;
+            string fileName = string.Empty;
             if (usinOSV)
             {
                 Mat rezultImg = Assembling.GetRezultImg();
-                isSaved = fileEdit.SaveImg(rezultImg);
+                fileName = fileEdit.SaveImg(rezultImg);
             }
-            else isSaved = fileEdit.SaveImg(null, picBox_Display.Image);
+            else fileName = fileEdit.SaveImg(null, picBox_Display.Image);
 
-            if (isSaved) RTB.Text = fileEdit.TextMessag + "\n";
-            else RTB.Text = fileEdit.ErrText + "\n";
-            return isSaved;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                RTB.Text = fileEdit.ErrText + "\n";
+                return false;
+            }
+            else
+            {
+                RTB.Text = fileEdit.TextMessag + "\n";
+                return true;
+            }
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
         private void deleteResultesToolStripMenuItem_Click(object sender, EventArgs e) => fileEdit.deleteResultes("Result");

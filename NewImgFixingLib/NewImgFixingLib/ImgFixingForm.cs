@@ -197,7 +197,7 @@ namespace NewImgFixingLib
             A = Convert.ToDecimal(ATxtBox.Text);
             A += 0.01m;
             ATxtBox.Text = A.ToString();
-            ReloadImg();
+            //ReloadImg();
         }
 
         private void ABtnDn_Click(object sender, EventArgs e)
@@ -644,5 +644,17 @@ namespace NewImgFixingLib
             }
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e) => ReloadImg();
+        internal bool CheckFixigImg(string imgFixingDir = "")
+        {
+            // ??todo перенести это в fileEdit
+            if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
+            if (!Directory.Exists(imgFixingDir)) return false;
+
+            FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
+            for (int i = 0; i < fileList.Count(); i++)
+                if (!File.Exists(imgFixingDir + "\\" + fileList[i].Name)) return false;
+
+            return true;
+        }
     }
 }

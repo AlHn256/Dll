@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace ImgAssemblingLib.Models
 {
-    class FileEdit
+   public class FileEdit
     {
         private string JsonSaveFile = "SaveJson.txt";
         public bool IsErr { get; set; } = false;
@@ -133,10 +133,24 @@ namespace ImgAssemblingLib.Models
                 catch (Exception e) { SetExeption(e); }
                 return false;
             }
-
             return true;
         }
 
+        public bool ChkFileDir(string href)
+        {
+            if (Directory.Exists(href)) return true;
+            if (File.Exists(href)) return true;
+            return false;
+        }
+        public bool IsDirectory(string href)
+        {
+            ClearInformation();
+            if (!ChkFileDir(href))return SetErr("Err File\\Dir not found!!!");
+            if (string.IsNullOrEmpty(href)) return false;
+            FileAttributes attr = File.GetAttributes(href);
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory) return true;
+            else return false;
+        }
         public string ComputeMD5Checksum(string path)
         {
             using (FileStream fs = File.OpenRead(path))
@@ -148,7 +162,6 @@ namespace ImgAssemblingLib.Models
                 return BitConverter.ToString(checkSum);
             }
         }
-
         public string DirFile(string Dir, string File)
         {
             if (string.IsNullOrEmpty(Dir) || string.IsNullOrEmpty(File)) return string.Empty;
@@ -293,7 +306,7 @@ namespace ImgAssemblingLib.Models
         {
             try
             {
-                FileStream fs = new FileStream(file, FileMode.Truncate, FileAccess.Write, FileShare.Read);
+                FileStream fs = new FileStream(file, FileMode.OpenOrCreate);
                 using (StreamWriter writetext = new StreamWriter(fs)){ writetext.WriteLine(text);}
             }
             catch (Exception e)
@@ -321,7 +334,7 @@ namespace ImgAssemblingLib.Models
         public FileInfo[] SearchFiles()=>SearchFiles(GetDefoltDirectory());
         public FileInfo[] SearchFiles(string dir)
         {
-            if(FileFilter.Length == 0)return SearchFiles(dir, new string[] { "*.*" });
+            if(FileFilter == null || FileFilter.Length == 0)return SearchFiles(dir, new string[] { "*.*" });
             else return SearchFiles(dir, FileFilter);
         }
         public FileInfo[] SearchFiles(string dir, string[] filter, int Lv = 0)
@@ -375,21 +388,6 @@ namespace ImgAssemblingLib.Models
                 if (File.Exists(f.FullName)) rezult = false;
             }
             return rezult;
-        }
-
-        public bool IsFileDirExist(string href)
-        {
-            if(Directory.Exists(href))return true;
-            if(File.Exists(href)) return true;
-            return false;
-        }
-
-        public bool IsDirectory(string href)
-        {
-            if(string.IsNullOrEmpty(href)) return false;    
-            FileAttributes attr = File.GetAttributes(href);
-            if ((attr & FileAttributes.Directory) == FileAttributes.Directory) return true; 
-            else return false;
         }
         public bool LoadeJson<T>(out T obj) => LoadeJson(GetJsonDefoltSaveFile(),out obj);
         public bool LoadeJson<T>(string file,out T obj)
@@ -447,21 +445,30 @@ namespace ImgAssemblingLib.Models
             return true;
         }
 
-        private int SaveId = 0;
-        public bool SaveImg(Mat rezultImg =null, Image DisplayImage = null)
+        private static int SaveId = 0;
+        public string SaveImg(Mat rezultImg =null, Image DisplayImage = null)
         {
-            if (DisplayImage == null && rezultImg == null)return SetErr("Err SaveImg = null !!!");
+            if (DisplayImage == null && rezultImg == null)
+            {
+                SetErr("Err SaveImg = null !!!");
+                return string.Empty;
+            }
 
             string FileSaveString = SaveId < 10 ? "Result0" + SaveId + ".jpg" : "Result" + SaveId + ".jpg";
             bool isSaved = false;
-            if (DisplayImage ==null)
+            if (DisplayImage == null)
             {
-                if (rezultImg.Height == 0 && rezultImg.Width == 0) return SetErr("Err SaveImg.Height & Width = 0 !!!");
+                if (rezultImg.Height == 0 && rezultImg.Width == 0) { SetErr("Err SaveImg.Height & Width = 0 !!!");
+                    return string.Empty;
+                }
 
                 if (rezultImg.Height > ushort.MaxValue || rezultImg.Width > ushort.MaxValue)
                 {
                     //??ToDo
-                    return SetErr("Err Изображение не сохранилось т.к. слишком велико\n" + " RezultImg.Height " + rezultImg.Height + " RezultImg.Width " + rezultImg.Width + "\n");
+                    {
+                        SetErr("Err Изображение не сохранилось т.к. слишком велико\n" + " RezultImg.Height " + rezultImg.Height + " RezultImg.Width " + rezultImg.Width + "\n");
+                        return string.Empty;
+                    }
                 }
                 else
                 {
@@ -487,7 +494,7 @@ namespace ImgAssemblingLib.Models
                 }
                 catch (Exception e)
                 {
-                    return SetErr("Err Save " + e.Message + " !!!");
+                     SetErr("Err Save " + e.Message + " !!!");
                 }
             }
 
@@ -496,7 +503,7 @@ namespace ImgAssemblingLib.Models
                 TextMessag += "   File saved to: \n" + GetDefoltDirectory() + FileSaveString+"\n";
                 SaveId++;
             }
-            return true;
+            return FileSaveString;
         }
         public void deleteResultes(string filter = "")
         {
@@ -591,100 +598,5 @@ namespace ImgAssemblingLib.Models
 
             return true;
         }
-        public bool CheckAccessToFile(string file)
-        {
-            try
-            {
-                // Attempt to get a list of security permissions from the folder. 
-                // This will raise an exception if the path is read only or do not have access to view the permissions. 
-                var fInfo = new FileInfo(file);
-                FileSecurity fSecurity = fInfo.GetAccessControl();
-                SecurityIdentifier usersSid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-                FileSystemRights fileRights = FileSystemRights.Read | FileSystemRights.Synchronize; //All read only file usually have Synchronize added automatically when allowing access, refer the msdn doc link below
-                var rules = fSecurity.GetAccessRules(true, true, usersSid.GetType()).OfType<FileSystemAccessRule>();
-                var hasRights = rules.Where(r => r.FileSystemRights == fileRights).Any();
-                return true;
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                string text = e.Message;
-                return false;
-            }
-        }
-
-        //public bool CheckAccessToFile(string file)
-        //{
-        //    try
-        //    {
-        //        // Attempt to get a list of security permissions from the folder. 
-        //        // This will raise an exception if the path is read only or do not have access to view the permissions. 
-        //        FileSecurity ds = File.GetAccessControl(file);
-        //        return true;
-        //    }
-        //    catch (UnauthorizedAccessException e)
-        //    {
-        //        string text = e.Message;
-        //        return false;
-        //    }
-        //}
-
-        public bool CheckAccessToFolder(string folderPath)
-        {
-            if(!Directory.Exists(folderPath)) return false;
-            bool hasWriteAccess = false;
-            DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
-            DirectorySecurity directorySecurity = directoryInfo.GetAccessControl();
-            AuthorizationRuleCollection accessRules = directorySecurity.GetAccessRules(true, true, typeof(SecurityIdentifier));
-
-            foreach (FileSystemAccessRule rule in accessRules)
-            {
-                if ((FileSystemRights.Write & rule.FileSystemRights) != 0 && rule.AccessControlType == AccessControlType.Allow)
-                {
-                    hasWriteAccess = true;
-                    break;
-                }
-            }
-
-            return hasWriteAccess;
-        }
-
-        //public bool CheckAccessToFolder(string folderPath)
-        //{
-        //    try
-        //    {
-        //        // Attempt to get a list of security permissions from the folder. 
-        //        // This will raise an exception if the path is read only or do not have access to view the permissions. 
-        //        DirectorySecurity ds = Directory.GetAccessControl(folderPath);
-        //        return true;
-        //    }
-        //    catch (UnauthorizedAccessException e)
-        //    {
-        //        string text = e.Message;
-        //        return false;
-        //    }
-        //}
-
-        public bool IsFileLocked(FileInfo file)
-        {
-            try
-            {
-                using (FileStream stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    stream.Close();
-                }
-            }
-            catch (IOException)
-            {
-                //the file is unavailable because it is:
-                //still being written to
-                //or being processed by another thread
-                //or does not exist (has already been processed)
-                return true;
-            }
-
-            //file is not locked
-            return false;
-        }
-
     }
 }

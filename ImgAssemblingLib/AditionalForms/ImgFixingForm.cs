@@ -2,16 +2,12 @@
 using ImgAssemblingLib.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ImgAssemblingLib.AditionalForms
@@ -66,8 +62,11 @@ namespace ImgAssemblingLib.AditionalForms
         public ImgFixingForm(string imgFixingPlan, bool test = false)
         {
             InitializeComponent();
-            if (!string.IsNullOrEmpty(imgFixingPlan)) imgFixingFile = imgFixingPlan;
-            TryReadSettings(false);
+            if (!string.IsNullOrEmpty(imgFixingPlan))
+            {
+                imgFixingFile = imgFixingPlan;
+                TryReadSettings(false);
+            }
         }
 
         public void OnProgressChanged(object i)
@@ -130,6 +129,7 @@ namespace ImgAssemblingLib.AditionalForms
         public bool FixImges(object param, string outputDir = "")
         {
             SynchronizationContext context = (SynchronizationContext)param;
+            bool contextIsOn = context == null ? false : true;
             ShowGridСhckBox.Checked = false;
             if (string.IsNullOrEmpty(outputDir))
             {
@@ -144,24 +144,29 @@ namespace ImgAssemblingLib.AditionalForms
             {
                 string outputFileNumber = outputDir + "\\" + fileList[i].Name;
                 File.WriteAllBytes(outputFileNumber, EditImg(fileList[i].FullName).ToByteArray());
-                //Image Img = Image.FromFile(outputFileNumber);
-                context.Send(OnProgressChanged, i * 100 / fileList.Length);
-                context.Send(OnTextChanged, "Imges Fixing " + i * 100 / fileList.Length + " %");
+                
+                if (contextIsOn)
+                {
+                    context.Send(OnProgressChanged, i * 100 / fileList.Length);
+                    context.Send(OnTextChanged, "Imges Fixing " + i * 100 / fileList.Length + " %");
+                }
             }
-
-            context.Send(OnProgressChanged, 100);
-            context.Send(OnTextChanged, "Imges Fixing 100 %");
-
+            if (contextIsOn)
+            {
+                context.Send(OnProgressChanged, 100);
+                context.Send(OnTextChanged, "Imges Fixing 100 %");
+            }
             return true;
         }
-        public bool CheckFixingImg(string imgFixingDir = "")
+        internal bool CheckFixingImg(string imgFixingDir = "")
         {
             // ??todo перенести это в fileEdit
             if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
             if (!Directory.Exists(imgFixingDir)) return false;
 
             FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            for (int i = 0; i < fileList.Length; i++)
+            if (fileList.Count() == 0) return SetErr("Err CheckFixigImg.fileList.Count() == 0!!!");
+            for (int i = 0; i < fileList.Count(); i++)
                 if (!File.Exists(imgFixingDir + "\\" + fileList[i].Name)) return false;
 
             return true;
@@ -200,7 +205,7 @@ namespace ImgAssemblingLib.AditionalForms
             A = Convert.ToDecimal(ATxtBox.Text);
             A += 0.01m;
             ATxtBox.Text = A.ToString();
-            ReloadImg();
+            //ReloadImg();
         }
 
         private void ABtnDn_Click(object sender, EventArgs e)
@@ -351,7 +356,7 @@ namespace ImgAssemblingLib.AditionalForms
         {
             if (string.IsNullOrEmpty(InputDirTxtBox.Text)) return;
             var files = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            if (files[0] != null)
+            if (files != null && files.Length>0 && files[0] != null)
             {
                 InputFileTxtBox.Text = files[0].Name;
                 pictureBox1.BackgroundImage = Image.FromFile(files[0].FullName);
@@ -617,7 +622,7 @@ namespace ImgAssemblingLib.AditionalForms
                     return SetErr("The file could not be read: " + e.Message + "!!!\n");
                 }
             }
-            else return SetErr("Err TryReadSettings.файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
+            else return SetErr("Err TryReadSettings.Файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
             return false;
         }
 
@@ -647,18 +652,5 @@ namespace ImgAssemblingLib.AditionalForms
             }
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e) => ReloadImg();
-
-        internal bool CheckFixigImg(string imgFixingDir = "")
-        {
-            // ??todo перенести это в fileEdit
-            if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
-            if (!Directory.Exists(imgFixingDir)) return false;
-
-            FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            for (int i = 0; i < fileList.Count(); i++)
-                if (!File.Exists(imgFixingDir + "\\" + fileList[i].Name)) return false;
-
-            return true;
-        }
     }
 }

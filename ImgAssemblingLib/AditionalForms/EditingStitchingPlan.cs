@@ -1,6 +1,9 @@
 ﻿using ImgAssemblingLib.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ImgAssemblingLib.AditionalForms
@@ -19,25 +22,61 @@ namespace ImgAssemblingLib.AditionalForms
             else AssemblyPlan = assemblyPlan;
             LoadSettings();
 
+            //AllowDrop = true;
+            //DragDrop += WindowsForm_DragDrop;
+            //DragEnter += WindowsForm_DragEnter;
+
+            WorkingDirectoryTxtBox.AllowDrop = true;
+            WorkingDirectoryTxtBox.DragDrop += WindowsForm_DragDrop;
+            WorkingDirectoryTxtBox.DragEnter += WindowsForm_DragEnter;
+
+            ImgFixingPlanTxtBox.AllowDrop = true;
+            ImgFixingPlanTxtBox.DragDrop += ImgFixingPlanTxtBox_DragDrop;
+            ImgFixingPlanTxtBox.DragEnter += ImgFixingPlanTxtBox_DragEnter;
+
             OpenWorkDirectoryBtn.Enabled = false;
             OpenFixingImgDirectoryBtn.Enabled = false;
             OpenStitchingDirectoryBtn.Enabled = false;
         }
-
         public AssemblyPlan GetAssemblingPlan() => AssemblyPlan;
+
+        void WindowsForm_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+        void WindowsForm_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if(fileEdit.IsDirectory(files[0])) WorkingDirectoryTxtBox.Text = files[0];
+            else WorkingDirectoryTxtBox.Text = Path.GetDirectoryName(files[0]);
+        }
+        void ImgFixingPlanTxtBox_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+        void ImgFixingPlanTxtBox_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var sdf = files[0];
+            var ggs = Path.GetExtension(files[0]);
+            files = files.Where(x=> Path.GetExtension(x)==".fip").ToArray();
+            if (files.Length > 0)ImgFixingPlanTxtBox.Text = files[0];
+            else ImgFixingPlanTxtBox.Text = string.Empty;
+        }
         private void LoadSettings()
         {
             //CheckFileNamesChckBox.Enabled = false;
             //FixFileNamesChckBox.Enabled = false;
-            //WorkingDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory;
             //CheckFileNamesChckBox.Checked = AssemblyPlan.FileNameCheck;
             //FixFileNamesChckBox.Checked = AssemblyPlan.FileNameFixing;
             //FindCopyChckBox.Checked = AssemblyPlan.DelFileCopy;
+
+            WorkingDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory;
             FixImgChckBox.Checked = AssemblyPlan.FixImg;
             FixingImgDirectoryTxtBox.Text = AssemblyPlan.FixingImgDirectory;
 
             ImgFixingPlanTxtBox.Text = AssemblyPlan.ImgFixingPlan;
-            EnableFixImgPanel();
+            EnableFixImgPanel(FixImgChckBox.Checked);
             AutoChckBox.Checked = true;
             AutoChckBoxInvok();
 
@@ -61,24 +100,46 @@ namespace ImgAssemblingLib.AditionalForms
             TimePerFrameTxtBox.Text = AssemblyPlan.TimePerFrame.ToString();
         }
 
+        private void AutoChckBox_CheckedChanged(object sender, EventArgs e) => FixStitchingDirectoryTxtBox();
+        private void AutoChckBoxInvok()
+        {
+            if (AutoChckBox.Checked) FixingImgDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory + "AutoOut";
+            else FixingImgDirectoryTxtBox.Text = AssemblyPlan.FixingImgDirectory;
+        }
         private void FixImgChckBox_CheckedChanged(object sender, EventArgs e)
         {
             AssemblyPlan.FixImg = FixImgChckBox.Checked;
-            EnableFixImgPanel();
+            EnableFixImgPanel(FixImgChckBox.Checked);
+            FixStitchingDirectoryTxtBox();
         }
-        private void EnableFixImgPanel()
+        private void EnableFixImgPanel(bool Enabled)
         {
-            bool @checked = FixImgChckBox.Checked;
-            ChekFixedImgsChckBox.Enabled = @checked;
-            AutoChckBox.Enabled = @checked;
-            FixingImgDirectoryTxtBox.Enabled = @checked;
-            ImgFixingPlanTxtBox.Enabled = @checked;
-            OpenImgFixingPlanBtn.Enabled = @checked;
-            label2.Enabled = @checked;
-            label3.Enabled = @checked;
-            if (@checked) StitchingDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory + "AutoOut";
+            ChekFixedImgsChckBox.Enabled = Enabled;
+            AutoChckBox.Enabled = Enabled;
+            FixingImgDirectoryTxtBox.Enabled = Enabled;
+            ImgFixingPlanTxtBox.Enabled = Enabled;
+            OpenImgFixingPlanBtn.Enabled = Enabled;
+            label2.Enabled = Enabled;
+            label3.Enabled = Enabled;
+        }
+
+        private void FixStitchingDirectoryTxtBox()
+        {
+            if (string.IsNullOrEmpty(WorkingDirectoryTxtBox.Text)) return;
+            if (FixImgChckBox.Checked && AutoChckBox.Checked)
+            {
+                FixingImgDirectoryTxtBox.Text = WorkingDirectoryTxtBox.Text + "AutoOut";
+                StitchingDirectoryTxtBox.Text = FixingImgDirectoryTxtBox.Text;
+            }
+            //else if (FixImgChckBox.Checked)
+            //{
+            //    FixingImgDirectoryTxtBox.Text = string.Empty;
+            //    StitchingDirectoryTxtBox.Text = string.Empty;
+            //}
             else StitchingDirectoryTxtBox.Text = WorkingDirectoryTxtBox.Text;
         }
+
+        private void WorkingDirectoryTxtBox_TextChanged(object sender, EventArgs e) => FixStitchingDirectoryTxtBox();
 
         private void SaveBtn_Click(object sender, EventArgs e)
         {
@@ -106,10 +167,10 @@ namespace ImgAssemblingLib.AditionalForms
         {
             //AssemblyPlan.FileNameCheck = CheckFileNamesChckBox.Checked;
             //AssemblyPlan.FileNameFixing = FixFileNamesChckBox.Checked;
-            //AssemblyPlan.WorkingDirectory = WorkingDirectoryTxtBox.Text;
             //AssemblyPlan.FileNameCheck = CheckFileNamesChckBox.Checked;
             //AssemblyPlan.DelFileCopy = FindCopyChckBox.Checked;
 
+            AssemblyPlan.WorkingDirectory = WorkingDirectoryTxtBox.Text;
             AssemblyPlan.FixImg = FixImgChckBox.Checked;
             AssemblyPlan.FixingImgDirectory = FixingImgDirectoryTxtBox.Text;
             AssemblyPlan.ImgFixingPlan = ImgFixingPlanTxtBox.Text;
@@ -157,12 +218,6 @@ namespace ImgAssemblingLib.AditionalForms
         }
 
         private void ExitBtn_Click(object sender, EventArgs e) => Close();
-        private void AutoChckBox_CheckedChanged(object sender, EventArgs e) => AutoChckBoxInvok();
-        private void AutoChckBoxInvok()
-        {
-            if (AutoChckBox.Checked) FixingImgDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory + "AutoOut";
-            else FixingImgDirectoryTxtBox.Text = AssemblyPlan.FixingImgDirectory;
-        }
         private void LoadBtn_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -222,7 +277,6 @@ namespace ImgAssemblingLib.AditionalForms
                 label8.Enabled = false;
                 FrLb.Enabled = false;
                 ToLb.Enabled = false;
-
             }
             else
             {
@@ -297,6 +351,21 @@ namespace ImgAssemblingLib.AditionalForms
             List<char> charList = new List<char>();
             foreach (char c in txt) if (Char.IsDigit(c) || c == ',') charList.Add(c);
             return new string(charList.ToArray());
+        }
+
+        private async void StartBtn_Click(object sender, EventArgs e)
+        {
+            if(AssemblyPlan != null)
+            {
+                UpdateAssemblyPlan();
+                Assembling assembling = new Assembling(AssemblyPlan, null);
+                await assembling.StartAssembling();
+                if(OpenResultChckBox.Checked)
+                {
+                    string SavedFileName = assembling.GetSavedFileName();
+                    if(!string.IsNullOrEmpty(SavedFileName) ) Process.Start(SavedFileName);
+                }
+            }
         }
     }
 }

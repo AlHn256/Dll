@@ -25,7 +25,7 @@ namespace TestStartingPr
 
             string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
             string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
-            //string WorkingDirectory = "D:\\Work\\Exampels\\Left"; // Папка изображений для испраления
+            //string WorkingDirectory = "E:\All\Side1\Left"; // Папка изображений для испраления
             if (!fileEdit.ChkDir(WorkingDirectory)) return;
 
             //Для имитации загружаем файлы из папки и создаем массив битмапов
@@ -74,7 +74,7 @@ namespace TestStartingPr
         // Запуск формы для создания файла с параметрами коррекции изображений
         private void ShowImgFixingForm()
         {
-            ImgFixingForm imgFixingForm = new ImgFixingForm("D:\\Work\\Exampels\\Left");
+            ImgFixingForm imgFixingForm = new ImgFixingForm("E:\\All\\Side1\\Left");
             imgFixingForm.ShowDialog();
         }
 

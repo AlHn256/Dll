@@ -72,21 +72,21 @@ namespace ImgAssemblingLib.Models
     //Скорость ~ 6,709994650599466 Км/ч - через выделенную область
 
 
-
-
     internal class SpeedСounter
     {
         private List<SelectedFiles> SelectedFiles { get; set; }
         public double MmInPixel { get; set; } = 5.5; // Количество мм в одном пикселе
         public double MSekPerFrame { get; set; } = 40; // Милисекунд в одном кадре
         private int MaxPointChainWithoutErrors { get; set; } = 0; // Максимальная цепочка точек без ошибок
-        private int FrWERR { get; set; } = 0; 
-        private int ToWERR { get; set; } = 0; 
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
-
         public SpeedСounter(List<SelectedFiles> selectedFiles)
         {
+            if (selectedFiles == null)
+            {
+                SetErr("Err selectedFiles == null !!!");
+                return;
+            }
             SelectedFiles = selectedFiles;
             if (SelectedFiles.Any(x => x.IsErr)) IsErr = true;
 
@@ -187,6 +187,11 @@ namespace ImgAssemblingLib.Models
         public List<StatisticList> GetSpeedListByPoints(int n)
         {
             List<StatisticList> SpList = new List<StatisticList>();
+            if (SelectedFiles == null)
+            {
+                SetErr("Err SelectedFiles == null!!!");
+                return SpList;
+            }
             if(SelectedFiles.Count < 2 || SelectedFiles.Count< n*2) return SpList; // Нет смысла считать среднюю скорость для 1 элемента
 
             if (SelectedFiles.Count == 2)

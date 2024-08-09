@@ -31,6 +31,7 @@
             this.MainFormBtn = new System.Windows.Forms.Button();
             this.EditingStitchingPlanBtn = new System.Windows.Forms.Button();
             this.ImgFixingFormBtn = new System.Windows.Forms.Button();
+            this.FixingImgsUsingDataArrayBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // MainFormBtn
@@ -63,11 +64,22 @@
             this.ImgFixingFormBtn.UseVisualStyleBackColor = true;
             this.ImgFixingFormBtn.Click += new System.EventHandler(this.ImgFixingFormBtn_Click);
             // 
+            // FixingImgsUsingDataArrayBtn
+            // 
+            this.FixingImgsUsingDataArrayBtn.Location = new System.Drawing.Point(12, 195);
+            this.FixingImgsUsingDataArrayBtn.Name = "FixingImgsUsingDataArrayBtn";
+            this.FixingImgsUsingDataArrayBtn.Size = new System.Drawing.Size(167, 23);
+            this.FixingImgsUsingDataArrayBtn.TabIndex = 3;
+            this.FixingImgsUsingDataArrayBtn.Text = "Fixing Imgs Using DataArray";
+            this.FixingImgsUsingDataArrayBtn.UseVisualStyleBackColor = true;
+            this.FixingImgsUsingDataArrayBtn.Click += new System.EventHandler(this.FixingImgsUsingDataArrayBtn_Click);
+            // 
             // TestingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(197, 450);
+            this.Controls.Add(this.FixingImgsUsingDataArrayBtn);
             this.Controls.Add(this.ImgFixingFormBtn);
             this.Controls.Add(this.EditingStitchingPlanBtn);
             this.Controls.Add(this.MainFormBtn);
@@ -83,6 +95,7 @@
         private System.Windows.Forms.Button MainFormBtn;
         private System.Windows.Forms.Button EditingStitchingPlanBtn;
         private System.Windows.Forms.Button ImgFixingFormBtn;
+        private System.Windows.Forms.Button FixingImgsUsingDataArrayBtn;
     }
 }
 

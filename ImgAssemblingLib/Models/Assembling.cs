@@ -14,6 +14,7 @@ namespace ImgAssemblingLib.Models
     {
         private AssemblyPlan AssemblyPlan { get; set; }
         private FileEdit fileEdit = new FileEdit();
+        private string SavedFileName { get; set; } = string.Empty;
         private Mat RezultImg { get; set; }
         private SynchronizationContext _context;
         private StitchingBlock stitchingBlock { get; set; }
@@ -59,7 +60,14 @@ namespace ImgAssemblingLib.Models
             _context = (SynchronizationContext)param;
             logger = LogManager.GetCurrentClassLogger();
         }
-        public void ChangeAssemblyPlan(AssemblyPlan assemblyPlan)=>AssemblyPlan = assemblyPlan;
+
+        public Assembling(AssemblyPlan assemblyPlan, object param)
+        {
+            AssemblyPlan = assemblyPlan;
+            logger = LogManager.GetCurrentClassLogger();
+        }
+
+        public void ChangeAssemblyPlan(AssemblyPlan assemblyPlan) => AssemblyPlan = assemblyPlan;
         public Mat GetRezultImg()
         {
             if (RezultImg == null)
@@ -69,6 +77,8 @@ namespace ImgAssemblingLib.Models
             }
             else return RezultImg;
         }
+
+        public string GetSavedFileName() => SavedFileName;
         public void SetRezultImg(Mat rezultImg) => RezultImg = rezultImg;
         private bool SetErr(string err)
         {
@@ -89,8 +99,9 @@ namespace ImgAssemblingLib.Models
             stopwatch.Start();
             TimeSpan ts = stopwatch.Elapsed;
             TimeSpan tSum = TimeSpan.Zero;
+            bool contectIsOn = _context == null? false: true;
 
-            _context.Send(OnRTBAddInfo, "   Delta = " + AssemblyPlan.Delta + "\n   Start File Name Checking ");
+            if(contectIsOn) _context.Send(OnRTBAddInfo, "   Delta = " + AssemblyPlan.Delta + "\n   Start File Name Checking ");
             logger.Info("Delta = " + AssemblyPlan.Delta + "   Start File Name Checking");
             if (AssemblyPlan.FileNameCheck)
             {
@@ -102,7 +113,7 @@ namespace ImgAssemblingLib.Models
             SendTime("   Time ", ts);
             stopwatch.Restart();
 
-            _context.Send(OnRTBAddInfo, "   File Name Fixing ");
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "   File Name Fixing ");
             logger.Info("File Name Fixing");
             if (AssemblyPlan.FileNameFixing)
             {
@@ -115,13 +126,13 @@ namespace ImgAssemblingLib.Models
             SendTime("  Time ", ts);
             stopwatch.Restart();
 
-            _context.Send(OnRTBAddInfo, "   Del File Copy ");
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "   Del File Copy ");
             logger.Info("Del File Copy");
             if (AssemblyPlan.DelFileCopy)
             {
                 if (await fileEdit.FindCopyAndDel(AssemblyPlan.WorkingDirectory))
                 {
-                    _context.Send(OnRTBAddInfo, " - " + fileEdit.TextMessag + "\n");
+                    if (contectIsOn) _context.Send(OnRTBAddInfo, " - " + fileEdit.TextMessag + "\n");
                     logger.Info(fileEdit.TextMessag);
                     AssemblyPlan.DelFileCopyRezult = fileEdit.TextMessag;
                 }
@@ -134,7 +145,7 @@ namespace ImgAssemblingLib.Models
             SendTime("  Time ", ts);
             stopwatch.Restart();
 
-            _context.Send(OnRTBAddInfo, "   Img Fixing ");
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "   Img Fixing ");
             logger.Info("Img Fixing"); // Исправление кадров по загруженной инструкции
             if (AssemblyPlan.FixImg)
             {
@@ -144,12 +155,12 @@ namespace ImgAssemblingLib.Models
 
                 ImgFixingForm distortionTest = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory, false);
                 if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = distortionTest.GetImgFixingPlan();
-                _context.Send(OnRTBAddInfo, " Checking old files ");
+                if (contectIsOn) _context.Send(OnRTBAddInfo, " Checking old files ");
                 logger.Info("Checking old files");
-                if (AssemblyPlan.ChekFixImg && distortionTest.CheckFixigImg(ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
+                if (AssemblyPlan.ChekFixImg && distortionTest.CheckFixingImg(ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
                 {
                     AssemblyPlan.StitchingDirectory = ImgFixingDir;
-                    _context.Send(OnRTBAddInfo, " - Using old files\n");
+                    if (contectIsOn) _context.Send(OnRTBAddInfo, " - Using old files\n");
                     logger.Info("Using old files");
                     AssemblyPlan.ChekFixImgRezult = "Выполнено.";
                     AssemblyPlan.FixImgRezult = "Пропущено т.к. уже есть исправленные файлы.";
@@ -158,7 +169,7 @@ namespace ImgAssemblingLib.Models
                 {
                     if (AssemblyPlan.ChekFixImg)
                     {
-                        _context.Send(OnRTBAddInfo, " - Old files not founded ");
+                        if (contectIsOn) _context.Send(OnRTBAddInfo, " - Old files not founded ");
                         logger.Info("Old files not founded");
                         AssemblyPlan.ChekFixImgRezult = "Исправленные файлы не найдены!!!";
                     }
@@ -168,7 +179,7 @@ namespace ImgAssemblingLib.Models
                     bool checkFixinImg = false;
 
                     logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
-                    _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
+                    if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                     await Task.Run(() => { checkFixinImg = distortionTest.FixImges(_context, ImgFixingDir); });
 
                     if (checkFixinImg){SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir;}
@@ -180,8 +191,8 @@ namespace ImgAssemblingLib.Models
             tSum += ts;
             SendTime("  Time ", ts);
             stopwatch.Restart();
-            
-            _context.Send(OnRTBAddInfo, "   Find Key Points ");
+
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "   Find Key Points ");
             logger.Info("Find Key Points"); // Поиск ключевых точек
 
             if (AssemblyPlan.FindKeyPoints) 
@@ -194,8 +205,8 @@ namespace ImgAssemblingLib.Models
             tSum += ts;
             SendTime("  Time ", ts);
             stopwatch.Stop();
-            
-            _context.Send(OnRTBAddInfo, "   Get Speed \n");
+
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "   Get Speed \n");
             logger.Info("Get Speed");
             if (AssemblyPlan.SpeedCounting) // Подсчет скорости
             {
@@ -206,8 +217,7 @@ namespace ImgAssemblingLib.Models
                 var avSpeedList = speedСounter.GetSpeedListByPoints(10);
                 double avSp = 0;
                 if (avSpeedList.Count > 1)avSp = avSpeedList.Sum(x => x.Sp) / avSpeedList.Count();
-
-                if (AssemblyPlan.Speed != -1) _context.Send(OnRTBAddInfo, "   Скорость ~ " + AssemblyPlan.Speed.ToString() + " Км/ч\n");
+                if (AssemblyPlan.Speed != -1 && contectIsOn) _context.Send(OnRTBAddInfo, "   Скорость ~ " + AssemblyPlan.Speed.ToString() + " Км/ч\n");
                 else { SendErr("Скорость неопределена!!!"); AssemblyPlan.SpeedCountingRezults = ErrText; }
             }
             else { SendSkipped(); AssemblyPlan.SpeedCountingRezults = "Этап пропущен!!!"; }
@@ -216,7 +226,7 @@ namespace ImgAssemblingLib.Models
             SendTime("  Time ", ts);
             stopwatch.Stop();
 
-            _context.Send(OnRTBAddInfo, "   Image Assembling ");
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "   Image Assembling ");
             logger.Info("Image Assembling");
             if (AssemblyPlan.Stitch) // Запуск сборки изображения из нескольких кадров
             {
@@ -230,12 +240,13 @@ namespace ImgAssemblingLib.Models
             stopwatch.Stop();
 
             // Сохранение итогового изображения
-            _context.Send(OnRTBAddInfo, "   Saving Rezult ");
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "   Saving Rezult ");
             logger.Info("Saving Rezult ");
             if (AssemblyPlan.SaveRezults)
             {
                 fileEdit.ClearInformation();
-                if (fileEdit.SaveImg(RezultImg)){SendFinished(fileEdit.TextMessag);AssemblyPlan.RezultOfSavingRezults = fileEdit.TextMessag; }
+                SavedFileName = fileEdit.SaveImg(RezultImg);
+                if (!string.IsNullOrEmpty(SavedFileName)){SendFinished(fileEdit.TextMessag);AssemblyPlan.RezultOfSavingRezults = fileEdit.TextMessag; }
                 else { SendErr(fileEdit.ErrText); AssemblyPlan.StitchRezult = ErrText; }
             }
             else { SendSkipped(); AssemblyPlan.RezultOfSavingRezults = "Этап пропущен!!!"; }
@@ -252,31 +263,31 @@ namespace ImgAssemblingLib.Models
 
         private void SendTime(string text, TimeSpan ts)
         {
-            _context.Send(OnRTBAddInfo, text + String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10) + "\n");
+            if (_context!=null) _context.Send(OnRTBAddInfo, text + String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10) + "\n");
             logger.Info(text + String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10));
         }
         private void SendFinished(string text = null)
         {
             if (string.IsNullOrEmpty(text))
             {
-                _context.Send(OnRTBAddInfo, " - Finished\n");
+                if (_context != null) _context.Send(OnRTBAddInfo, " - Finished\n");
                 logger.Info("Finished");
             }
             else
             {
-                _context.Send(OnRTBAddInfo, " - Finished " + text );
+                if (_context != null) _context.Send(OnRTBAddInfo, " - Finished " + text );
                 logger.Info("Finished " + text);
             }
         }
         private void SendSkipped()
         {
-            _context.Send(OnRTBAddInfo, " -  Skipped\n");
+            if (_context!=null) _context.Send(OnRTBAddInfo, " -  Skipped\n");
             logger.Info("Skipped");
         }
         private void SendErr(string err)
         {
             SetErr("Err "+err+"!!!\n");
-            _context.Send(OnRTBAddInfo, ErrText);
+            if (_context != null) _context.Send(OnRTBAddInfo, ErrText);
             logger.Error(ErrText);
         }
 
@@ -304,7 +315,6 @@ namespace ImgAssemblingLib.Models
             //    bool fixinErr = stitchingBlock.CheckAndFixErr(_context);
             //    if (!fixinErr) return SetErr(stitchingBlock.ErrText);
             //}
-
             
             return true;
         }
@@ -316,7 +326,7 @@ namespace ImgAssemblingLib.Models
                 //await Task.Run(() => { RezultImg = stitchingBlock.Stitch(_context, AssemblyPlan.From, AssemblyPlan.To, AssemblyPlan.Delta); });
                 await Task.Run(() => { RezultImg = stitchingBlock.Stitch(_context, AssemblyPlan.Delta); });
 
-                _context.Send(OnImgUpdate, RezultImg);
+                if(_context!=null) _context.Send(OnImgUpdate, RezultImg);
                 if (RezultImg.Width == 0 && RezultImg.Height == 0) return SetErr(stitchingBlock.GetErrText());
 
                 return true;

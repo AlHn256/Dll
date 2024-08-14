@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OpenCvSharp;
+using System.Collections.Generic;
 using WinFormsApp1.Enum;
 
 namespace ImgAssemblingLib.Models
@@ -6,12 +7,13 @@ namespace ImgAssemblingLib.Models
     public class SelectedFiles
     {
         public int Id { get; set; }
-        public string FullName { get; set; }
-        public string StitchingFile { get; set; }
-        public string Hint { get; set; }
+        public Mat Mat { get; set; }
         public double AverageShift { get; set; }
         public EnumDirection? Direction { get; set; }
         public List<Vector> VectorList { get; set; }
+        public string FullName { get; set; }
+        public string StitchingFile { get; set; }
+        public string Hint { get; set; }
         public double AverageXShift { get; set; }
         public double AverageYShift { get; set; }
         public bool IsErr { get; set; } = false;
@@ -23,6 +25,7 @@ namespace ImgAssemblingLib.Models
         public SelectedFiles(SelectedFiles selectedFiles)
         {
             Id = Id;
+            Mat = selectedFiles.Mat;
             FullName = selectedFiles.FullName;
             StitchingFile = selectedFiles.StitchingFile;
             Hint = selectedFiles.Hint;

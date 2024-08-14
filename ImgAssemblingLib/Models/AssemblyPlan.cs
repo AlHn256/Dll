@@ -5,6 +5,7 @@ namespace ImgAssemblingLib.Models
 {
     public class AssemblyPlan
     {
+        public bool BitMap { get; set; } = false; // Работаем не через файлы, а через массивы Bitmapов
         public string WorkingDirectory { get; set; } = string.Empty;
         public bool FileNameCheck { get; set; } = false; // Проверка и исправление имен файлов
         public string FileNameCheckRezult { get; set; } = "Не выполнено!";
@@ -21,7 +22,6 @@ namespace ImgAssemblingLib.Models
         public string ChekFixImgRezult { get; set; } = "Не выполнено!";
         public string ImgFixingPlan { get; set; } = "imgFixingSettings.fip";
         public string FixImgRezult { get; set; } = "Не выполнено!";
-
 
         public bool FindKeyPoints { get; set; } = true; // Поиск ключевых точек
         public bool ChekStitchPlan { get; set; } = true;

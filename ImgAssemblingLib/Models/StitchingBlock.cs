@@ -6,12 +6,13 @@ using System.IO;
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Drawing;
 
 namespace ImgAssemblingLib.Models
 {
     public class StitchingBlock
     {
+        private bool WorkingWBitmap { get; set; } = true; // Работа с блоком битмапов, а не с файлами
         private double[] Precision = new double[] { 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 5, 10, 20, 50, 100, 200, 300 };// Таблица точности ключевых точек
         private int minShift = 10; // минимально смещение картинок которое допускается из за погрешности определения ключевых точек
         private const int MinSufficientNumberOfPoints = 5; // минимальное и максимальное необходимое количество ключевых точек 
@@ -41,6 +42,41 @@ namespace ImgAssemblingLib.Models
         public DrawMatchesFlags drawMatchesFlags { get; set; } = DrawMatchesFlags.NotDrawSinglePoints;
         private FileEdit fileEdit { get; set; } = new FileEdit();
 
+        //public StitchingBlock(AssemblyPlan assemblyPlan, Bitmap[] bitMapArray)
+        public StitchingBlock(Bitmap[] bitMapArray)
+        {
+            if (bitMapArray == null || bitMapArray.Length == 0)
+            {
+                SetErr("Err StitchingBlock.bitMapArray = null || bitMapArray.Length = 0!!!");
+                return;
+            }
+
+            if (SelectedFiles == null) SelectedFiles = new List<SelectedFiles>();
+            else SelectedFiles.Clear();
+
+            int i = 0, Width = 0, Height = 0;
+            for (i = From; i < bitMapArray.Length; i++)
+            {
+                Mat mat = OpenCvSharp.Extensions.BitmapConverter.ToMat(bitMapArray[i]);
+                if (i == 0)
+                {
+                    Width = mat.Width;
+                    Height = mat.Height;
+                }
+                else if (mat.Width == 0 || mat.Height == 0)
+                {
+                    SetErr("Err GetVectorList.один из параметров (Width\\Height) нулевой!!!\n", EnumErrCode.ZeroFile);
+                    return;
+                }
+                else if (mat.Width != Width || mat.Height != Height)
+                {
+                    SetErr("Err StitchingBlock.не совпадают параметры в одном из блоков mat.Width != Width || mat.Height != Height",EnumErrCode.ParametersDontMatch);
+                    return;
+                }
+
+                SelectedFiles.Add(new SelectedFiles() { Id = i, Mat = mat });
+            }
+        }
         public StitchingBlock(AssemblyPlan assemblyPlan):this(assemblyPlan.StitchingDirectory, assemblyPlan.AdditionalFilter, assemblyPlan.Percent, assemblyPlan.From, assemblyPlan.To, assemblyPlan.Period, assemblyPlan.SelectSearchArea, assemblyPlan.MinHeight, assemblyPlan.MaxHeight, assemblyPlan.MinWight, assemblyPlan.MaxWight)
         { }
         public StitchingBlock(string file, bool additionalFilter,bool percent = true, int from = 0, int to = 100, int period = 1, bool selectSearchArea = false,float minHeight =0,float maxHeight = 0,float minWight=0,float maxWight=0)
@@ -72,6 +108,7 @@ namespace ImgAssemblingLib.Models
                 return;
             }
 
+            WorkingWBitmap = false;
             Percent = percent;
             From = from; 
             To = to;
@@ -156,7 +193,9 @@ namespace ImgAssemblingLib.Models
                     firstSelectedFiles.Hint = "Stitching Imgs " + Path.GetFileNameWithoutExtension(firstSelectedFiles.FullName) + " - " + Path.GetFileName(secondSelectedFiles.FullName);
 
                     // Получаем список векторов по ключевым точкам
-                    List<Vector> VectorList = GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
+                    List<Vector> VectorList = new List <Vector>();
+                    if(WorkingWBitmap) VectorList = GetVectorList(SelectedFiles[i - 1].Mat, SelectedFiles[i].Mat);
+                    else VectorList = GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
 
                     if (IsErr || VectorList.Count == 0)
                     {
@@ -194,24 +233,86 @@ namespace ImgAssemblingLib.Models
                 context.Send(OnTextChanged, "100 %");
             }
         }
+        public List<Vector> GetVectorList(Mat matSrc, Mat matTo, bool makeFotoRezult = false)
+        {
+
+            List<Vector> goodPointList = new List<Vector>();
+            List<DMatch> goodMatches = new List<DMatch>();
+
+            KeyPoint[] keyPointsSrc, keyPointsTo;
+            using (Mat matSrcRet = new Mat())
+            using (Mat matToRet = new Mat())
+            {
+                using (var sift = OpenCvSharp.Features2D.SIFT.Create())
+                {
+                    sift.DetectAndCompute(matSrc, null, out keyPointsSrc, matSrcRet);
+                    sift.DetectAndCompute(matTo, null, out keyPointsTo, matToRet);
+                }
+
+                using (var bfMatcher = new BFMatcher())
+                {
+                    var matches = bfMatcher.KnnMatch(matSrcRet, matToRet, k: 2);
+
+                    if (matches.Length == 0)
+                    {
+                        SetErr("Err StitchImgsByPointsImgs.Length = 0 !!!", EnumErrCode.Err);
+                        return goodPointList;
+                    }
+
+                    if (matches[0].Length == 2) goodPointList = GetVectors(matches, keyPointsSrc, keyPointsTo, out goodMatches);
+                    else
+                    {
+                        SetErr("Err StitchImgsByPointsImgs.matches[0].Length != 2 !!!", EnumErrCode.Err);
+                        return goodPointList;
+                    }
+                }
+
+                if (goodPointList.Count == 0)
+                {
+                    if (string.IsNullOrEmpty(ErrText)) SetErr("Err StitchImgsByPointsImgs.ключевые точки не найдены!!!", EnumErrCode.PointsNotFound);
+                    return goodPointList;
+                }
+
+                //foreach (var elem in goodPointList) elem.GetDirection();
+                if (makeFotoRezult)// Если нужно создаем изображение с найденными точками
+                {
+                    VectorInfo vectorInfo = GetAverages(goodPointList);
+                    goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
+
+                    string text = goodPointList.Count + " points found " +
+                        (Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? Math.Round(vectorInfo.AverageXShift, 2) : Math.Round(vectorInfo.AverageYShift, 2)).ToString() +
+                          " " + vectorInfo.Direction + " Shift \n";
+
+                    int i = 0;
+                    foreach (Vector point in goodPointList) text += "P " + i++ + " Sh " + Math.Round(point.Delta, 2) + " " + point.Direction + " Shift " + point.Delta +
+                         " Identity " + Math.Round(point.Identity, 2) + " CoDirection " + Math.Round(point.CoDirection, 2) + " dX " + Math.Round(point.dX, 2) + " dY " + Math.Round(point.Yfr, 2) + "\n";
+
+                    OnTextChanged(text);
+                    Mat RezultImg = new Mat();
+                    Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, RezultImg, flags: drawMatchesFlags);
+                    OnChangedImg(RezultImg);
+                }
+            }
+            return goodPointList;
+        }
 
         public List<Vector> GetVectorList(string file1, string file2, bool makeFotoRezult = false)
         {
-            List<Vector> goodPointList = new List<Vector>();
-            List<DMatch> goodMatches = new List<DMatch>();
             using (Mat matSrc = new Mat(file1))
             using (Mat matTo = new Mat(file2))
-            { 
+            {
+                List<Vector> goodPointList = new List<Vector>();
+                List<DMatch> goodMatches = new List<DMatch>();
                 //Mat matSrc = Cv2.ImRead(file1, ImreadModes.Grayscale);
-                //Mat matTo = Cv2.ImRead(file2, ImreadModes.Grayscale); 
+                //Mat matTo = Cv2.ImRead(file2, ImreadModes.Grayscale);
                 if (matSrc.Width == 0 || matSrc.Height == 0 || matTo.Width == 0 || matTo.Height == 0)
                 {
-                    SetErr("Err один из фалов " + file1 + " или " + file2 + " не найден!!!\n", EnumErrCode.FileNotFound);
+                    SetErr("Err GetVectorList.один из фалов " + file1 + " или " + file2 + " не найден!!!\n", EnumErrCode.FileNotFound);
                     return goodPointList;
                 }
             if (matSrc.Width != matTo.Width || matSrc.Height != matTo.Height)
             {
-                SetErr("Err один из парамеров фалов " + file1 + " или " + file2 + " не совпадает!!!\n", EnumErrCode.Err);
+                SetErr("Err GetVectorList.один из парамеров фалов " + file1 + " или " + file2 + " не совпадает!!!\n", EnumErrCode.Err);
                 return goodPointList;
             }
             KeyPoint[] keyPointsSrc, keyPointsTo;
@@ -249,7 +350,6 @@ namespace ImgAssemblingLib.Models
                     }
 
                     //foreach (var elem in goodPointList) elem.GetDirection();
-
 
                     if (makeFotoRezult)// Если нужно создаем изображение с найденными точками
                     {
@@ -514,38 +614,19 @@ namespace ImgAssemblingLib.Models
             }
 
             AddStitchingInfo();
-
-                //if (From != 0 || To != 100)
-                //{
-                //    int Fr = 0;
-                //    int To = SelectedFiles.Count;
-
-                //    if (From != 0) Fr = SelectedFiles.Count * From / 100;
-                //    if (To != 100) To = SelectedFiles.Count * To / 100;
-                //    SelectedFiles = SelectedFiles.GetRange(Fr, To - Fr);
-                //}
-
-
             SelectedFiles = SelectedFiles.Where(x => !x.IsErr).ToList(); // Удаляем все ошибочные сектора
             if (Direction == EnumDirection.Right || Direction == EnumDirection.Down) InvertDirection(); // Если направление движения правое то делаем инверсию SelectedFiles
-
-            //if (SelectedFiles.Count > 2)
-            //    if (SelectedFiles[SelectedFiles.Count - 2].IsErr)
-            //    {
-            //        int z = SelectedFiles.Count - 2;
-            //        while (SelectedFiles[--z].IsErr);
-
-            //        var sdfw = SelectedFiles[z];
-            //        int sdf = 0;
-            //        SelectedFiles = SelectedFiles.Take(z+2).ToList();
-            //    }
 
             SynchronizationContext context = (SynchronizationContext)param;
             // Сборка картинки по частям
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
+                if(i == SelectedFiles.Count - 2 && WorkingWBitmap)
+                {
+                    break;
+                }
                 if (SelectedFiles[i].IsErr) continue;
-                if(context!=null) context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
+                if (context != null) context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
                 if (context != null) context.Send(OnTextChanged, "Frame Union " + i * 100 / SelectedFiles.Count + " %");
 
                 if (SelectedFiles.Count == 2) // Вариант на случай если нужно собрать только 2 картинки
@@ -586,13 +667,23 @@ namespace ImgAssemblingLib.Models
                 else
                 {
                     double shift = averageShift ? SelectedFiles[0].AverageShift : SelectedFiles[i].AverageShift;
-                    if (i == 0) rezult = JoinImg(SelectedFiles[i].FullName, SelectedFiles[i + 1].FullName, (int)Math.Round(shift), EnumFramePosition.First, Delta);
-                    else if (i == SelectedFiles.Count - 2) rezult = JoinImg(rezult, SelectedFiles[i + 1].FullName, (int)Math.Round(shift), EnumFramePosition.Last, Delta);
-                    else rezult = JoinImg(rezult, SelectedFiles[i + 1].FullName, (int)Math.Round(shift), EnumFramePosition.Midle, Delta);
+
+                    if (WorkingWBitmap)
+                    {
+                        if (i == 0) rezult = JoinImg(SelectedFiles[i].Mat, SelectedFiles[i + 1].Mat, (int)Math.Round(shift), EnumFramePosition.First, Delta);
+                        else if (i == SelectedFiles.Count - 2) rezult = JoinImg(rezult, SelectedFiles[i + 1].Mat, (int)Math.Round(shift), EnumFramePosition.Last, Delta);
+                        else rezult = JoinImg(rezult, SelectedFiles[i + 1].Mat, (int)Math.Round(shift), EnumFramePosition.Midle, Delta);
+                    }
+                    else
+                    {
+                        if (i == 0) rezult = JoinImg(SelectedFiles[i].FullName, SelectedFiles[i + 1].FullName, (int)Math.Round(shift), EnumFramePosition.First, Delta);
+                        else if (i == SelectedFiles.Count - 2) rezult = JoinImg(rezult, SelectedFiles[i + 1].FullName, (int)Math.Round(shift), EnumFramePosition.Last, Delta);
+                        else rezult = JoinImg(rezult, SelectedFiles[i + 1].FullName, (int)Math.Round(shift), EnumFramePosition.Midle, Delta);
+                    }
                 }
                 if (rezult.Width == 0 || rezult.Height == 0)
                 {
-                    SetErr("Err Итоговая картинка не собрана!!!");
+                    SetErr("Итоговая картинка не собрана. Ошибка на "+i+ " кадре!!!");
                     break;
                 }
             }
@@ -857,19 +948,33 @@ namespace ImgAssemblingLib.Models
                 foreach (var info in ErrList) StitchingInfo += info + "\n";
             }
         }
-        private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0) => JoinImg(new Mat(file1), file2, shift, enumFramePosition, Delta);
-        private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition FramePosition, int Delta = 0)
+        //private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0) => JoinImg(new Mat(file1), file2, shift, enumFramePosition, Delta);
+        private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)
+        {
+            return JoinImg(new Mat(file1), new Mat(file2), shift, enumFramePosition, Delta);
+        }
+
+        //private Mat JoinImg(string file1, Mat Img2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)
+        //{
+        //    return JoinImg(new Mat(file1), Img2, shift, enumFramePosition, Delta);
+        //}
+
+        private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)
+        {
+            return JoinImg(Img1, new Mat(file2), shift, enumFramePosition, Delta);
+        }
+
+        //private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition FramePosition, int Delta = 0)
+        private Mat JoinImg(Mat Img1, Mat Img2, int shift, EnumFramePosition FramePosition, int Delta = 0)
         {
             shift = Math.Abs(shift);
-            //if (shift < minShift)return Img1;
-            
             Mat rezult = new Mat();
-            if (!File.Exists(file2))
-            {
-                SetErr("Err !File.Exists(file2) !!!");
-                return rezult;
-            }
-            Mat Img2 = new Mat(file2);
+            //if (!File.Exists(file2))
+            //{
+            //    SetErr("Err !File.Exists(file2) !!!");
+            //    return rezult;
+            //}
+            //Mat Img2 = new Mat(file2);
 
             if (Img1.Width == 0 || Img1.Height == 0 || Img2.Width == 0 || Img2.Height == 0)
             {

@@ -21,10 +21,9 @@ namespace ImgAssemblingLib.AditionalForms
         private string imgFixingFile = imgDefoltFixingFile;
         public event Action<int> ProcessChanged;
         public event Action<string> TextChanged;
-        private MagickImage[] DataArray { get; set; }
         private Bitmap[] BitmapArray { get; set; }
-        private bool IsErr { get; set; } = false;
-        private string ErrText { get; set; } = string.Empty;
+        public bool IsErr { get; set; } = false;
+        public string ErrText { get; set; } = string.Empty;
 
         public ImgFixingForm(string directory)
         {
@@ -49,16 +48,6 @@ namespace ImgAssemblingLib.AditionalForms
             TryReadSettings(fileLoad);
             InputDirTxtBox.Text = directory;
         }
-
-
-        public ImgFixingForm(string imgFixingPlan, MagickImage[] dataArray)
-        {
-            InitializeComponent();
-            DataArray = dataArray;
-            if (!string.IsNullOrEmpty(imgFixingPlan)) imgFixingFile = imgFixingPlan;
-            TryReadSettings(false);
-        }
-
         public ImgFixingForm(string imgFixingPlan, bool test = false)
         {
             InitializeComponent();
@@ -68,7 +57,6 @@ namespace ImgAssemblingLib.AditionalForms
                 TryReadSettings(false);
             }
         }
-
         public void OnProgressChanged(object i)
         {
             if (ProcessChanged != null) ProcessChanged((int)i);
@@ -77,7 +65,6 @@ namespace ImgAssemblingLib.AditionalForms
         {
             if (TextChanged != null) TextChanged((string)txt);
         }
-
         void WindowsForm_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
@@ -459,7 +446,7 @@ namespace ImgAssemblingLib.AditionalForms
             var JpegCodecInfo = ImageCodecInfo.GetImageEncoders().Where(x => x.FormatDescription == "JPEG").First();
             ImageCodecInfo jpegCodec = JpegCodecInfo;
             EncoderParameters encoderParams = new EncoderParameters(1);
-            EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+            EncoderParameter qualityParam = new EncoderParameter(Encoder.Quality, quality);
             encoderParams.Param[0] = qualityParam;
             MemoryStream mss = new MemoryStream();
             FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
@@ -472,20 +459,6 @@ namespace ImgAssemblingLib.AditionalForms
             fs.Close();
             return matriz;
         }
-
-        //public static byte[] BitmapToByte(Image img, int quality)
-        //{
-        //    ImageCodecInfo jpegCodec = ImageCodecInfo.GetImageEncoders().Where(codec => codec.MimeType == "image/jpeg").First();
-        //    EncoderParameters encoderParams = new EncoderParameters(1);
-        //    encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-        //    MemoryStream mss = new MemoryStream();
-        //    img.Save(mss, jpegCodec, encoderParams);
-        //    byte[] matriz = mss.ToArray();
-
-        //    mss.Close();
-        //    return matriz;
-        //}
-
         public Bitmap[] FixImgArray(Bitmap[] dataArray)
         {
             var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg", x, 99)); }).ToArray();
@@ -494,11 +467,8 @@ namespace ImgAssemblingLib.AditionalForms
 
             return DataArray.Select(x => MagickImageToBitMap(x)).ToArray();
         }
-
         private Bitmap MagickImageToBitMap(MagickImage magickImage)
         {
-            // MagickImage magickImage = EditImg(Image);
-            //var imageData = ;
             MemoryStream ms = new MemoryStream(magickImage.ToByteArray());
             return new Bitmap(ms);
         }
@@ -575,15 +545,6 @@ namespace ImgAssemblingLib.AditionalForms
             return image;
         }
 
-        private async void ImgFixingForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //await TrySaveSettings();
-        }
-
-        private async void ImgFixingForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //await TrySaveSettings();
-        }
         public string GetImgFixingPlan() => imgFixingFile;
         private async void SaveAsBtn_Click(object sender, EventArgs e)
         {

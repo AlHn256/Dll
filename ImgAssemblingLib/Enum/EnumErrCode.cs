@@ -5,6 +5,8 @@
         NoErr,
         Err,
         FileNotFound,
+        ZeroFile, // Нулевой файл или блок битмапа
+        ParametersDontMatch, // Не совпадают параметры между блоками
         Copy, // Копии кадров
         PointsNotFound, // Не найдены подходящие точки
         SiftThreshold, // Смещение не превысило порог погрешности

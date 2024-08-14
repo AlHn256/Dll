@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -34,12 +35,11 @@ namespace ImgAssemblingLib.AditionalForms
             ImgFixingPlanTxtBox.DragDrop += ImgFixingPlanTxtBox_DragDrop;
             ImgFixingPlanTxtBox.DragEnter += ImgFixingPlanTxtBox_DragEnter;
 
-            OpenWorkDirectoryBtn.Enabled = false;
-            OpenFixingImgDirectoryBtn.Enabled = false;
-            OpenStitchingDirectoryBtn.Enabled = false;
+            //OpenWorkDirectoryBtn.Enabled = false;
+            //OpenFixingImgDirectoryBtn.Enabled = false;
+            //OpenStitchingDirectoryBtn.Enabled = false;
         }
         public AssemblyPlan GetAssemblingPlan() => AssemblyPlan;
-
         void WindowsForm_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
@@ -70,7 +70,7 @@ namespace ImgAssemblingLib.AditionalForms
             //CheckFileNamesChckBox.Checked = AssemblyPlan.FileNameCheck;
             //FixFileNamesChckBox.Checked = AssemblyPlan.FileNameFixing;
             //FindCopyChckBox.Checked = AssemblyPlan.DelFileCopy;
-
+            BitMapChckBox.Checked = AssemblyPlan.BitMap;
             WorkingDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory;
             FixImgChckBox.Checked = AssemblyPlan.FixImg;
             FixingImgDirectoryTxtBox.Text = AssemblyPlan.FixingImgDirectory;
@@ -170,6 +170,8 @@ namespace ImgAssemblingLib.AditionalForms
             //AssemblyPlan.FileNameCheck = CheckFileNamesChckBox.Checked;
             //AssemblyPlan.DelFileCopy = FindCopyChckBox.Checked;
 
+            AssemblyPlan.BitMap = BitMapChckBox.Checked;
+
             AssemblyPlan.WorkingDirectory = WorkingDirectoryTxtBox.Text;
             AssemblyPlan.FixImg = FixImgChckBox.Checked;
             AssemblyPlan.FixingImgDirectory = FixingImgDirectoryTxtBox.Text;
@@ -223,7 +225,7 @@ namespace ImgAssemblingLib.AditionalForms
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 var dir = fileEdit.GetDefoltDirectory();
-                openFileDialog.InitialDirectory = "D:\\Work\\C#\\ImageStitching\\bin\\Debug\\net8.0-windows";
+                //openFileDialog.InitialDirectory = "D:\\Work\\C#\\ImageStitching\\bin\\Debug\\net8.0-windows";
                 openFileDialog.Filter = "Assembling file plan (*.asp)|*.asp|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
@@ -358,14 +360,43 @@ namespace ImgAssemblingLib.AditionalForms
             if(AssemblyPlan != null)
             {
                 UpdateAssemblyPlan();
-                Assembling assembling = new Assembling(AssemblyPlan, null);
+                Assembling assembling;
+
+                if (BitMapChckBox.Checked)
+                {
+                    string ImgFixingPlan = string.IsNullOrEmpty(ImgFixingPlanTxtBox.Text) ? string.Empty: ImgFixingPlanTxtBox.Text; // Файл с параментрами корректировки изображений
+                    string WorkingDirectory = string.IsNullOrEmpty(WorkingDirectoryTxtBox.Text) ? string.Empty : WorkingDirectoryTxtBox.Text; // Папка изображений для испраления
+                    //string WorkingDirectory = "E:\All\Side1\Left"; // Папка изображений для испраления
+                    if (!fileEdit.ChkDir(WorkingDirectory)) return;
+
+                    //Для имитации загружаем файлы из папки и создаем массив битмапов
+                    FileInfo[] fileList = fileEdit.SearchFiles(WorkingDirectory);
+
+                    if (fileList.Length == 0) return;
+                    Bitmap[] dataArray = fileList.Select(x => { return new Bitmap(x.FullName);}).ToArray();
+                    assembling = new Assembling(AssemblyPlan, dataArray, null);
+                }
+                else assembling = new Assembling(AssemblyPlan, null);
+
                 await assembling.StartAssembling();
-                if(OpenResultChckBox.Checked)
+
+                if (assembling.IsErr) InfoLabel.Text = assembling.ErrText;
+                if (OpenResultChckBox.Checked)
                 {
                     string SavedFileName = assembling.GetSavedFileName();
-                    if(!string.IsNullOrEmpty(SavedFileName) ) Process.Start(SavedFileName);
+                    if(!string.IsNullOrEmpty(SavedFileName))Process.Start(SavedFileName);
                 }
             }
+        }
+
+        private void SaveResultChckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if(!SaveResultChckBox.Checked) OpenResultChckBox.Checked = false;
+        }
+
+        private void OpenResultChckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (OpenResultChckBox.Checked) SaveResultChckBox.Checked = true;
         }
     }
 }

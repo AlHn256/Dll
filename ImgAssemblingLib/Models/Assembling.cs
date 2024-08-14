@@ -4,6 +4,7 @@ using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace ImgAssemblingLib.Models
 {
     public class Assembling
     {
+        private Bitmap[] BitmapData { get; set; }
         private AssemblyPlan AssemblyPlan { get; set; }
         private FileEdit fileEdit = new FileEdit();
         private string SavedFileName { get; set; } = string.Empty;
@@ -64,6 +66,15 @@ namespace ImgAssemblingLib.Models
         public Assembling(AssemblyPlan assemblyPlan, object param)
         {
             AssemblyPlan = assemblyPlan;
+            _context = (SynchronizationContext)param;
+            logger = LogManager.GetCurrentClassLogger();
+        }
+        
+        public Assembling(AssemblyPlan assemblyPlan, Bitmap[] bitmapData, object param)
+        {
+            BitmapData = bitmapData;
+            AssemblyPlan = assemblyPlan;
+            _context = (SynchronizationContext)param;
             logger = LogManager.GetCurrentClassLogger();
         }
 
@@ -88,8 +99,16 @@ namespace ImgAssemblingLib.Models
 
         public bool CheckPlane()
         {
-            if (AssemblyPlan == null) return SetErr("Err AssemblyPlan=null!!!");
-            if (string.IsNullOrEmpty(AssemblyPlan.WorkingDirectory)) return SetErr("Err " + AssemblyPlan.WorkingDirectory + " IsNullOrEmpty!!!");
+            if (AssemblyPlan == null) return SetErr("Err AssemblyPlan = null!!!");
+            if (AssemblyPlan.BitMap)
+            {
+                if (BitmapData.Length == 0) return SetErr("Err BitmapData = 0!!!");
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(AssemblyPlan.WorkingDirectory)) return SetErr("Err " + AssemblyPlan.WorkingDirectory + " IsNullOrEmpty!!!");
+            }
+            
             return true;
         }
 
@@ -99,91 +118,137 @@ namespace ImgAssemblingLib.Models
             stopwatch.Start();
             TimeSpan ts = stopwatch.Elapsed;
             TimeSpan tSum = TimeSpan.Zero;
+            
             bool contectIsOn = _context == null? false: true;
+            bool workingWBitmap = (AssemblyPlan.BitMap && BitmapData != null && BitmapData.Length != 0) ? true : false;
 
-            if(contectIsOn) _context.Send(OnRTBAddInfo, "   Delta = " + AssemblyPlan.Delta + "\n   Start File Name Checking ");
-            logger.Info("Delta = " + AssemblyPlan.Delta + "   Start File Name Checking");
-            if (AssemblyPlan.FileNameCheck)
+            if (workingWBitmap)
             {
-                var check = fileEdit.CheckFileName(AssemblyPlan.WorkingDirectory);
-                if (check){SendFinished();AssemblyPlan.FileNameCheckRezult = "Выполнено.";}
-                else { SendErr("Ошибка при проверке файлов в папке " + AssemblyPlan.WorkingDirectory); AssemblyPlan.FileNameCheckRezult = ErrText; }
+                logger.Info("Working with Bitmap. BitmapData - " + BitmapData.Length);
+                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Bitmap. BitmapData - " + BitmapData.Length);
             }
-            else {SendSkipped();AssemblyPlan.FileNameCheckRezult = "Этап пропущен!!!";}
-            SendTime("   Time ", ts);
-            stopwatch.Restart();
-
-            if (contectIsOn) _context.Send(OnRTBAddInfo, "   File Name Fixing ");
-            logger.Info("File Name Fixing");
-            if (AssemblyPlan.FileNameFixing)
+            else
             {
-                if (fileEdit.FixFileName(AssemblyPlan.WorkingDirectory)){SendFinished(); AssemblyPlan.FileNameFixingRezult = "Выполнено.";}
-                else { SendErr(" "); AssemblyPlan.FileNameFixingRezult = "Ошибка!!!"; }
+                logger.Info("Working with Bitmap. Directory");
+                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Bitmap. Directory");
             }
-            else {SendSkipped();AssemblyPlan.FileNameFixingRezult = "Этап пропущен!!!";}
-            ts = stopwatch.Elapsed;
-            tSum += ts;
-            SendTime("  Time ", ts);
-            stopwatch.Restart();
+            logger.Info("Delta = " + AssemblyPlan.Delta);
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "   Delta = " + AssemblyPlan.Delta);
 
-            if (contectIsOn) _context.Send(OnRTBAddInfo, "   Del File Copy ");
-            logger.Info("Del File Copy");
-            if (AssemblyPlan.DelFileCopy)
+            if (!CheckPlane()) return false;
+
+            if (!workingWBitmap)
             {
-                if (await fileEdit.FindCopyAndDel(AssemblyPlan.WorkingDirectory))
+                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Start File Name Checking ");
+                logger.Info("   Start File Name Checking");
+                if (AssemblyPlan.FileNameCheck)
                 {
-                    if (contectIsOn) _context.Send(OnRTBAddInfo, " - " + fileEdit.TextMessag + "\n");
-                    logger.Info(fileEdit.TextMessag);
-                    AssemblyPlan.DelFileCopyRezult = fileEdit.TextMessag;
+                    var check = fileEdit.CheckFileName(AssemblyPlan.WorkingDirectory);
+                    if (check) { SendFinished(); AssemblyPlan.FileNameCheckRezult = "Выполнено."; }
+                    else { SendErr("Ошибка при проверке файлов в папке " + AssemblyPlan.WorkingDirectory); AssemblyPlan.FileNameCheckRezult = ErrText; }
                 }
-                else { SendErr(fileEdit.ErrText + "\n"); AssemblyPlan.DelFileCopyRezult = fileEdit.ErrText; }
-                fileEdit.ClearInformation();
+                else { SendSkipped(); AssemblyPlan.FileNameCheckRezult = "Этап пропущен!!!"; }
+                SendTime("   Time ", ts);
+                stopwatch.Restart();
+
+                if (contectIsOn) _context.Send(OnRTBAddInfo, "   File Name Fixing ");
+                logger.Info("File Name Fixing");
+                if (AssemblyPlan.FileNameFixing)
+                {
+                    if (fileEdit.FixFileName(AssemblyPlan.WorkingDirectory)) { SendFinished(); AssemblyPlan.FileNameFixingRezult = "Выполнено."; }
+                    else { SendErr(" "); AssemblyPlan.FileNameFixingRezult = "Ошибка!!!"; }
+                }
+                else { SendSkipped(); AssemblyPlan.FileNameFixingRezult = "Этап пропущен!!!"; }
+                ts = stopwatch.Elapsed;
+                tSum += ts;
+                SendTime("  Time ", ts);
+                stopwatch.Restart();
+
+                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Del File Copy ");
+                logger.Info("Del File Copy");
+                if (AssemblyPlan.DelFileCopy)
+                {
+                    if (await fileEdit.FindCopyAndDel(AssemblyPlan.WorkingDirectory))
+                    {
+                        if (contectIsOn) _context.Send(OnRTBAddInfo, " - " + fileEdit.TextMessag + "\n");
+                        logger.Info(fileEdit.TextMessag);
+                        AssemblyPlan.DelFileCopyRezult = fileEdit.TextMessag;
+                    }
+                    else { SendErr(fileEdit.ErrText + "\n"); AssemblyPlan.DelFileCopyRezult = fileEdit.ErrText; }
+                    fileEdit.ClearInformation();
+                }
+                else { SendSkipped(); AssemblyPlan.DelFileCopyRezult = "Этап пропущен!!!"; }
+                ts = stopwatch.Elapsed;
+                tSum += ts;
+                SendTime("  Time ", ts);
+                stopwatch.Restart();
             }
-            else {SendSkipped();AssemblyPlan.DelFileCopyRezult = "Этап пропущен!!!";}
-            ts = stopwatch.Elapsed;
-            tSum += ts;
-            SendTime("  Time ", ts);
-            stopwatch.Restart();
 
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Img Fixing ");
             logger.Info("Img Fixing"); // Исправление кадров по загруженной инструкции
             if (AssemblyPlan.FixImg)
             {
-                string ImgFixingDir = string.Empty;
-                if (string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory)) ImgFixingDir = AssemblyPlan.WorkingDirectory + "AutoOut";
-                else ImgFixingDir = AssemblyPlan.FixingImgDirectory;
-
-                ImgFixingForm distortionTest = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory, false);
-                if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = distortionTest.GetImgFixingPlan();
-                if (contectIsOn) _context.Send(OnRTBAddInfo, " Checking old files ");
-                logger.Info("Checking old files");
-                if (AssemblyPlan.ChekFixImg && distortionTest.CheckFixingImg(ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
+                if (workingWBitmap)
                 {
-                    AssemblyPlan.StitchingDirectory = ImgFixingDir;
-                    if (contectIsOn) _context.Send(OnRTBAddInfo, " - Using old files\n");
-                    logger.Info("Using old files");
-                    AssemblyPlan.ChekFixImgRezult = "Выполнено.";
-                    AssemblyPlan.FixImgRezult = "Пропущено т.к. уже есть исправленные файлы.";
+                    logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
+                    if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
+
+                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, false);
+                    BitmapData = imgFixingForm.FixImgArray(BitmapData);
+                    if (imgFixingForm.IsErr || BitmapData.Length == 0)
+                    {
+                        SendErr(" "); AssemblyPlan.FixImgRezult = "Не выполнено из-за ошибки!!!";
+                        if (imgFixingForm.IsErr)
+                        {
+                            AssemblyPlan.FixImgRezult = imgFixingForm.ErrText;
+                            return SetErr(imgFixingForm.ErrText);
+                        }
+                        if (BitmapData.Length == 0)
+                        {
+                            AssemblyPlan.FixImgRezult = "Err StartAssembling.BitmapData.Length = 0!!!";
+                            return SetErr("Err StartAssembling.BitmapData.Length = 0!!!");
+                        }
+                    }
+                    else { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; }
                 }
                 else
                 {
-                    if (AssemblyPlan.ChekFixImg)
+                    string ImgFixingDir = string.Empty;
+                    if (string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory)) ImgFixingDir = AssemblyPlan.WorkingDirectory + "AutoOut";
+                    else ImgFixingDir = AssemblyPlan.FixingImgDirectory;
+
+                    ImgFixingForm distortionTest = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory, false);
+                    if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = distortionTest.GetImgFixingPlan();
+                    if (contectIsOn) _context.Send(OnRTBAddInfo, " Checking old files ");
+                    logger.Info("Checking old files");
+                    if (AssemblyPlan.ChekFixImg && distortionTest.CheckFixingImg(ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
                     {
-                        if (contectIsOn) _context.Send(OnRTBAddInfo, " - Old files not founded ");
-                        logger.Info("Old files not founded");
-                        AssemblyPlan.ChekFixImgRezult = "Исправленные файлы не найдены!!!";
+                        AssemblyPlan.StitchingDirectory = ImgFixingDir;
+                        if (contectIsOn) _context.Send(OnRTBAddInfo, " - Using old files\n");
+                        logger.Info("Using old files");
+                        AssemblyPlan.ChekFixImgRezult = "Выполнено.";
+                        AssemblyPlan.FixImgRezult = "Пропущено т.к. уже есть исправленные файлы.";
                     }
+                    else
+                    {
+                        if (AssemblyPlan.ChekFixImg)
+                        {
+                            if (contectIsOn) _context.Send(OnRTBAddInfo, " - Old files not founded ");
+                            logger.Info("Old files not founded");
+                            AssemblyPlan.ChekFixImgRezult = "Исправленные файлы не найдены!!!";
+                        }
 
-                    distortionTest.ProcessChanged += worker_ProcessChang;
-                    distortionTest.TextChanged += worker_TextChang;
-                    bool checkFixinImg = false;
+                        distortionTest.ProcessChanged += worker_ProcessChang;
+                        distortionTest.TextChanged += worker_TextChang;
+                        bool checkFixinImg = false;
 
-                    logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
-                    if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
-                    await Task.Run(() => { checkFixinImg = distortionTest.FixImges(_context, ImgFixingDir); });
+                        logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
+                        if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
+                        await Task.Run(() => { checkFixinImg = distortionTest.FixImges(_context, ImgFixingDir); });
 
-                    if (checkFixinImg){SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir;}
-                    else { SendErr(" "); AssemblyPlan.FixImgRezult = "Не выполнено из-за ошибки!!!"; }
+                        if (checkFixinImg) { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
+                        else { SendErr(" "); AssemblyPlan.FixImgRezult = "Не выполнено из-за ошибки!!!"; }
+                    }
                 }
             }
             else {SendSkipped();AssemblyPlan.FixImgRezult = "Этап пропущен!!!";AssemblyPlan.ChekFixImgRezult = "Этап пропущен!!!";}
@@ -194,11 +259,10 @@ namespace ImgAssemblingLib.Models
 
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Find Key Points ");
             logger.Info("Find Key Points"); // Поиск ключевых точек
-
-            if (AssemblyPlan.FindKeyPoints) 
+            if (AssemblyPlan.FindKeyPoints)
             {
-                if (await FindKeyPoints()){SendFinished(); AssemblyPlan.FindKeyPointsRezult = "Выполнено.";}
-                else {SendErr(ErrText);AssemblyPlan.FindKeyPointsRezult = ErrText;}
+                if (await FindKeyPoints()) { SendFinished(); AssemblyPlan.FindKeyPointsRezult = "Выполнено."; }
+                else { SendErr(ErrText); AssemblyPlan.FindKeyPointsRezult = ErrText; }
             }
             else { SendSkipped(); AssemblyPlan.StitchRezult = "Этап пропущен!!!"; }
             ts = stopwatch.Elapsed;
@@ -210,10 +274,10 @@ namespace ImgAssemblingLib.Models
             logger.Info("Get Speed");
             if (AssemblyPlan.SpeedCounting) // Подсчет скорости
             {
-                //SpeedСounter speedСounter = new(stitchingBlock.GetSelectedFiles(), AssemblyPlan);
+                // SpeedСounter speedСounter = new(stitchingBlock.GetSelectedFiles(), AssemblyPlan);
                 SpeedСounter speedСounter = new SpeedСounter(stitchingBlock.GetSelectedFiles(), AssemblyPlan.MillimetersInPixel, AssemblyPlan.TimePerFrame);
                 AssemblyPlan.Speed = speedСounter.GetSpeedByPoints(CalculationSpeedDespiteErrors);
-               // AssemblyPlan.Speed = speedСounter.GetSpeedByPoints(true);
+                // AssemblyPlan.Speed = speedСounter.GetSpeedByPoints(true);
                 var avSpeedList = speedСounter.GetSpeedListByPoints(10);
                 double avSp = 0;
                 if (avSpeedList.Count > 1)avSp = avSpeedList.Sum(x => x.Sp) / avSpeedList.Count();
@@ -293,18 +357,28 @@ namespace ImgAssemblingLib.Models
 
         private async Task<bool> FindKeyPoints()
         {
-            //stitchingBlock = new StitchingBlock(AssemblyPlan.StitchingDirectory, AssemblyPlan.AdditionalFilter,  AssemblyPlan.Percent, AssemblyPlan.From, AssemblyPlan.To, AssemblyPlan.Period);
-            stitchingBlock = new StitchingBlock(AssemblyPlan);
-            stitchingBlock.ProcessChanged += worker_ProcessChang;
-            stitchingBlock.TextChanged += worker_TextChang;
-
-            bool tryReadMapPlan = false;
-            if (stitchingBlock.IsErr) return SetErr(stitchingBlock.GetErrText());
-            if (AssemblyPlan.ChekStitchPlan) tryReadMapPlan = await stitchingBlock.TryReadMapPlan(AssemblyPlan.From, AssemblyPlan.To); // Если включенно пробуем найти старый план сборки
-            if (!tryReadMapPlan)
+            if (AssemblyPlan.BitMap)
             {
-                await Task.Run(() => { stitchingBlock.FindKeyPoints(_context); }); // Если плана нет, запускаем создние нового
-                if (AssemblyPlan.DefaultParameters || (AssemblyPlan.Percent && AssemblyPlan.From == 0&& AssemblyPlan.To == 100)) await stitchingBlock.TrySaveMapPlan();
+                stitchingBlock = new StitchingBlock(BitmapData);
+                stitchingBlock.ProcessChanged += worker_ProcessChang;
+                stitchingBlock.TextChanged += worker_TextChang;
+                await Task.Run(() => { stitchingBlock.FindKeyPoints(_context); });
+            }
+            else
+            {
+                //stitchingBlock = new StitchingBlock(AssemblyPlan.StitchingDirectory, AssemblyPlan.AdditionalFilter,  AssemblyPlan.Percent, AssemblyPlan.From, AssemblyPlan.To, AssemblyPlan.Period);
+                stitchingBlock = new StitchingBlock(AssemblyPlan);
+                stitchingBlock.ProcessChanged += worker_ProcessChang;
+                stitchingBlock.TextChanged += worker_TextChang;
+
+                bool tryReadMapPlan = false;
+                if (stitchingBlock.IsErr) return SetErr(stitchingBlock.GetErrText());
+                if (AssemblyPlan.ChekStitchPlan) tryReadMapPlan = await stitchingBlock.TryReadMapPlan(AssemblyPlan.From, AssemblyPlan.To); // Если включенно пробуем найти старый план сборки
+                if (!tryReadMapPlan)
+                {
+                    await Task.Run(() => { stitchingBlock.FindKeyPoints(_context); }); // Если плана нет, запускаем создние нового
+                    if (AssemblyPlan.DefaultParameters || (AssemblyPlan.Percent && AssemblyPlan.From == 0 && AssemblyPlan.To == 100)) await stitchingBlock.TrySaveMapPlan();
+                }
             }
 
             //stitchingBlock.CheckErr();
@@ -315,7 +389,6 @@ namespace ImgAssemblingLib.Models
             //    bool fixinErr = stitchingBlock.CheckAndFixErr(_context);
             //    if (!fixinErr) return SetErr(stitchingBlock.ErrText);
             //}
-            
             return true;
         }
         private async Task<bool> StitchImgs()

@@ -113,10 +113,10 @@ namespace ImgAssemblingLib.AditionalForms
             {
                 FromTxtBox.Text = "0";
                 ToTxtBox.Text = "100";
-                await AssemblyByPlan(true);
+                await StartAssembling(true);
             }
-            else if (e.KeyChar == ']' || e.KeyChar == '}' || e.KeyChar == 'ъ' || e.KeyChar == 'Ъ' || e.KeyChar == '6') { Delta += deltaStep; await AssemblyByPlan(true); }
-            else if (e.KeyChar == '[' || e.KeyChar == '{' || e.KeyChar == 'х' || e.KeyChar == 'Х' || e.KeyChar == '4') { Delta -= deltaStep; await AssemblyByPlan(true); }
+            else if (e.KeyChar == ']' || e.KeyChar == '}' || e.KeyChar == 'ъ' || e.KeyChar == 'Ъ' || e.KeyChar == '6') { Delta += deltaStep; await StartAssembling(true); }
+            else if (e.KeyChar == '[' || e.KeyChar == '{' || e.KeyChar == 'х' || e.KeyChar == 'Х' || e.KeyChar == '4') { Delta -= deltaStep; await StartAssembling(true); }
             else if (e.KeyChar == '.' || e.KeyChar == '>' || e.KeyChar == 'ю' || e.KeyChar == 'Ю' || e.KeyChar == ',' || e.KeyChar == '<' || e.KeyChar == 'б' || e.KeyChar == 'Б' || e.KeyChar == 'k' || e.KeyChar == ';' || e.KeyChar == 'K' || e.KeyChar == ':' || e.KeyChar == 'л' || e.KeyChar == 'ж' || e.KeyChar == 'Л' || e.KeyChar == 'Ж')
             {
                 if (FileList.Count == 0) { RTB.Text = "Err FileList=0!!!"; return; }
@@ -444,7 +444,6 @@ namespace ImgAssemblingLib.AditionalForms
             }
             else ShowLoadeImgs();
         }
-
         private void ZoomIn()
         {
             Zoom += 0.2m;
@@ -517,7 +516,6 @@ namespace ImgAssemblingLib.AditionalForms
             //    }
             //}
             //else FirstFile = File1TxtBox.Text;
-
 
             if (string.IsNullOrEmpty(FirstFile) && string.IsNullOrEmpty(FileDirTxtBox.Text))
             {
@@ -907,8 +905,8 @@ namespace ImgAssemblingLib.AditionalForms
         private void FromTxtBox_TextChanged(object sender, EventArgs e) => UpDateFrom();
         private void ToTxtBox_TextChanged(object sender, EventArgs e) => UpDateTo();
         private void PeriodTxtBox_TextChanged(object sender, EventArgs e) => UpDatePeriod();
-        private async void StitchingByPlanBtn_Click(object sender, EventArgs e) => await AssemblyByPlan(true);
-        private async Task<bool> AssemblyByPlan(bool loadBoders = false)
+        private async void StitchingByPlanBtn_Click(object sender, EventArgs e) => await StartAssembling(true);
+        private async Task<bool> StartAssembling(bool loadBoders = false)
         {
             RTB.Text = "Start Assembling\n";
             logger.Info("\nStart Assembling");

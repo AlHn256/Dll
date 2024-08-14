@@ -137,7 +137,7 @@ namespace StartTestProject
 
 
             // Для проверки можно записать один файл из итогового массива
-            // respArray[22].Save("test2022.jpg");
+            respBitmapArray[22].Save("test2022.jpg");
 
             //ts = stopwatch.Elapsed;
             //string text = String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);

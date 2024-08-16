@@ -18,7 +18,7 @@ using System.Windows.Forms;
 
 namespace ImgAssemblingLib.AditionalForms
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private AssemblyPlan assemblyPlan { get; set; }
         private Assembling Assembling { get; set; }
@@ -34,13 +34,13 @@ namespace ImgAssemblingLib.AditionalForms
         private string[] fileFilter = new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" };
         private object _context;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             logger = LogManager.GetCurrentClassLogger();
         }
 
-        public Form1(AssemblyPlan assemblyPlan)
+        public MainForm(AssemblyPlan assemblyPlan)
         {
             InitializeComponent();
             this.assemblyPlan = assemblyPlan;

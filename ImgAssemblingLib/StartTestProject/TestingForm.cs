@@ -23,7 +23,7 @@ namespace StartTestProject
 
         private void ShowMainForm()
         {
-            Form1 imgFixingForm = new Form1();
+            MainForm imgFixingForm = new MainForm();
             imgFixingForm.ShowDialog();
         }
         private void ShowEditingStitchingForm()

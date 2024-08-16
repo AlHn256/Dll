@@ -306,7 +306,7 @@ namespace ImgAssemblingLib.Models
         {
             try
             {
-                FileStream fs = new FileStream(file, FileMode.OpenOrCreate);
+                FileStream fs = new FileStream(file, FileMode.Create);
                 using (StreamWriter writetext = new StreamWriter(fs)){ writetext.WriteLine(text);}
             }
             catch (Exception e)

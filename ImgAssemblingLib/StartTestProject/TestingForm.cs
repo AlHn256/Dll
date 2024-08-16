@@ -16,8 +16,8 @@ namespace StartTestProject
             InitializeComponent();
             KeyPreview = true;
 
-            //ShowMainForm();
-            ShowEditingStitchingForm();
+            ShowMainForm();
+            //ShowEditingStitchingForm();
             //ShowImgFixingForm();
         }
 

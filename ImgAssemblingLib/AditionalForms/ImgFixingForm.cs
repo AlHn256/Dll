@@ -24,6 +24,8 @@ namespace ImgAssemblingLib.AditionalForms
         private Bitmap[] BitmapArray { get; set; }
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
+        private bool SaveRezultToFile { get; set; } = false;
+        private string SavingRezultDir { get; set; } = string.Empty;
 
         public ImgFixingForm(string directory)
         {
@@ -48,13 +50,16 @@ namespace ImgAssemblingLib.AditionalForms
             TryReadSettings(fileLoad);
             InputDirTxtBox.Text = directory;
         }
-        public ImgFixingForm(string imgFixingPlan, bool test = false)
+        
+        public ImgFixingForm(string imgFixingPlan, bool saveRezultToFile = false, string fixingImgDirectory = "")
         {
             InitializeComponent();
             if (!string.IsNullOrEmpty(imgFixingPlan))
             {
                 imgFixingFile = imgFixingPlan;
                 TryReadSettings(false);
+                SaveRezultToFile = saveRezultToFile;
+                SavingRezultDir = fixingImgDirectory;
             }
         }
         public void OnProgressChanged(object i)
@@ -158,7 +163,6 @@ namespace ImgAssemblingLib.AditionalForms
 
             return true;
         }
-
         private void ReloadImg()
         {
             string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
@@ -463,22 +467,31 @@ namespace ImgAssemblingLib.AditionalForms
         {
             var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg", x, 99)); }).ToArray();
             if (DataArray.Length == 0) return new Bitmap[0];
-            DataArray = FixImgArray(DataArray);
-
-            return DataArray.Select(x => MagickImageToBitMap(x)).ToArray();
+            return FixImgArray(DataArray);
         }
-        private Bitmap MagickImageToBitMap(MagickImage magickImage)
-        {
-            MemoryStream ms = new MemoryStream(magickImage.ToByteArray());
-            return new Bitmap(ms);
-        }
+        private Bitmap MagickImageToBitMap(MagickImage magickImage) => new Bitmap(new MemoryStream(magickImage.ToByteArray()));
 
-        public MagickImage[] FixImgArray(MagickImage[] DataArray)
+        public Bitmap[] FixImgArray(MagickImage[] DataArray)
         {
-            if (DataArray == null && BitmapArray == null) return new MagickImage[0];
-            if (DataArray.Length == 0 && BitmapArray.Length == 0) return new MagickImage[0];
+            if (DataArray == null && BitmapArray == null) return new Bitmap[0];
+            if (DataArray.Length == 0 && BitmapArray.Length == 0) return new Bitmap[0];
+            if (SaveRezultToFile)
+            {
+                int i = 0, DidgLeng =  DataArray.Length.ToString().Length;
 
-            return DataArray.Select(x => EditImg(x)).ToArray();
+                return DataArray.Select(x =>
+                {
+                    MagickImage img = EditImg(x);
+                    string savingFile = string.IsNullOrEmpty(SavingRezultDir) ? "img" + (i++).ToString().PadLeft(DidgLeng, '0') + ".bmp" : SavingRezultDir + "\\" + (i++).ToString().PadLeft(DidgLeng, '0') + ".bmp";
+                    img.Write(savingFile);
+                    return MagickImageToBitMap(img);
+                }).ToArray();
+            }
+            else return DataArray.Select(x => 
+            { 
+                MagickImage img = EditImg(x); 
+                return MagickImageToBitMap(img); 
+            }).ToArray();
         }
         private MagickImage EditImg(string InputFile)
         {

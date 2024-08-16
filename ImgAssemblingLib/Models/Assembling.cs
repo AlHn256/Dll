@@ -28,6 +28,7 @@ namespace ImgAssemblingLib.Models
         public string StitchingInfo { get; set; }
         public bool StopExecution { get; set; } = false;
         public bool CalculationSpeedDespiteErrors { get; set; } = false;
+        public bool SaveImgFixingRezultToFile { get; set; } = false;
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
         public List<string> ErrList { get; set; } = new List<string>();
@@ -193,7 +194,7 @@ namespace ImgAssemblingLib.Models
                     logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                     if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
 
-                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, false);
+                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, SaveImgFixingRezultToFile, AssemblyPlan.FixingImgDirectory);
                     BitmapData = imgFixingForm.FixImgArray(BitmapData);
                     if (imgFixingForm.IsErr || BitmapData.Length == 0)
                     {

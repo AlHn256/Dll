@@ -70,6 +70,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.OpenResultChckBox = new System.Windows.Forms.CheckBox();
             this.BitMapChckBox = new System.Windows.Forms.CheckBox();
             this.InfoLabel = new System.Windows.Forms.Label();
+            this.SavingImgWBitmapChckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ExitBtn
@@ -85,7 +86,7 @@ namespace ImgAssemblingLib.AditionalForms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 36);
+            this.label1.Location = new System.Drawing.Point(11, 36);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(95, 13);
             this.label1.TabIndex = 2;
@@ -143,15 +144,15 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             // FixingImgDirectoryTxtBox
             // 
-            this.FixingImgDirectoryTxtBox.Location = new System.Drawing.Point(107, 80);
+            this.FixingImgDirectoryTxtBox.Location = new System.Drawing.Point(107, 106);
             this.FixingImgDirectoryTxtBox.Name = "FixingImgDirectoryTxtBox";
-            this.FixingImgDirectoryTxtBox.Size = new System.Drawing.Size(407, 20);
+            this.FixingImgDirectoryTxtBox.Size = new System.Drawing.Size(381, 20);
             this.FixingImgDirectoryTxtBox.TabIndex = 13;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 83);
+            this.label2.Location = new System.Drawing.Point(9, 109);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(102, 13);
             this.label2.TabIndex = 12;
@@ -159,7 +160,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             // OpenImgFixingPlanBtn
             // 
-            this.OpenImgFixingPlanBtn.Location = new System.Drawing.Point(492, 105);
+            this.OpenImgFixingPlanBtn.Location = new System.Drawing.Point(492, 82);
             this.OpenImgFixingPlanBtn.Name = "OpenImgFixingPlanBtn";
             this.OpenImgFixingPlanBtn.Size = new System.Drawing.Size(22, 20);
             this.OpenImgFixingPlanBtn.TabIndex = 17;
@@ -169,7 +170,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             // ImgFixingPlanTxtBox
             // 
-            this.ImgFixingPlanTxtBox.Location = new System.Drawing.Point(107, 105);
+            this.ImgFixingPlanTxtBox.Location = new System.Drawing.Point(107, 82);
             this.ImgFixingPlanTxtBox.Name = "ImgFixingPlanTxtBox";
             this.ImgFixingPlanTxtBox.Size = new System.Drawing.Size(381, 20);
             this.ImgFixingPlanTxtBox.TabIndex = 16;
@@ -177,7 +178,7 @@ namespace ImgAssemblingLib.AditionalForms
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 107);
+            this.label3.Location = new System.Drawing.Point(10, 85);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(61, 13);
             this.label3.TabIndex = 15;
@@ -335,7 +336,7 @@ namespace ImgAssemblingLib.AditionalForms
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 152);
+            this.label4.Location = new System.Drawing.Point(10, 152);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(95, 13);
             this.label4.TabIndex = 50;
@@ -448,6 +449,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.BitMapChckBox.TabIndex = 62;
             this.BitMapChckBox.Text = "BitMap";
             this.BitMapChckBox.UseVisualStyleBackColor = true;
+            this.BitMapChckBox.CheckedChanged += new System.EventHandler(this.BitMapChckBox_CheckedChanged);
             // 
             // InfoLabel
             // 
@@ -457,11 +459,23 @@ namespace ImgAssemblingLib.AditionalForms
             this.InfoLabel.Size = new System.Drawing.Size(0, 13);
             this.InfoLabel.TabIndex = 63;
             // 
+            // SavingImgWBitmapChckBox
+            // 
+            this.SavingImgWBitmapChckBox.AutoSize = true;
+            this.SavingImgWBitmapChckBox.Enabled = false;
+            this.SavingImgWBitmapChckBox.Location = new System.Drawing.Point(495, 109);
+            this.SavingImgWBitmapChckBox.Name = "SavingImgWBitmapChckBox";
+            this.SavingImgWBitmapChckBox.Size = new System.Drawing.Size(15, 14);
+            this.SavingImgWBitmapChckBox.TabIndex = 64;
+            this.SavingImgWBitmapChckBox.UseVisualStyleBackColor = true;
+            this.SavingImgWBitmapChckBox.CheckedChanged += new System.EventHandler(this.SavingImgWBitmapChckBox_CheckedChanged);
+            // 
             // EditingStitchingPlan
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(526, 374);
+            this.Controls.Add(this.SavingImgWBitmapChckBox);
             this.Controls.Add(this.InfoLabel);
             this.Controls.Add(this.BitMapChckBox);
             this.Controls.Add(this.OpenResultChckBox);
@@ -555,5 +569,6 @@ namespace ImgAssemblingLib.AditionalForms
         private CheckBox OpenResultChckBox;
         private CheckBox BitMapChckBox;
         private Label InfoLabel;
+        private CheckBox SavingImgWBitmapChckBox;
     }
 }

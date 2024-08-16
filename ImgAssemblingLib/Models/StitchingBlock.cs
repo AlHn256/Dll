@@ -190,7 +190,8 @@ namespace ImgAssemblingLib.Models
 
                     secondSelectedFiles = SelectedFiles[i];
                     firstSelectedFiles.StitchingFile = secondSelectedFiles.FullName;
-                    firstSelectedFiles.Hint = "Stitching Imgs " + Path.GetFileNameWithoutExtension(firstSelectedFiles.FullName) + " - " + Path.GetFileName(secondSelectedFiles.FullName);
+                    if(WorkingWBitmap) firstSelectedFiles.Hint = "Stitching Imgs " + firstSelectedFiles.Id + " - " + secondSelectedFiles.Id;
+                    else firstSelectedFiles.Hint = "Stitching Imgs " + Path.GetFileNameWithoutExtension(firstSelectedFiles.FullName) + " - " + Path.GetFileName(secondSelectedFiles.FullName);
 
                     // Получаем список векторов по ключевым точкам
                     List<Vector> VectorList = new List <Vector>();
@@ -604,6 +605,7 @@ namespace ImgAssemblingLib.Models
             }
         }
         
+        int X = 0;
         internal Mat Stitch(object param, int Delta = 0)// Сборка кадров в один
         {
             Mat rezult = new Mat();
@@ -621,10 +623,11 @@ namespace ImgAssemblingLib.Models
             // Сборка картинки по частям
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
-                if(i == SelectedFiles.Count - 2 && WorkingWBitmap)
-                {
-                    break;
-                }
+                X = i;
+                //if(i == SelectedFiles.Count - 2 && WorkingWBitmap)
+                //{
+                //    break;
+                //}
                 if (SelectedFiles[i].IsErr) continue;
                 if (context != null) context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
                 if (context != null) context.Send(OnTextChanged, "Frame Union " + i * 100 / SelectedFiles.Count + " %");
@@ -709,6 +712,7 @@ namespace ImgAssemblingLib.Models
                     {
                         Id = y++,
                         FullName = SelectedFiles[0].FullName,
+                        Mat = SelectedFiles[0].Mat,
                     });
                 }
                 else
@@ -725,6 +729,7 @@ namespace ImgAssemblingLib.Models
                         {
                             tempSf = new SelectedFiles(SelectedFiles[i - 1]);
                             tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
+                            tempSf.Mat = SelectedFiles[i].Mat;
                         }
                         else
                         {
@@ -733,6 +738,7 @@ namespace ImgAssemblingLib.Models
                                 if (z == 0) break;
 
                             tempSf = new SelectedFiles(SelectedFiles[z]);
+                            tempSf.Mat = SelectedFiles[z].Mat;
                             tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
                             //tempSf.StitchingFile = SelectedFiles[z].FullName;
                             tempSf.VectorList = SelectedFiles[z].VectorList;
@@ -748,9 +754,7 @@ namespace ImgAssemblingLib.Models
 
                         tempSf.Id = y++;
                         tempSf.FullName = SelectedFiles[i].FullName;
-                        if (tempSf.Direction == EnumDirection.Right) tempSf.Direction = EnumDirection.Left;
-                        if (tempSf.Direction == EnumDirection.Down) tempSf.Direction = EnumDirection.Up;
-                        
+                        tempSf.Direction = Direction;
                     }
                     TempSelectedFiles.Add(tempSf);
                 }
@@ -1005,7 +1009,7 @@ namespace ImgAssemblingLib.Models
                     else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
                 }
 
-                if (FramePosition == EnumFramePosition.Midle)
+                else if (FramePosition == EnumFramePosition.Midle)
                 {
                     int d2 = h2 - shift + Delta;
                     if (d2 > 0 && d2 < Img2.Height - 1)
@@ -1017,7 +1021,7 @@ namespace ImgAssemblingLib.Models
                     else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
                 }
 
-                if (FramePosition == EnumFramePosition.Last)
+                else if (FramePosition == EnumFramePosition.Last)
                 {
                     int d1 = h2 - shift + Delta;
                     int d2 = Img2.Height - h2 + shift - Delta - 1;
@@ -1048,17 +1052,26 @@ namespace ImgAssemblingLib.Models
                     }
                     else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
                 }
-                if (FramePosition == EnumFramePosition.Midle)
+                else if (FramePosition == EnumFramePosition.Midle)
                 {
                     int d2 = w2 - shift + Delta;
                     int d3 = d2 + shift - 1;
+
+
 
                     if (d2 > 0 && d2 < Img2.Width - 1 && d3 > 0 && d3 < Img2.Width - 1)
                     {
                         Rect rect2 = new Rect(d2, 0, shift - 1, Img2.Height - 1);
                         Mat dstroi2 = new Mat(Img2, rect2);
 
-                        if(Img1.Height!= dstroi2.Height )
+                        if (X > 134)
+                        {
+                            Img1.SaveImage("1.bmp");
+                            Img2.SaveImage("2.bmp");
+                            dstroi2.SaveImage("3.bmp");
+                        }
+
+                        if (Img1.Height!= dstroi2.Height )
                         {
                             rect2 = new Rect(d2, 0, shift, Img2.Height);
                             dstroi2 = new Mat(Img2, rect2);
@@ -1068,7 +1081,7 @@ namespace ImgAssemblingLib.Models
                     }
                     else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
                 }
-                if (FramePosition == EnumFramePosition.Last)
+                else if (FramePosition == EnumFramePosition.Last)
                 {
                     int d1 = w2 - shift + Delta - 1;
                     int d2 = Img2.Width - Delta - w2 + shift - 1;

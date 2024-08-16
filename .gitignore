@@ -81,3 +81,5 @@ dkms.conf
 /ImgAssemblingLib/packages
 /ImgAssemblingLib/StartTestProject/bin
 /ImgAssemblingLib/StartTestProject/obj
+/TestLib/.vs
+/TestLib/obj

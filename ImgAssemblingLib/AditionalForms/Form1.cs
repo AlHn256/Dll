@@ -594,11 +594,27 @@ namespace ImgAssemblingLib.AditionalForms
         {
             if (string.IsNullOrEmpty(FirstFile) || string.IsNullOrEmpty(SecondFile)) return;
 
-            //    public StitchingBlock(AssemblyPlan assemblyPlan):this(assemblyPlan.StitchingDirectory, assemblyPlan.AdditionalFilter, assemblyPlan.Percent, assemblyPlan.From, assemblyPlan.To, assemblyPlan.Period)
-            //{ }
-            //    public StitchingBlock(string file, bool additionalFilter, bool percent = true, int from = 0, int to = 100, int period = 1, bool selectSearchArea = false, float minHeight = 0, float maxHeight = 0, float minWight = 0, float maxWight = 0)
+            AssemblyPlan assemblyPln = new AssemblyPlan();
+            assemblyPln.StitchingDirectory = FirstFile;
+            assemblyPln.AdditionalFilter = false;
+            assemblyPln.SelectSearchArea = SelectSearchArea;
+            assemblyPln.MinHeight = MinHeight;
+            assemblyPln.MaxHeight = MaxHeight;
+            assemblyPln.MinWight = MinWight;
+            assemblyPln.MaxWight = MaxWight;
 
-            //    {
+            StitchingBlock stitchingBlock = new StitchingBlock(assemblyPln);
+            stitchingBlock.TextChanged += rtbText_AddInfo;
+            stitchingBlock.ChangImg += worker_UpdateImg;
+            stitchingBlock.AllPointsChkBox = AllPointsChkBox.Checked;
+            stitchingBlock.GetVectorList(FirstFile, SecondFile, true);
+            if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
+        }
+        //private void Stitch2ImgsBtn_Click(object sender, EventArgs e) => JoinImgs();
+        private void JoinImgs(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(FirstFile) || string.IsNullOrEmpty(SecondFile)) return;
+            string file1 = FileDirTxtBox.Text, file2 = SecondFile;
 
             AssemblyPlan assemblyPln = new AssemblyPlan();
             assemblyPln.StitchingDirectory = FirstFile;
@@ -613,14 +629,12 @@ namespace ImgAssemblingLib.AditionalForms
             StitchingBlock stitchingBlock = new StitchingBlock(assemblyPln);
             stitchingBlock.TextChanged += rtbText_AddInfo;
             stitchingBlock.ChangImg += worker_UpdateImg;
-            stitchingBlock.AllPointsChkBox = AllPointsChkBox.Checked;
+            //stitchingBlock.AllPointsChkBox = AllPointsChkBox.Checked;
             stitchingBlock.GetVectorList(FirstFile, SecondFile, true);
+
             if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
-        }
-        private void Stitch2ImgsBtn_Click(object sender, EventArgs e) => Stitch2ImgsByPointsImgs(FileDirTxtBox.Text, SecondFile);
-        private List<Vector> Stitch2ImgsByPointsImgs(string file1, string file2, bool JustGetPointList = false)
-        {
-            List<Vector> goodPointList = new List<Vector>();
+
+            //List<Vector> goodPointList = new List<Vector>();
             //RTB.Text = string.Empty;
             //List<DMatch> goodMatches = new List<DMatch>();
             //Mat matSrc = new Mat(file1);
@@ -698,7 +712,7 @@ namespace ImgAssemblingLib.AditionalForms
 
             //    return selectedPoints;
             //}
-            return goodPointList;
+            //return goodPointList;
         }
         private void worker_ProcessChang(int progress)
         {
@@ -905,7 +919,7 @@ namespace ImgAssemblingLib.AditionalForms
         private void FromTxtBox_TextChanged(object sender, EventArgs e) => UpDateFrom();
         private void ToTxtBox_TextChanged(object sender, EventArgs e) => UpDateTo();
         private void PeriodTxtBox_TextChanged(object sender, EventArgs e) => UpDatePeriod();
-        private async void StitchingByPlanBtn_Click(object sender, EventArgs e) => await StartAssembling(true);
+        private async void StartAssembling(object sender, EventArgs e) => await StartAssembling(true);
         private async Task<bool> StartAssembling(bool loadBoders = false)
         {
             RTB.Text = "Start Assembling\n";

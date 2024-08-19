@@ -624,10 +624,6 @@ namespace ImgAssemblingLib.Models
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
                 X = i;
-                //if(i == SelectedFiles.Count - 2 && WorkingWBitmap)
-                //{
-                //    break;
-                //}
                 if (SelectedFiles[i].IsErr) continue;
                 if (context != null) context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
                 if (context != null) context.Send(OnTextChanged, "Frame Union " + i * 100 / SelectedFiles.Count + " %");
@@ -635,8 +631,24 @@ namespace ImgAssemblingLib.Models
                 if (SelectedFiles.Count == 2) // Вариант на случай если нужно собрать только 2 картинки
                 {
                     int shift =(int)Math.Round(SelectedFiles[0].AverageShift);
-                    Mat Img1 = new Mat(SelectedFiles[0].FullName);
-                    Mat Img2 = new Mat(SelectedFiles[1].FullName);
+                    Mat Img1, Img2;
+
+                    if (WorkingWBitmap)
+                    {
+                        Img1 = SelectedFiles[0].Mat;
+                        Img2 = SelectedFiles[1].Mat;
+                    }
+                    else
+                    {
+                        if(string.IsNullOrEmpty(SelectedFiles[0].FullName) || string.IsNullOrEmpty(SelectedFiles[1].FullName))
+                        {
+                            SetErr("Err Stitch.One of SelectedFiles == 0!!!");
+                            return rezult;
+                        }
+                        Img1 = new Mat(SelectedFiles[0].FullName);
+                        Img2 = new Mat(SelectedFiles[1].FullName);
+                    }
+
                     if (Direction == EnumDirection.Down || Direction == EnumDirection.Up)
                     {
                         int d1 = Img1.Height / 2 + shift / 2 + Delta - 1;

@@ -22,7 +22,7 @@ namespace ImgAssemblingLib.AditionalForms
     {
         private AssemblyPlan assemblyPlan { get; set; }
         private Assembling Assembling { get; set; }
-        private static Logger logger; //логи сохраняются в файле D:\Work\C#\ImageStitching\bin\Debug\net8.0-windows\logs\logfile.txt
+        private static Logger logger = LogManager.GetCurrentClassLogger(); //логи
         private FileEdit fileEdit;
         private bool SelectSearchArea { get; set; } = false;
         private float MinHeight = 0, MaxHeight = 0, MinWight = 0, MaxWight = 0;
@@ -37,16 +37,13 @@ namespace ImgAssemblingLib.AditionalForms
         public MainForm()
         {
             InitializeComponent();
-            logger = LogManager.GetCurrentClassLogger();
         }
-
         public MainForm(AssemblyPlan assemblyPlan)
         {
             InitializeComponent();
             this.assemblyPlan = assemblyPlan;
-            logger = LogManager.GetCurrentClassLogger();
+            //logger = LogManager.GetCurrentClassLogger();
         }
-
         private void Loading(object sender, EventArgs e)
         {
             logger.Info("Programm starting");
@@ -611,108 +608,39 @@ namespace ImgAssemblingLib.AditionalForms
             if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
         }
         //private void Stitch2ImgsBtn_Click(object sender, EventArgs e) => JoinImgs();
-        private void JoinImgs(object sender, EventArgs e)
+        private async void JoinImgs(object sender, EventArgs e) => await JoinImgs();
+        private async Task<bool> JoinImgs()
         {
-            if (string.IsNullOrEmpty(FirstFile) || string.IsNullOrEmpty(SecondFile)) return;
-            string file1 = FileDirTxtBox.Text, file2 = SecondFile;
+            if (string.IsNullOrEmpty(FirstFile) || string.IsNullOrEmpty(SecondFile))
+            {
+                RTB.Text += "Err JoinImgs.FirstFile || SecondFile IsNullOrEmpty!!!";
+                return false;
+            }
 
-            AssemblyPlan assemblyPln = new AssemblyPlan();
-            assemblyPln.StitchingDirectory = FirstFile;
-            assemblyPln.AdditionalFilter = false;
-            assemblyPln.SelectSearchArea = SelectSearchArea;
-            assemblyPln.MinHeight = MinHeight;
-            assemblyPln.MaxHeight = MaxHeight;
-            assemblyPln.MinWight = MinWight;
-            assemblyPln.MaxWight = MaxWight;
-            assemblyPln.AdditionalFilter = false;
+            if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
+            LoadBoders();
+            assemblyPlan.BitMap = true;
+            assemblyPlan.FixImg = false;
+            RTB.Text = "Start Assembling\n";
 
-            StitchingBlock stitchingBlock = new StitchingBlock(assemblyPln);
-            stitchingBlock.TextChanged += rtbText_AddInfo;
-            stitchingBlock.ChangImg += worker_UpdateImg;
-            //stitchingBlock.AllPointsChkBox = AllPointsChkBox.Checked;
-            stitchingBlock.GetVectorList(FirstFile, SecondFile, true);
+            Assembling assembling;
+            Bitmap[] dataArray = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
+            assembling = new Assembling(assemblyPlan, dataArray, _context);
+            assembling.SaveImgFixingRezultToFile = true;
+            assembling.UpdateImg += worker_UpdateImg;
+            assembling.RTBAddInfo += rtbText_AddInfo;
+            // Вариант сборки через файлы или ссылки на них
 
-            if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
-
-            //List<Vector> goodPointList = new List<Vector>();
-            //RTB.Text = string.Empty;
-            //List<DMatch> goodMatches = new List<DMatch>();
-            //Mat matSrc = new Mat(file1);
-            //Mat matTo = new Mat(file2);
-
-            //KeyPoint[] keyPointsSrc, keyPointsTo;
-            //using (Mat matSrcRet = new Mat())
-            //using (Mat matToRet = new Mat())
-            //{
-            //    using (var sift = OpenCvSharp.Features2D.SIFT.Create())
-            //    {
-            //        sift.DetectAndCompute(matSrc, null, out keyPointsSrc, matSrcRet);
-            //        sift.DetectAndCompute(matTo, null, out keyPointsTo, matToRet);
-            //    }
-
-            //    using (var bfMatcher = new BFMatcher())
-            //    {
-            //        var matches = bfMatcher.KnnMatch(matSrcRet, matToRet, k: 2);
-            //        if (matches.Length == 0)
-            //        {
-            //            RTB.Text = "Err matches.Length = 0 !!!";
-            //            return goodPointList;
-            //        }
-
-            //        if (matches[0].Length == 2) goodPointList = FindOptimalPrecision(matches, keyPointsSrc, keyPointsTo, out goodMatches);
-            //        else
-            //        {
-            //            RTB.Text = "Err ShowPoints.matches[0].Length != 2 !!!";
-            //            return goodPointList;
-            //        }
-            //    }
-
-            //    if (goodMatches.Count == 0 && goodPointList.Count == 0)
-            //    {
-            //        RTB.Text = "Err ShowPoints подходящие точки не найдены !!!";
-            //        return goodPointList;
-            //    }
-
-            //    PointAnalizator pointAnalizator = new PointAnalizator(goodPointList, matSrc, matTo);
-            //    List<Vector> selectedPoints = pointAnalizator.ResultList;
-            //    if (JustGetPointList) return selectedPoints;
-
-            //    var rezult = new Mat();
-            //    if (selectedPoints.Count > 0)
-            //    {
-            //        Vector vector = selectedPoints[0];
-            //        Mat srcImg1 = new Mat(File1TxtBox.Text);
-            //        Mat srcImg2 = new Mat(SecondFile);
-            //        if (vector.isPanaram)
-            //        {
-            //            Rect rect1 = new Rect(0, 0, (int)vector.Xfr, srcImg1.Height - 1);
-            //            Mat dstroi1 = new Mat(srcImg1, rect1);
-            //            Rect rect2 = new Rect((int)vector.Xto, 0, srcImg2.Width - (int)vector.Xto - 1, srcImg2.Height - 1);
-            //            Mat dstroi2 = new Mat(srcImg2, rect2);
-            //            Cv2.HConcat(dstroi1, dstroi2, rezult);
-            //        }
-            //        else
-            //        {
-            //            Rect rect1 = new Rect(0, 0, srcImg1.Width - 1, (int)vector.Yfr);
-            //            Mat dstroi1 = new Mat(srcImg1, rect1);
-            //            Rect rect2 = new Rect(0, (int)vector.Yto, srcImg2.Width - 1, srcImg2.Height - (int)vector.Yto - 1);
-            //            Mat dstroi2 = new Mat(srcImg2, rect2);
-            //            Cv2.VConcat(dstroi1, dstroi2, rezult);
-            //        }
-            //    }
-            //    else RTB.Text = "Err ключевые точки не найдены!!!";
-            //    if (rezult == null) { RTB.Text = "Err StitchImgsByPointsImgs.rezult = null !!!"; return new List<Vector>(); }
-            //    if (rezult.Width == 0 && rezult.Height == 0) { RTB.Text = "Err StitchImgsByPointsImgs.rezult Width & Height == 0 !!!"; return new List<Vector>(); }
-            //    if (rezult.Width == 0) { RTB.Text = "Err StitchImgsByPointsImgs.rezult.Width == 0 !!!"; return new List<Vector>(); }
-            //    if (rezult.Height == 0) { RTB.Text = "Err StitchImgsByPointsImgs.Height == 0 !!!"; return new List<Vector>(); }
-            //    RezultImg = new Mat();
-            //    rezult.CopyTo(RezultImg);
-            //    Cv2.Resize(rezult, rezult, new OpenCvSharp.Size((int)(rezult.Width * Zoom), (int)(rezult.Height * Zoom)));
-            //    picBox_Display.Image = BitmapConverter.ToBitmap(rezult);
-
-            //    return selectedPoints;
-            //}
-            //return goodPointList;
+            if (await assembling.StartAssembling())// Запуск сборки изображения
+            {
+                RTB.Text += "Assembling is finished!";
+                return true;
+            }
+            else
+            {
+                RTB.Text += assembling.ErrText;
+                return false;
+            }
         }
         private void worker_ProcessChang(int progress)
         {
@@ -721,7 +649,7 @@ namespace ImgAssemblingLib.AditionalForms
             else progressBar.Value = progress;
         }
         private void worker_TextChang(string text) => progressBarLabel.Text = text;
-        private void rtbText_AddInfo(string text) => RTB.Text += text;
+        private void rtbText_AddInfo(string text)=>RTB.Text += text;
         private void rtbText_UpDateInfo(string text) => RTB.Text = text;
         private void worker_UpdateImg(Mat img)
         {

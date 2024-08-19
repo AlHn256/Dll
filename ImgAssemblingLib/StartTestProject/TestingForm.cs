@@ -10,7 +10,8 @@ namespace StartTestProject
 {
     public partial class TestingForm : Form
     {
-        
+
+        //private static Logger logger;
         public TestingForm()
         {
             InitializeComponent();

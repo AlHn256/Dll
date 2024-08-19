@@ -83,3 +83,4 @@ dkms.conf
 /ImgAssemblingLib/StartTestProject/obj
 /TestLib/.vs
 /TestLib/obj
+/TestLib/WindowsForms/obj

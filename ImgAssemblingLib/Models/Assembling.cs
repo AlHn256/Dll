@@ -126,7 +126,7 @@ namespace ImgAssemblingLib.Models
             if (workingWBitmap)
             {
                 logger.Info("Working with Bitmap. BitmapData - " + BitmapData.Length);
-                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Bitmap. BitmapData - " + BitmapData.Length);
+                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Bitmap. BitmapData - " + BitmapData.Length+"\n");
             }
             else
             {

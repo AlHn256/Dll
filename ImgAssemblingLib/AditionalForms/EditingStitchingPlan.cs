@@ -386,10 +386,6 @@ namespace ImgAssemblingLib.AditionalForms
                 assembling.SaveImgFixingRezultToFile = SavingImgWBitmapChckBox.Checked;
             } // Вариант сборки через файлы или ссылки на них
             else assembling = new Assembling(AssemblyPlan, _context);
-            //Assembling.ProcessChanged += worker_ProcessChang;
-            //Assembling.TextChanged += worker_TextChang;
-            //Assembling.UpdateImg += worker_UpdateImg;
-            //Assembling.RTBAddInfo += rtbText_AddInfo;
             
             assembling.RTBAddInfo += rtbText_UpDateInfo;
             if (await assembling.StartAssembling())// Запуск сборки изображения

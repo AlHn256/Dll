@@ -40,18 +40,19 @@ namespace ImgAssemblingLib.Models
         public string ChekStitchPlanRezult { get; set; } = "Не выполнено!";
         public string FindKeyPointsRezult { get; set; } = "Не выполнено!";
 
+        public bool SpeedCounting { get; set; } = false; // Подсчет скорости
+        public string SpeedCountingRezults { get; set; } = "Не выполнено!";
+        public double Speed { get; set; } = -1;
+        public double MillimetersInPixel { get; set; } = 5.5; // Количество мм в одном пикселе
+        public double TimePerFrame { get; set; } = 40; // Милисекунд в одном кадре
+
         public bool Stitch { get; set; } = true;  // Склейка изображений
         public string StitchRezult { get; set; } = "Не выполнено!";
 
         public bool SaveRezults { get; set; } = false; // Автосохранение результирующего изображения
         public string RezultOfSavingRezults { get; set; } = "Не выполнено!";
         public const string defaultAssemblingFile = "NewAssemblyPlan.asp";
-
-        public bool SpeedCounting { get; set; } = false; // Подсчет скорости
-        public string SpeedCountingRezults { get; set; } = "Не выполнено!";
-        public double Speed { get; set; } = -1;
-        public double MillimetersInPixel { get; set; } = 5.5; // Количество мм в одном пикселе
-        public double TimePerFrame { get; set; } = 40; // Милисекунд в одном кадре
+        public bool ShowAssemblingFile { get; set; } = false; // Показать сохраненный файл ( работает только при включенном SaveRezults) 
 
         public bool AdditionalFilter { get; set; } = false; // Включение/отключение дополнительный фильтр ключевых точек
 

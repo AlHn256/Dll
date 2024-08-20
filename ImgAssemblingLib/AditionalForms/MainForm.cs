@@ -7,11 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -791,7 +789,7 @@ namespace ImgAssemblingLib.AditionalForms
         private void UpDateFrom()
         {
             if (assemblyPlan == null) return;
-            assemblyPlan.DefaultParameters = false;
+            //assemblyPlan.DefaultParameters = false;
             int from = 0;
             Int32.TryParse(FromTxtBox.Text, out from);
             FromTxtBox.Text = from.ToString();
@@ -800,11 +798,31 @@ namespace ImgAssemblingLib.AditionalForms
         private void UpDateTo()
         {
             if (assemblyPlan == null) return;
-            assemblyPlan.DefaultParameters = false;
+            //assemblyPlan.DefaultParameters = false;
             int to = 100;
             Int32.TryParse(ToTxtBox.Text, out to);
             ToTxtBox.Text = to.ToString();
             assemblyPlan.To = to;
+        }
+
+        private void label6_Click(object sender, EventArgs e) => PersentInvok();
+
+        private void label5_Click(object sender, EventArgs e) => PersentInvok();
+
+        private void MainForm_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.X > 550 && e.X < 566 && e.Y > -15 && e.Y < 80)
+                PersentInvok();
+        }
+
+        private void PersentInvok()
+        {
+            if (assemblyPlan != null)
+            {
+                assemblyPlan.Percent = !assemblyPlan.Percent;
+                label5.Visible = assemblyPlan.Percent;
+                label6.Visible = assemblyPlan.Percent;
+            }
         }
 
         private void UpDatePeriod()
@@ -822,21 +840,24 @@ namespace ImgAssemblingLib.AditionalForms
         private async void StartAssembling(object sender, EventArgs e) => await StartAssembling(true);
         private async Task<bool> StartAssembling(bool loadBoders = false)
         {
+            if (string.IsNullOrEmpty(FileDirTxtBox.Text))
+            {
+                RTB.Text = "Err File1TxtBox.Text IsNullOrEmpty!!!";
+                return false;
+            }
+
             RTB.Text = "Start Assembling\n";
             logger.Info("\nStart Assembling");
 
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
-            if (loadBoders) LoadBoders();
 
-            assemblyPlan.BitMap = false;
-            if (string.IsNullOrEmpty(FileDirTxtBox.Text))
-            {
-                RTB.Text += "Err File1TxtBox.Text IsNullOrEmpty!!!";
-                return false;
-            }
+
+            if (loadBoders) LoadBoders();
             else if (!fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
             else assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
             assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
+            assemblyPlan.BitMap = false;
+            assemblyPlan.ShowAssemblingFile = true;
 
             Assembling.ChangeAssemblyPlan(assemblyPlan);
             if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
@@ -945,7 +966,7 @@ namespace ImgAssemblingLib.AditionalForms
         {
             if (string.IsNullOrEmpty(FileDirTxtBox.Text)) return;
 
-            if(!fileEdit.OpenDir(FileDirTxtBox.Text)) RTB.Text = fileEdit.ErrText;
+            if(!fileEdit.OpenFileDir(FileDirTxtBox.Text)) RTB.Text = fileEdit.ErrText;
         }
     }
 }

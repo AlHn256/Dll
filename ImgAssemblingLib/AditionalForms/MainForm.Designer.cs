@@ -110,7 +110,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.PeriodTxtBox.Size = new System.Drawing.Size(30, 20);
             this.PeriodTxtBox.TabIndex = 5;
             this.PeriodTxtBox.Text = "1";
-            this.PeriodTxtBox.TextChanged += PeriodTxtBox_TextChanged;
+            this.PeriodTxtBox.TextChanged += new System.EventHandler(this.PeriodTxtBox_TextChanged);
             // 
             // RTB
             // 
@@ -306,8 +306,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.ToTxtBox.Size = new System.Drawing.Size(30, 20);
             this.ToTxtBox.TabIndex = 31;
             this.ToTxtBox.Text = "100";
-            this.ToTxtBox.TextChanged += ToTxtBox_TextChanged;
-            // 
+            this.ToTxtBox.TextChanged += new System.EventHandler(this.ToTxtBox_TextChanged);
             // 
             // FromTxtBox
             // 
@@ -316,7 +315,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.FromTxtBox.Size = new System.Drawing.Size(30, 20);
             this.FromTxtBox.TabIndex = 32;
             this.FromTxtBox.Text = "0";
-            this.FromTxtBox.TextChanged += FromTxtBox_TextChanged;
+            this.FromTxtBox.TextChanged += new System.EventHandler(this.FromTxtBox_TextChanged);
             // 
             // FrLb
             // 
@@ -347,6 +346,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.label5.Size = new System.Drawing.Size(18, 15);
             this.label5.TabIndex = 35;
             this.label5.Text = "%";
+            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // label6
             // 
@@ -357,6 +357,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.label6.Size = new System.Drawing.Size(18, 15);
             this.label6.TabIndex = 36;
             this.label6.Text = "%";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // TestImgFixingBtn
             // 
@@ -459,6 +460,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.MinimumSize = new System.Drawing.Size(1750, 600);
             this.Name = "MainForm";
             this.Text = "MainForm";
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseClick);
             ((System.ComponentModel.ISupportInitialize)(this.picBox_Display)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

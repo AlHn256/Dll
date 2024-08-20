@@ -311,7 +311,14 @@ namespace ImgAssemblingLib.Models
             {
                 fileEdit.ClearInformation();
                 SavedFileName = fileEdit.SaveImg(RezultImg);
-                if (!string.IsNullOrEmpty(SavedFileName)){SendFinished(fileEdit.TextMessag);AssemblyPlan.RezultOfSavingRezults = fileEdit.TextMessag; }
+                if (!string.IsNullOrEmpty(SavedFileName)){
+                    SendFinished(fileEdit.TextMessag);AssemblyPlan.RezultOfSavingRezults = fileEdit.TextMessag;
+                    if (AssemblyPlan.ShowAssemblingFile)
+                    {
+                        fileEdit.OpenFileDir(SavedFileName);
+                    }
+                }
+
                 else { SendErr(fileEdit.ErrText); AssemblyPlan.StitchRezult = ErrText; }
             }
             else { SendSkipped(); AssemblyPlan.RezultOfSavingRezults = "Этап пропущен!!!"; }
@@ -320,6 +327,9 @@ namespace ImgAssemblingLib.Models
             SendTime("  Time ", ts);
             SendTime("  AllTime ", tSum);
             stopwatch.Stop();
+
+
+            
 
             return !IsErr;
         }

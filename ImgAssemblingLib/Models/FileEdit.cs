@@ -33,16 +33,12 @@ namespace ImgAssemblingLib.Models
 
         private bool SetErr(string err)
         {
+            IsErr = true;
             ErrText = err;
             return false;
         }
 
-        private bool SetExeption(Exception e)
-        {
-            IsErr = true;
-            ErrText = e.Message;
-            return false;
-        }
+        private bool SetErr(Exception e) => SetErr(e.Message);
 
         public bool AutoSave(string[] Info)
         {
@@ -99,7 +95,7 @@ namespace ImgAssemblingLib.Models
                             sr.Close();
                         }
                     }
-                    catch (Exception e) { SetExeption(e); }
+                    catch (Exception e) { SetErr(e); }
                 }
             }
             return LoadeInfo;
@@ -114,7 +110,7 @@ namespace ImgAssemblingLib.Models
                 {
                     tmpdir.Create();
                 }
-                catch (Exception e) { SetExeption(e); }
+                catch (Exception e) { SetErr(e); }
                 if (Directory.Exists(dir)) return true;
             }
             else return true;
@@ -132,7 +128,7 @@ namespace ImgAssemblingLib.Models
                         if (File.Exists(file)) return true;
                     }
                 }
-                catch (Exception e) { SetExeption(e); }
+                catch (Exception e) { SetErr(e); }
                 return false;
             }
             return true;
@@ -293,14 +289,13 @@ namespace ImgAssemblingLib.Models
         {
             try
             {
-                FileStream f1 = new FileStream(file, FileMode.Truncate, FileAccess.Write, FileShare.Read);
+                FileStream f1 = new FileStream(file, FileMode.Create);
                 using (StreamWriter sw = new StreamWriter(f1, Encoding.GetEncoding(encoding)))
                     foreach (string txt in fileList) sw.WriteLine(txt);
             }
             catch (Exception e)
             {
-                SetExeption(e);
-                return false;
+                return SetErr(e);
             }
             return true;
         }
@@ -313,8 +308,7 @@ namespace ImgAssemblingLib.Models
             }
             catch (Exception e)
             {
-                SetExeption(e);
-                return false;
+                return SetErr(e);
             }
             return true;
         }
@@ -322,15 +316,14 @@ namespace ImgAssemblingLib.Models
         {
             try
             {
-                FileStream fs = new FileStream(file, FileMode.Truncate, FileAccess.Write, FileShare.Read);
+                FileStream fs = new FileStream(file, FileMode.Create);
                 using (StreamWriter writetext = new StreamWriter(fs)){await writetext.WriteLineAsync(text);}
+                return true;
             }
             catch (Exception e)
             {
-                SetExeption(e);
-                return false;
+                return SetErr(e);
             }
-            return true;
         }
 
         public FileInfo[] SearchFiles()=>SearchFiles(GetDefoltDirectory());
@@ -413,7 +406,7 @@ namespace ImgAssemblingLib.Models
                 }
                 catch (IOException e)
                 {
-                    return false;
+                    return SetErr(e);
                 }
             }
             return false;
@@ -429,7 +422,7 @@ namespace ImgAssemblingLib.Models
             }
             catch (IOException e)
             {
-                return false;
+                return SetErr(e);
             }
             return true;
         }
@@ -439,12 +432,12 @@ namespace ImgAssemblingLib.Models
             try
             {
                 await SetFileStringAsync(filename, JsonConvert.SerializeObject(obj));
+                return true;
             }
             catch (IOException e)
             {
-                return false;
+                return SetErr(e);
             }
-            return true;
         }
 
         private static int SaveId = 0;
@@ -484,7 +477,7 @@ namespace ImgAssemblingLib.Models
                 {
                     if (ChkFile(FileSaveString))
                     {
-                        using (FileStream ms = new FileStream(FileSaveString, FileMode.Truncate, FileAccess.Write, FileShare.Read))
+                        using (FileStream ms = new FileStream(FileSaveString, FileMode.Create))
                         {
                             DisplayImage.Save(ms, ImageFormat.Jpeg);
                             byte[] ar = new byte[ms.Length];
@@ -601,12 +594,12 @@ namespace ImgAssemblingLib.Models
             return true;
         }
 
-        internal bool OpenDir(string dir)
+        internal bool OpenFileDir(string FilDir)
         {
-            if(!ChkFileDir(dir))return SetErr("Err dir " + dir  + " !Exists!!!");
+            if(!ChkFileDir(FilDir))return SetErr("Err FilDir " + FilDir  + " !Exists!!!");
             try
             {
-                Process.Start("explorer.exe", IsDirectory(dir) ? dir : Path.GetDirectoryName(dir));
+                var dfg = IsDirectory(FilDir) ? Process.Start("explorer.exe", FilDir) : Process.Start(FilDir);
                 return true;
             }
             catch (Win32Exception win32Exception)

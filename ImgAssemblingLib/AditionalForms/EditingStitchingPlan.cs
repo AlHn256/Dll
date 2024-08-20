@@ -164,7 +164,11 @@ namespace ImgAssemblingLib.AditionalForms
             saveFileDialog1.FilterIndex = 1;
             saveFileDialog1.RestoreDirectory = true;
 
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK) SavePlan(saveFileDialog1.FileName);
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                if (SavePlan(saveFileDialog1.FileName)) InfoLabel.Text = "File saved: " + saveFileDialog1.FileName;
+                else InfoLabel.Text = "Saving Err: " + saveFileDialog1.FileName+"!!!";
+            }
         }
 
         private bool SavePlan(string saveFile)
@@ -218,7 +222,7 @@ namespace ImgAssemblingLib.AditionalForms
             AssemblyPlan.ChekStitchPlan = ChekStitchPlanСhckBox.Checked;
             AssemblyPlan.SaveRezults = SaveResultChckBox.Checked;
             AssemblyPlan.SpeedCounting = SpeedCountingСhckBox.Checked;
-
+            AssemblyPlan.ShowAssemblingFile = OpenResultChckBox.Checked;
             SpeedCountingСhckBox.Checked = AssemblyPlan.SpeedCounting;
 
             double millimetersInPixel = 0, timePerFrame = 0;
@@ -319,9 +323,7 @@ namespace ImgAssemblingLib.AditionalForms
                 label6.Visible = false;
             }
         }
-        private void label5_Click(object sender, EventArgs e) => PersentInvok();
-        private void label6_Click(object sender, EventArgs e) => PersentInvok();
-        private void EditingStitchingPlan_MouseClick(object sender, MouseEventArgs e) { if (e.X > 305 && e.X < 330 && e.Y > 147 && e.Y < 200) PersentInvok(); }
+
         private void StitchСhckBox_CheckedChanged(object sender, EventArgs e) => CheckFKPoins();
         private void SpeedCountingСhckBox_CheckedChanged(object sender, EventArgs e) => CheckFKPoins();
 
@@ -394,8 +396,7 @@ namespace ImgAssemblingLib.AditionalForms
                 if (OpenResultChckBox.Checked)
                 {
                     string SavedFileName = assembling.GetSavedFileName();
-                    //if (!string.IsNullOrEmpty(SavedFileName)) Process.Start(SavedFileName);
-                    if (!string.IsNullOrEmpty(SavedFileName)) fileEdit.OpenDir(SavedFileName);
+                    if (!string.IsNullOrEmpty(SavedFileName)) fileEdit.OpenFileDir(SavedFileName);
                 }
                 return true;
             }
@@ -440,5 +441,12 @@ namespace ImgAssemblingLib.AditionalForms
             ChekStitchPlanСhckBox.Enabled = !BitMapChckBox.Checked;
         }
         private void BitMapChckBox_CheckedChanged(object sender, EventArgs e) => CheckBitMap();
+        private void label5_Click(object sender, EventArgs e) => PersentInvok();
+        private void label6_Click(object sender, EventArgs e) => PersentInvok();
+        private void EditingStitchingPlan_MouseClick(object sender, MouseEventArgs e)
+        { 
+            if (e.X > 305 && e.X < 333 && e.Y > 173 && e.Y < 233)
+            PersentInvok(); 
+        }
     }
 }

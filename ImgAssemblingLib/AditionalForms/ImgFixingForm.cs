@@ -568,9 +568,11 @@ namespace ImgAssemblingLib.AditionalForms
             if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
                 return;
 
-            await fileEdit.SaveJsonAsync(saveFileDialog.FileName, GetImgFixingSettings());
+            if(await fileEdit.SaveJsonAsync(saveFileDialog.FileName, GetImgFixingSettings()))
+                RezultRTB.Text = "Settings saved :\n" + saveFileDialog.FileName;
+            else RezultRTB.Text = "Err save file!!!\n" + saveFileDialog.FileName;
             //fileEdit.SaveJson(imgFixingFile, GetImgFixingSettings());
-            RezultRTB.Text = "Settings save in " + saveFileDialog.FileName;
+
         }
 
         public bool TryReadSettings(bool fileLoad = false)

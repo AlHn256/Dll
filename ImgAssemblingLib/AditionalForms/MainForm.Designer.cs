@@ -81,9 +81,6 @@ namespace ImgAssemblingLib.AditionalForms
             this.picBox_Display.Size = new System.Drawing.Size(1712, 692);
             this.picBox_Display.TabIndex = 1;
             this.picBox_Display.TabStop = false;
-            this.picBox_Display.MouseDown += picBox_Display_MouseDown;
-            this.picBox_Display.MouseUp += picBox_Display_MouseUp;
-            this.picBox_Display.MouseWheel += panel1_MouseWheel;
             // 
             // TestBtn
             // 
@@ -94,7 +91,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.TestBtn.TabIndex = 3;
             this.TestBtn.Text = "Match Pic By Sift";
             this.TestBtn.UseVisualStyleBackColor = true;
-            this.TestBtn.Click += new System.EventHandler(this. TestBtn_Click);
+            this.TestBtn.Click += new System.EventHandler(this.TestBtn_Click);
             // 
             // Test2Btn
             // 
@@ -162,7 +159,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.ShowPointsBtn.TabIndex = 16;
             this.ShowPointsBtn.Text = "Show Points";
             this.ShowPointsBtn.UseVisualStyleBackColor = true;
-            this.ShowPointsBtn.Click += new System.EventHandler(this. ShowPointsBtn_Click);
+            this.ShowPointsBtn.Click += new System.EventHandler(this.ShowPointsBtn_Click);
             // 
             // StitchImgsBtn
             // 
@@ -173,7 +170,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.StitchImgsBtn.TabIndex = 22;
             this.StitchImgsBtn.Text = "Join Imgs";
             this.StitchImgsBtn.UseVisualStyleBackColor = true;
-            this.StitchImgsBtn.Click += new System.EventHandler(this. JoinImgs);
+            this.StitchImgsBtn.Click += new System.EventHandler(this.JoinImgs);
             // 
             // AllPointsChkBox
             // 
@@ -235,7 +232,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.SaveThisImgBtn.TabIndex = 29;
             this.SaveThisImgBtn.Text = "Save this Img";
             this.SaveThisImgBtn.UseVisualStyleBackColor = true;
-            this.SaveThisImgBtn.Click += new System.EventHandler(this. SaveThisImgBtn_Click);
+            this.SaveThisImgBtn.Click += new System.EventHandler(this.SaveThisImgBtn_Click);
             // 
             // menuStrip1
             // 
@@ -266,7 +263,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.imgFixingToolStripMenuItem.Name = "imgFixingToolStripMenuItem";
             this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.imgFixingToolStripMenuItem.Text = "Img Fixing";
-            this.imgFixingToolStripMenuItem.Click += new System.EventHandler(this. imgFixingToolStripMenuItem_Click);
+            this.imgFixingToolStripMenuItem.Click += new System.EventHandler(this.imgFixingToolStripMenuItem_Click);
             // 
             // fileNameFixingToolStripMenuItem
             // 
@@ -274,34 +271,33 @@ namespace ImgAssemblingLib.AditionalForms
             this.fileNameFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.fileNameFixingToolStripMenuItem.Text = "File Name Fixing";
             // 
-            // 
             // deleteFileCopyToolStripMenuItem
             // 
             this.deleteFileCopyToolStripMenuItem.Name = "deleteFileCopyToolStripMenuItem";
             this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.deleteFileCopyToolStripMenuItem.Text = "Delete FileCopy";
-            this.deleteFileCopyToolStripMenuItem.Click += new System.EventHandler(this. deleteFileCopyToolStripMenuItem_Click);
+            this.deleteFileCopyToolStripMenuItem.Click += new System.EventHandler(this.deleteFileCopyToolStripMenuItem_Click);
             // 
             // deleteResultesToolStripMenuItem
             // 
             this.deleteResultesToolStripMenuItem.Name = "deleteResultesToolStripMenuItem";
             this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.deleteResultesToolStripMenuItem.Text = "Delete Resultes";
-            this.deleteResultesToolStripMenuItem.Click += new System.EventHandler(this. deleteResultesToolStripMenuItem_Click);
+            this.deleteResultesToolStripMenuItem.Click += new System.EventHandler(this.deleteResultesToolStripMenuItem_Click);
             // 
             // deletePlanToolStripMenuItem
             // 
             this.deletePlanToolStripMenuItem.Name = "deletePlanToolStripMenuItem";
             this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.deletePlanToolStripMenuItem.Text = "Delete Plan";
-            this.deletePlanToolStripMenuItem.Click += new System.EventHandler(this. deletePlanToolStripMenuItem_Click);
+            this.deletePlanToolStripMenuItem.Click += new System.EventHandler(this.deletePlanToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this. exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // ToTxtBox
             // 
@@ -310,6 +306,8 @@ namespace ImgAssemblingLib.AditionalForms
             this.ToTxtBox.Size = new System.Drawing.Size(30, 20);
             this.ToTxtBox.TabIndex = 31;
             this.ToTxtBox.Text = "100";
+            this.ToTxtBox.TextChanged += ToTxtBox_TextChanged;
+            // 
             // 
             // FromTxtBox
             // 
@@ -368,7 +366,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.TestImgFixingBtn.TabIndex = 37;
             this.TestImgFixingBtn.Text = "Edit plan";
             this.TestImgFixingBtn.UseVisualStyleBackColor = true;
-            this.TestImgFixingBtn.Click += new System.EventHandler(this. TestImgFixingBtn_Click);
+            this.TestImgFixingBtn.Click += new System.EventHandler(this.TestImgFixingBtn_Click);
             // 
             // StitchingByPlanBtn
             // 
@@ -379,8 +377,6 @@ namespace ImgAssemblingLib.AditionalForms
             this.StitchingByPlanBtn.Text = "Stitch";
             this.StitchingByPlanBtn.UseVisualStyleBackColor = true;
             this.StitchingByPlanBtn.Click += new System.EventHandler(this.StartAssembling);
-            
-            // 
             // 
             // Period
             // 
@@ -401,7 +397,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.GetSpeedBtn.TabIndex = 40;
             this.GetSpeedBtn.Text = "Get Speed";
             this.GetSpeedBtn.UseVisualStyleBackColor = true;
-            OpenDirDtn.Click += new System.EventHandler(this. OpenDirDtn_Click);
+            this.GetSpeedBtn.Click += new System.EventHandler(this.GetSpeedBtn_Click);
             // 
             // RndBtn
             // 
@@ -412,7 +408,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.RndBtn.TabIndex = 41;
             this.RndBtn.Text = "Rnd";
             this.RndBtn.UseVisualStyleBackColor = true;
-            this.OpenDirDtn.Click += new System.EventHandler(this. OpenDirDtn_Click);
+            this.RndBtn.Click += new System.EventHandler(this.Random_Click);
             // 
             // OpenDirDtn
             // 
@@ -422,9 +418,9 @@ namespace ImgAssemblingLib.AditionalForms
             this.OpenDirDtn.TabIndex = 43;
             this.OpenDirDtn.Text = "...";
             this.OpenDirDtn.UseVisualStyleBackColor = true;
-            this.OpenDirDtn.Click += new System.EventHandler(this. OpenDirDtn_Click);
+            this.OpenDirDtn.Click += new System.EventHandler(this.OpenDirDtn_Click);
             // 
-            // Form1
+            // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -461,18 +457,14 @@ namespace ImgAssemblingLib.AditionalForms
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(1750, 600);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "MainForm";
+            this.Text = "MainForm";
             ((System.ComponentModel.ISupportInitialize)(this.picBox_Display)).EndInit();
-            this.FormClosing += Form1_FormClosing;
-            this.Load += Loading;
-            this.DragDrop += WindowsForm_DragDrop;
-            this.DragEnter += WindowsForm_DragEnter;
-            ((System.ComponentModel.ISupportInitialize)picBox_Display).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

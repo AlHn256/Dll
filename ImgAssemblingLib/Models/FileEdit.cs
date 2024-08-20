@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Drawing;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using System.ComponentModel;
 
 namespace ImgAssemblingLib.Models
 {
@@ -597,6 +599,20 @@ namespace ImgAssemblingLib.Models
             else TextMessag = text;
 
             return true;
+        }
+
+        internal bool OpenDir(string dir)
+        {
+            if(!ChkFileDir(dir))return SetErr("Err dir " + dir  + " !Exists!!!");
+            try
+            {
+                Process.Start("explorer.exe", IsDirectory(dir) ? dir : Path.GetDirectoryName(dir));
+                return true;
+            }
+            catch (Win32Exception win32Exception)
+            {
+                return SetErr("Err" + win32Exception.Message + "!!!");
+            }
         }
     }
 }

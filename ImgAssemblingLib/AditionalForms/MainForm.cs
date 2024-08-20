@@ -37,17 +37,28 @@ namespace ImgAssemblingLib.AditionalForms
         public MainForm()
         {
             InitializeComponent();
+
+            this.Load += Loading;
+
         }
         public MainForm(AssemblyPlan assemblyPlan)
         {
             InitializeComponent();
             this.assemblyPlan = assemblyPlan;
-            //logger = LogManager.GetCurrentClassLogger();
         }
         private void Loading(object sender, EventArgs e)
         {
             logger.Info("Programm starting");
+
             StopBtn.Enabled = false;
+
+            this.picBox_Display.MouseDown += picBox_Display_MouseDown;
+            this.picBox_Display.MouseUp += picBox_Display_MouseUp;
+            this.picBox_Display.MouseWheel += panel1_MouseWheel;
+            this.FormClosing += Form1_FormClosing;
+            this.DragDrop += WindowsForm_DragDrop;
+            this.DragEnter += WindowsForm_DragEnter;
+            ((ISupportInitialize)picBox_Display).EndInit();
 
             if (SynchronizationContext.Current != null) _context = SynchronizationContext.Current;
             else _context = new SynchronizationContext();
@@ -303,46 +314,6 @@ namespace ImgAssemblingLib.AditionalForms
                 }
             }
         }
-
-        //private Double[] Precision = [0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 5, 10, 20, 50, 100];
-        // private int MinSufficientNumberOfPoints = 5, MaxSufficientNumberOfPoints = 65;
-        //public List<Vector> FindOptimalPrecision(DMatch[][]? matches, KeyPoint[] keyPointsSrc, KeyPoint[] keyPointsTo, out List<DMatch> goodMatches)
-        //{
-        //    goodMatches = new List<DMatch>();
-        //    List<Vector> goodPointList = new List<Vector>();
-
-        //    if (matches == null) return goodPointList;
-        //    int i;
-        //    for (i = 0; i < Precision.Length; i++)
-        //    {
-        //        goodMatches = new List<DMatch>();
-        //        goodPointList = new List<Vector>();
-        //        for (int j = 0; j < matches.Length; j++)
-        //        {
-        //            var match = matches[j][0];
-        //            if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance)
-        //            {
-        //                Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
-        //                if (AllPointsChkBox.Checked)
-        //                {
-        //                    goodPointList.Add(vector);
-        //                    goodMatches.Add(matches[j][0]);
-        //                }
-        //                else if (!vector.isSamePoint)
-        //                {
-        //                    goodPointList.Add(vector);
-        //                    goodMatches.Add(matches[j][0]);
-        //                }
-        //            }
-        //        }
-
-        //        if (matches.Length == goodPointList.Count) break;
-        //        if (goodPointList.Count > MinSufficientNumberOfPoints && !AllPointsChkBox.Checked) break;
-        //        if (goodPointList.Count > MaxSufficientNumberOfPoints && AllPointsChkBox.Checked) break;
-        //    }
-
-        //    return goodPointList;
-        //}
         public Mat MatchPicBySurf(Mat matSrc, Mat matTo, double threshold = 40)
         {
             using (Mat matSrcRet = new Mat())
@@ -607,7 +578,6 @@ namespace ImgAssemblingLib.AditionalForms
             stitchingBlock.GetVectorList(FirstFile, SecondFile, true);
             if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
         }
-        //private void Stitch2ImgsBtn_Click(object sender, EventArgs e) => JoinImgs();
         private async void JoinImgs(object sender, EventArgs e) => await JoinImgs();
         private async Task<bool> JoinImgs()
         {
@@ -620,8 +590,9 @@ namespace ImgAssemblingLib.AditionalForms
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
             LoadBoders();
             assemblyPlan.BitMap = true;
+            assemblyPlan.Stitch = true;
             assemblyPlan.FixImg = false;
-            RTB.Text = "Start Assembling\n";
+            RTB.Text = "Join Imgs\n";
 
             Assembling assembling;
             Bitmap[] dataArray = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
@@ -835,6 +806,7 @@ namespace ImgAssemblingLib.AditionalForms
             ToTxtBox.Text = to.ToString();
             assemblyPlan.To = to;
         }
+
         private void UpDatePeriod()
         {
             if (assemblyPlan == null) return;
@@ -853,24 +825,18 @@ namespace ImgAssemblingLib.AditionalForms
             RTB.Text = "Start Assembling\n";
             logger.Info("\nStart Assembling");
 
-            if (assemblyPlan == null || string.IsNullOrEmpty(FileDirTxtBox.Text))
+            if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
+            if (loadBoders) LoadBoders();
+
+            assemblyPlan.BitMap = false;
+            if (string.IsNullOrEmpty(FileDirTxtBox.Text))
             {
-                if (assemblyPlan == null) RTB.Text += "Err assemblyPlan = null!!!";
-                if (string.IsNullOrEmpty(FileDirTxtBox.Text)) RTB.Text += "Err string.IsNullOrEmpty(File1TxtBox.Text)!!!";
+                RTB.Text += "Err File1TxtBox.Text IsNullOrEmpty!!!";
                 return false;
             }
-
-            if (loadBoders) LoadBoders();
-            if (!fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
+            else if (!fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
             else assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
             assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
-
-            assemblyPlan.CheckPlan();
-            if (assemblyPlan.IsErr)
-            {
-                RTB.Text = assemblyPlan.ErrText;
-                return false;
-            }
 
             Assembling.ChangeAssemblyPlan(assemblyPlan);
             if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
@@ -883,13 +849,20 @@ namespace ImgAssemblingLib.AditionalForms
             }
             else
             {
-                RTB.Text += "Err " + Assembling.ErrText;
-                logger.Info("Err " + Assembling.ErrText);
+                RTB.Text += Assembling.ErrText;
+                logger.Info(Assembling.ErrText);
                 return false;
             }
         }
         private async void GetSpeedBtn_Click(object sender, EventArgs e)
         {
+            if(string.IsNullOrEmpty(FileDirTxtBox.Text))
+            {
+                RTB.Text = "ERR GetSpeedBtn.FileDirTxtBox.Text IsNullOrEmpty  !!!";
+                return;
+            }
+            if(assemblyPlan==null) assemblyPlan= new AssemblyPlan();
+
             RTB.Text = string.Empty;
             LoadBoders();
             assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
@@ -970,17 +943,9 @@ namespace ImgAssemblingLib.AditionalForms
 
         private void OpenDirDtn_Click(object sender, EventArgs e)
         {
-
             if (string.IsNullOrEmpty(FileDirTxtBox.Text)) return;
-            try
-            {
-                Process.Start("explorer.exe", fileEdit.IsDirectory(FileDirTxtBox.Text) ? FileDirTxtBox.Text : Path.GetDirectoryName(FileDirTxtBox.Text));
-            }
-            catch (Win32Exception win32Exception)
-            {
-                //The system cannot find the file specified...
-                RTB.Text = "Err" + win32Exception.Message + "!!!";
-            }
+
+            if(!fileEdit.OpenDir(FileDirTxtBox.Text)) RTB.Text = fileEdit.ErrText;
         }
     }
 }

@@ -100,10 +100,10 @@ namespace ImgAssemblingLib.Models
 
         public bool CheckPlane()
         {
-            if (AssemblyPlan == null) return SetErr("Err AssemblyPlan = null!!!");
+            if (AssemblyPlan == null) return SetErr("Err Assembling.AssemblyPlan = null!!!");
             if (AssemblyPlan.BitMap)
             {
-                if (BitmapData.Length == 0) return SetErr("Err BitmapData = 0!!!");
+                if (BitmapData==null || BitmapData.Length == 0) return SetErr("Err Assembling.BitmapData = null || = 0!!!");
             }
             else
             {
@@ -130,8 +130,8 @@ namespace ImgAssemblingLib.Models
             }
             else
             {
-                logger.Info("Working with Bitmap. Directory");
-                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Bitmap. Directory");
+                logger.Info("Working with Directory");
+                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Directory");
             }
             logger.Info("Delta = " + AssemblyPlan.Delta);
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Delta = " + AssemblyPlan.Delta);

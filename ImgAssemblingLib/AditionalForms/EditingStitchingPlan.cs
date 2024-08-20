@@ -394,7 +394,8 @@ namespace ImgAssemblingLib.AditionalForms
                 if (OpenResultChckBox.Checked)
                 {
                     string SavedFileName = assembling.GetSavedFileName();
-                    if (!string.IsNullOrEmpty(SavedFileName)) Process.Start(SavedFileName);
+                    //if (!string.IsNullOrEmpty(SavedFileName)) Process.Start(SavedFileName);
+                    if (!string.IsNullOrEmpty(SavedFileName)) fileEdit.OpenDir(SavedFileName);
                 }
                 return true;
             }

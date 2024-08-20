@@ -194,7 +194,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.SaveBtn.TabIndex = 24;
             this.SaveBtn.Text = "Save Rezult";
             this.SaveBtn.UseVisualStyleBackColor = true;
-            this.SaveBtn.Click += new System.EventHandler(this. SaveBtn_Click);
+            this.SaveBtn.Click += new System.EventHandler(this.SaveBtn_Click);
             // 
             // progressBar
             // 
@@ -310,7 +310,6 @@ namespace ImgAssemblingLib.AditionalForms
             this.ToTxtBox.Size = new System.Drawing.Size(30, 20);
             this.ToTxtBox.TabIndex = 31;
             this.ToTxtBox.Text = "100";
-            this.ToTxtBox.TextChanged += ToTxtBox_TextChanged;
             // 
             // FromTxtBox
             // 

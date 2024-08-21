@@ -150,12 +150,6 @@ namespace ImgAssemblingLib.AditionalForms
         }
 
         private void WorkingDirectoryTxtBox_TextChanged(object sender, EventArgs e) => FixStitchingDirectoryTxtBox();
-
-        private void SaveBtn_Click(object sender, EventArgs e)
-        {
-            if (SavePlan(AssemblyPlan.defaultAssemblingFile)) Close();
-        }
-
         private void SaveToBtn_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -166,17 +160,13 @@ namespace ImgAssemblingLib.AditionalForms
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                if (SavePlan(saveFileDialog1.FileName)) InfoLabel.Text = "File saved: " + saveFileDialog1.FileName;
+                PlanIsUpDate = true;
+                UpdateAssemblyPlan();
+                if (fileEdit.SaveJson(saveFileDialog1.FileName, AssemblyPlan)) InfoLabel.Text = "File saved: " + saveFileDialog1.FileName;
                 else InfoLabel.Text = "Saving Err: " + saveFileDialog1.FileName+"!!!";
             }
         }
 
-        private bool SavePlan(string saveFile)
-        {
-            PlanIsUpDate = true;
-            UpdateAssemblyPlan();
-            return fileEdit.SaveJson(saveFile, AssemblyPlan);
-        }
         private void UpdateAssemblyPlan()
         {
             //AssemblyPlan.FileNameCheck = CheckFileNamesChckBox.Checked;
@@ -217,14 +207,14 @@ namespace ImgAssemblingLib.AditionalForms
             }
 
             AssemblyPlan.Stitch = StitchСhckBox.Checked;
-            AssemblyPlan.StitchingDirectory = StitchingDirectoryTxtBox.Text;
-
             AssemblyPlan.ChekStitchPlan = ChekStitchPlanСhckBox.Checked;
+            AssemblyPlan.StitchingDirectory = StitchingDirectoryTxtBox.Text;
+            
             AssemblyPlan.SaveRezults = SaveResultChckBox.Checked;
             AssemblyPlan.SpeedCounting = SpeedCountingСhckBox.Checked;
             AssemblyPlan.ShowAssemblingFile = OpenResultChckBox.Checked;
-            SpeedCountingСhckBox.Checked = AssemblyPlan.SpeedCounting;
 
+            //SpeedCountingСhckBox.Checked = AssemblyPlan.SpeedCounting;
             double millimetersInPixel = 0, timePerFrame = 0;
             double.TryParse(MillimetersInPixelTxtBox.Text, out millimetersInPixel);
             double.TryParse(TimePerFrameTxtBox.Text, out timePerFrame);

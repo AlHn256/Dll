@@ -67,6 +67,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.GetSpeedBtn = new System.Windows.Forms.Button();
             this.RndBtn = new System.Windows.Forms.Button();
             this.OpenDirDtn = new System.Windows.Forms.Button();
+            this.UseBitmapChckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_Display)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -105,7 +106,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             // PeriodTxtBox
             // 
-            this.PeriodTxtBox.Location = new System.Drawing.Point(519, 51);
+            this.PeriodTxtBox.Location = new System.Drawing.Point(518, 50);
             this.PeriodTxtBox.Name = "PeriodTxtBox";
             this.PeriodTxtBox.Size = new System.Drawing.Size(30, 20);
             this.PeriodTxtBox.TabIndex = 5;
@@ -121,7 +122,6 @@ namespace ImgAssemblingLib.AditionalForms
             this.RTB.Size = new System.Drawing.Size(882, 62);
             this.RTB.TabIndex = 7;
             this.RTB.Text = "";
-            this.RTB.KeyPress += key_Down;
             // 
             // FileDirTxtBox
             // 
@@ -134,7 +134,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.Location = new System.Drawing.Point(350, 52);
+            this.label4.Location = new System.Drawing.Point(302, 52);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(40, 15);
             this.label4.TabIndex = 14;
@@ -144,7 +144,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             this.ZoomLabel.AutoSize = true;
             this.ZoomLabel.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ZoomLabel.Location = new System.Drawing.Point(389, 53);
+            this.ZoomLabel.Location = new System.Drawing.Point(341, 53);
             this.ZoomLabel.Name = "ZoomLabel";
             this.ZoomLabel.Size = new System.Drawing.Size(13, 15);
             this.ZoomLabel.TabIndex = 15;
@@ -211,6 +211,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.StopBtn.TabIndex = 27;
             this.StopBtn.Text = "Stop";
             this.StopBtn.UseVisualStyleBackColor = true;
+            this.StopBtn.Click += new System.EventHandler(this.StopBtn_Click);
             // 
             // progressBarLabel
             // 
@@ -261,47 +262,47 @@ namespace ImgAssemblingLib.AditionalForms
             // imgFixingToolStripMenuItem
             // 
             this.imgFixingToolStripMenuItem.Name = "imgFixingToolStripMenuItem";
-            this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.imgFixingToolStripMenuItem.Text = "Img Fixing";
             this.imgFixingToolStripMenuItem.Click += new System.EventHandler(this.imgFixingToolStripMenuItem_Click);
             // 
             // fileNameFixingToolStripMenuItem
             // 
             this.fileNameFixingToolStripMenuItem.Name = "fileNameFixingToolStripMenuItem";
-            this.fileNameFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.fileNameFixingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fileNameFixingToolStripMenuItem.Text = "File Name Fixing";
             // 
             // deleteFileCopyToolStripMenuItem
             // 
             this.deleteFileCopyToolStripMenuItem.Name = "deleteFileCopyToolStripMenuItem";
-            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deleteFileCopyToolStripMenuItem.Text = "Delete FileCopy";
             this.deleteFileCopyToolStripMenuItem.Click += new System.EventHandler(this.deleteFileCopyToolStripMenuItem_Click);
             // 
             // deleteResultesToolStripMenuItem
             // 
             this.deleteResultesToolStripMenuItem.Name = "deleteResultesToolStripMenuItem";
-            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deleteResultesToolStripMenuItem.Text = "Delete Resultes";
             this.deleteResultesToolStripMenuItem.Click += new System.EventHandler(this.deleteResultesToolStripMenuItem_Click);
             // 
             // deletePlanToolStripMenuItem
             // 
             this.deletePlanToolStripMenuItem.Name = "deletePlanToolStripMenuItem";
-            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deletePlanToolStripMenuItem.Text = "Delete Plan";
             this.deletePlanToolStripMenuItem.Click += new System.EventHandler(this.deletePlanToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // ToTxtBox
             // 
-            this.ToTxtBox.Location = new System.Drawing.Point(519, 30);
+            this.ToTxtBox.Location = new System.Drawing.Point(518, 29);
             this.ToTxtBox.Name = "ToTxtBox";
             this.ToTxtBox.Size = new System.Drawing.Size(30, 20);
             this.ToTxtBox.TabIndex = 31;
@@ -310,7 +311,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             // FromTxtBox
             // 
-            this.FromTxtBox.Location = new System.Drawing.Point(519, 10);
+            this.FromTxtBox.Location = new System.Drawing.Point(518, 9);
             this.FromTxtBox.Name = "FromTxtBox";
             this.FromTxtBox.Size = new System.Drawing.Size(30, 20);
             this.FromTxtBox.TabIndex = 32;
@@ -321,7 +322,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             this.FrLb.AutoSize = true;
             this.FrLb.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.FrLb.Location = new System.Drawing.Point(475, 14);
+            this.FrLb.Location = new System.Drawing.Point(476, 12);
             this.FrLb.Name = "FrLb";
             this.FrLb.Size = new System.Drawing.Size(36, 15);
             this.FrLb.TabIndex = 33;
@@ -331,7 +332,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(483, 34);
+            this.label1.Location = new System.Drawing.Point(484, 32);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(21, 15);
             this.label1.TabIndex = 34;
@@ -341,7 +342,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label5.Location = new System.Drawing.Point(549, 13);
+            this.label5.Location = new System.Drawing.Point(549, 12);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(18, 15);
             this.label5.TabIndex = 35;
@@ -352,7 +353,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label6.Location = new System.Drawing.Point(549, 36);
+            this.label6.Location = new System.Drawing.Point(549, 35);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(18, 15);
             this.label6.TabIndex = 36;
@@ -383,7 +384,7 @@ namespace ImgAssemblingLib.AditionalForms
             // 
             this.Period.AutoSize = true;
             this.Period.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Period.Location = new System.Drawing.Point(469, 54);
+            this.Period.Location = new System.Drawing.Point(470, 52);
             this.Period.Name = "Period";
             this.Period.Size = new System.Drawing.Size(46, 15);
             this.Period.TabIndex = 39;
@@ -421,12 +422,24 @@ namespace ImgAssemblingLib.AditionalForms
             this.OpenDirDtn.UseVisualStyleBackColor = true;
             this.OpenDirDtn.Click += new System.EventHandler(this.OpenDirDtn_Click);
             // 
+            // UseBitmapChckBox
+            // 
+            this.UseBitmapChckBox.AutoSize = true;
+            this.UseBitmapChckBox.Location = new System.Drawing.Point(373, 52);
+            this.UseBitmapChckBox.Name = "UseBitmapChckBox";
+            this.UseBitmapChckBox.Size = new System.Drawing.Size(80, 17);
+            this.UseBitmapChckBox.TabIndex = 44;
+            this.UseBitmapChckBox.Text = "Use Bitmap";
+            this.UseBitmapChckBox.UseVisualStyleBackColor = true;
+            this.UseBitmapChckBox.CheckedChanged += new System.EventHandler(this.UseBitmapChckBox_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1734, 802);
+            this.Controls.Add(this.UseBitmapChckBox);
             this.Controls.Add(this.OpenDirDtn);
             this.Controls.Add(this.RndBtn);
             this.Controls.Add(this.GetSpeedBtn);
@@ -507,5 +520,6 @@ namespace ImgAssemblingLib.AditionalForms
         private Button RndBtn;
         private Button Zoom1Btn;
         private Button OpenDirDtn;
+        private CheckBox UseBitmapChckBox;
     }
 }

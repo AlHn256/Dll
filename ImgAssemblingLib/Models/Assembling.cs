@@ -13,7 +13,7 @@ namespace ImgAssemblingLib.Models
 {
     public class Assembling
     {
-        private Bitmap[] BitmapData { get; set; }
+        public Bitmap[] BitmapData { get; set; }
         private AssemblyPlan AssemblyPlan { get; set; }
         private FileEdit fileEdit = new FileEdit();
         private string SavedFileName { get; set; } = string.Empty;
@@ -115,14 +115,16 @@ namespace ImgAssemblingLib.Models
 
         public async Task<bool> StartAssembling()
         {
+            bool contectIsOn = _context == null ? false : true;
+            if (contectIsOn) _context.Send(OnRTBAddInfo, "Start Assembling\n");
+            logger.Info("\nStart Assembling");
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             TimeSpan ts = stopwatch.Elapsed;
             TimeSpan tSum = TimeSpan.Zero;
             
-            bool contectIsOn = _context == null? false: true;
             bool workingWBitmap = (AssemblyPlan.BitMap && BitmapData != null && BitmapData.Length != 0) ? true : false;
-
             if (workingWBitmap)
             {
                 logger.Info("Working with Bitmap. BitmapData - " + BitmapData.Length);
@@ -314,9 +316,7 @@ namespace ImgAssemblingLib.Models
                 if (!string.IsNullOrEmpty(SavedFileName)){
                     SendFinished(fileEdit.TextMessag);AssemblyPlan.RezultOfSavingRezults = fileEdit.TextMessag;
                     if (AssemblyPlan.ShowAssemblingFile)
-                    {
                         fileEdit.OpenFileDir(SavedFileName);
-                    }
                 }
 
                 else { SendErr(fileEdit.ErrText); AssemblyPlan.StitchRezult = ErrText; }

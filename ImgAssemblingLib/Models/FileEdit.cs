@@ -345,7 +345,6 @@ namespace ImgAssemblingLib.Models
             if (string.IsNullOrEmpty(dir)) dir = AppDomain.CurrentDomain.BaseDirectory;
 
             FileInfo[] fileList = new FileInfo[0];
-
             if (Directory.Exists(dir))
             {
                 DirectoryInfo DI = new DirectoryInfo(dir);

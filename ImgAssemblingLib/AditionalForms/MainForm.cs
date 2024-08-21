@@ -35,9 +35,7 @@ namespace ImgAssemblingLib.AditionalForms
         public MainForm()
         {
             InitializeComponent();
-
             this.Load += Loading;
-
         }
         public MainForm(AssemblyPlan assemblyPlan)
         {
@@ -48,8 +46,7 @@ namespace ImgAssemblingLib.AditionalForms
         {
             logger.Info("Programm starting");
 
-            StopBtn.Enabled = false;
-
+            //StopBtn.Enabled = false;
             this.picBox_Display.MouseDown += picBox_Display_MouseDown;
             this.picBox_Display.MouseUp += picBox_Display_MouseUp;
             this.picBox_Display.MouseWheel += panel1_MouseWheel;
@@ -113,23 +110,44 @@ namespace ImgAssemblingLib.AditionalForms
             fileEdit.AutoSave(formSettings);
             return true;
         }
-        private async void key_Down(object sender, KeyPressEventArgs e)
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (e.KeyChar == 'a' || e.KeyChar == 'A' || e.KeyChar == 'ф' || e.KeyChar == 'Ф')
+            KeyDown(keyData);
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private string cosole = string.Empty;
+        private async void KeyDown(Keys keyData)
+        {
+            if (keyData == Keys.A)
             {
                 FromTxtBox.Text = "0";
                 ToTxtBox.Text = "100";
-                await StartAssembling(true);
+                //await StartAssembling(true);
             }
-            else if (e.KeyChar == ']' || e.KeyChar == '}' || e.KeyChar == 'ъ' || e.KeyChar == 'Ъ' || e.KeyChar == '6') { Delta += deltaStep; await StartAssembling(true); }
-            else if (e.KeyChar == '[' || e.KeyChar == '{' || e.KeyChar == 'х' || e.KeyChar == 'Х' || e.KeyChar == '4') { Delta -= deltaStep; await StartAssembling(true); }
-            else if (e.KeyChar == '.' || e.KeyChar == '>' || e.KeyChar == 'ю' || e.KeyChar == 'Ю' || e.KeyChar == ',' || e.KeyChar == '<' || e.KeyChar == 'б' || e.KeyChar == 'Б' || e.KeyChar == 'k' || e.KeyChar == ';' || e.KeyChar == 'K' || e.KeyChar == ':' || e.KeyChar == 'л' || e.KeyChar == 'ж' || e.KeyChar == 'Л' || e.KeyChar == 'Ж')
+            else if (keyData == Keys.Oem6 || keyData == Keys.Oem4)
             {
-                if (FileList.Count == 0) { RTB.Text = "Err FileList=0!!!"; return; }
-                if (e.KeyChar == '<' || e.KeyChar == ',' || e.KeyChar == 'б' || e.KeyChar == 'Б') SecondFileNumber--;
-                if (e.KeyChar == '.' || e.KeyChar == '>' || e.KeyChar == 'ю' || e.KeyChar == 'Ю') SecondFileNumber++;
-                if (e.KeyChar == 'k' || e.KeyChar == 'K' || e.KeyChar == 'л' || e.KeyChar == 'Л') FirstFileNumber--;
-                if (e.KeyChar == ';' || e.KeyChar == ':' || e.KeyChar == 'ж' || e.KeyChar == 'Ж') FirstFileNumber++;
+                if (keyData == Keys.Oem6) { Delta += deltaStep; await StartAssembling(true); }
+                else if (keyData == Keys.Oem4) { Delta -= deltaStep; await StartAssembling(true); }
+            }
+            else if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.K || keyData == Keys.Oem1 || keyData == Keys.OemPeriod || keyData == Keys.Oemcomma || keyData == Keys.Left || keyData == Keys.Right)
+            {
+                if (FileList.Count == 0) { RTB.Text = "Err KeyDown.FileList=0!!!"; return; }
+                else if (keyData == Keys.Oemcomma) SecondFileNumber--;
+                else if (keyData == Keys.OemPeriod) SecondFileNumber++;
+                else if (keyData == Keys.K) FirstFileNumber--;
+                else if (keyData == Keys.Oem1) FirstFileNumber++;
+                else if (keyData == Keys.Left || keyData == Keys.Up)
+                {
+                    FirstFileNumber--;
+                    SecondFileNumber--;
+                }
+                else if (keyData == Keys.Right || keyData == Keys.Down)
+                {
+                    FirstFileNumber++;
+                    SecondFileNumber++;
+                }
 
                 if (FirstFileNumber < 0) FirstFileNumber = 0;
                 if (SecondFileNumber < 0) SecondFileNumber = 0;
@@ -141,9 +159,17 @@ namespace ImgAssemblingLib.AditionalForms
                 SecondFile = FileList[SecondFileNumber];
 
                 RTB.Text = Path.GetFileName(FirstFile) + " - " + Path.GetFileName(SecondFile) + "\n";
-                ShowPoints();
+                if (keyData == Keys.Up || keyData == Keys.Down)JoinImgs();
+                else  ShowPoints();
+            }
+            else
+            {
+                cosole += keyData;
+                if(cosole.Length>5) cosole= cosole.Substring(cosole.Length-5);
             }
         }
+
+        private void TestBtn_Click(object sender, EventArgs e) => MatchImgs();
         private void MatchImgs()
         {
             Mat matSrc = new Mat(FileDirTxtBox.Text);
@@ -151,7 +177,6 @@ namespace ImgAssemblingLib.AditionalForms
 
             picBox_Display.Image = BitmapConverter.ToBitmap(MatchPicBySift(matSrc, matTo));
         }
-        private void TestBtn_Click(object sender, EventArgs e) => MatchImgs();
         private void Test2Btn_Click(object sender, EventArgs e)
         {
             Mat matSrc = new Mat(FileDirTxtBox.Text);
@@ -584,6 +609,16 @@ namespace ImgAssemblingLib.AditionalForms
                 RTB.Text += "Err JoinImgs.FirstFile || SecondFile IsNullOrEmpty!!!";
                 return false;
             }
+            if (!File.Exists(FirstFile) )
+            {
+                RTB.Text += "Err JoinImgs.FirstFile "+ FirstFile + " NotExists!!!";
+                return false;
+            }
+            if (!File.Exists(SecondFile))
+            {
+                RTB.Text += "Err JoinImgs.SecondFile " + SecondFile + " NotExists!!!";
+                return false;
+            }
 
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
             LoadBoders();
@@ -592,22 +627,26 @@ namespace ImgAssemblingLib.AditionalForms
             assemblyPlan.FixImg = false;
             RTB.Text = "Join Imgs\n";
 
-            Assembling assembling;
-            Bitmap[] dataArray = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
-            assembling = new Assembling(assemblyPlan, dataArray, _context);
-            assembling.SaveImgFixingRezultToFile = true;
-            assembling.UpdateImg += worker_UpdateImg;
-            assembling.RTBAddInfo += rtbText_AddInfo;
-            // Вариант сборки через файлы или ссылки на них
+            
+            Assembling.BitmapData = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
+            Assembling.ChangeAssemblyPlan(assemblyPlan);
+            Assembling.SaveImgFixingRezultToFile = true;
 
-            if (await assembling.StartAssembling())// Запуск сборки изображения
+            //Bitmap[] dataArray = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
+            //Assembling assembling;
+            //assembling = new Assembling(assemblyPlan, dataArray, _context);
+            //assembling.SaveImgFixingRezultToFile = true;
+            //assembling.UpdateImg += worker_UpdateImg;
+            //assembling.RTBAddInfo += rtbText_AddInfo;
+
+            if (await Assembling.StartAssembling())// Запуск сборки изображения
             {
                 RTB.Text += "Assembling is finished!";
                 return true;
             }
             else
             {
-                RTB.Text += assembling.ErrText;
+                RTB.Text += Assembling.ErrText;
                 return false;
             }
         }
@@ -650,7 +689,10 @@ namespace ImgAssemblingLib.AditionalForms
             picBox_Display.Image = BitmapConverter.ToBitmap(rezult);
         }
 
-        //private void StopBtn_Click(object sender, EventArgs e) => StitchingBlock.StopProcess = true;
+        private void StopBtn_Click(object sender, EventArgs e)
+        {
+            StitchingBlock.StopProcess = true;
+        }
         private void SaveThisImgBtn_Click(object sender, EventArgs e) => SaveImg(false);
         private void SaveBtn_Click(object sender, EventArgs e) => SaveImg();
         private bool SaveImg(bool usinOSV = true)
@@ -709,7 +751,7 @@ namespace ImgAssemblingLib.AditionalForms
         }
         private void TestImgFixingBtn_Click(object sender, EventArgs e)
         {
-            if (assemblyPlan == null) return;
+            if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
             if (fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
             else assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
 
@@ -750,6 +792,7 @@ namespace ImgAssemblingLib.AditionalForms
                 Delta = assemblyPlan.Delta;
                 FromTxtBox.Text = assemblyPlan.From.ToString();
                 ToTxtBox.Text = assemblyPlan.To.ToString();
+                UseBitmapChckBox.Checked = assemblyPlan.BitMap;
                 SaveSettings();
             }
         }
@@ -804,17 +847,12 @@ namespace ImgAssemblingLib.AditionalForms
             ToTxtBox.Text = to.ToString();
             assemblyPlan.To = to;
         }
-
         private void label6_Click(object sender, EventArgs e) => PersentInvok();
-
         private void label5_Click(object sender, EventArgs e) => PersentInvok();
-
         private void MainForm_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.X > 550 && e.X < 566 && e.Y > -15 && e.Y < 80)
-                PersentInvok();
+            if (e.X > 550 && e.X < 566 && e.Y > -15 && e.Y < 80) PersentInvok();
         }
-
         private void PersentInvok()
         {
             if (assemblyPlan != null)
@@ -823,6 +861,11 @@ namespace ImgAssemblingLib.AditionalForms
                 label5.Visible = assemblyPlan.Percent;
                 label6.Visible = assemblyPlan.Percent;
             }
+        }
+
+        private void UseBitmapChckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (assemblyPlan != null) assemblyPlan.BitMap = UseBitmapChckBox.Checked;
         }
 
         private void UpDatePeriod()
@@ -846,21 +889,28 @@ namespace ImgAssemblingLib.AditionalForms
                 return false;
             }
 
-            RTB.Text = "Start Assembling\n";
-            logger.Info("\nStart Assembling");
-
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
-
 
             if (loadBoders) LoadBoders();
             else if (!fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
             else assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
             assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
-            assemblyPlan.BitMap = false;
-            assemblyPlan.ShowAssemblingFile = true;
+            //assemblyPlan.BitMap = false;
+            //assemblyPlan.ShowAssemblingFile = true;
+
+            if (assemblyPlan.BitMap)
+            {
+                FileInfo[] fileList = fileEdit.SearchFiles(assemblyPlan.WorkingDirectory);
+                if (fileList.Length == 0) return false;
+                Bitmap[] dataArray = fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
+                Assembling.BitmapData = dataArray;
+                //Assembling.SaveImgFixingRezultToFile = SavingImgWBitmapChckBox.Checked;
+            }
+
+
+            if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
 
             Assembling.ChangeAssemblyPlan(assemblyPlan);
-            if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
 
             if (await Assembling.StartAssembling())
             {

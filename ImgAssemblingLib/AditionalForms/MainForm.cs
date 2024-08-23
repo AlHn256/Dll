@@ -28,7 +28,7 @@ namespace ImgAssemblingLib.AditionalForms
         private int Delta = 0, deltaStep = 20, Xdn = 0, Ydn = 0, Xup = 0, Yup = 0;
         private int FirstFileNumber = 0, SecondFileNumber = 0;
         private List<string> FileList = new List<string>();
-        private string SecondFile = string.Empty, FirstFile = string.Empty;
+        private string SecondFile = string.Empty, FirstFile = string.Empty, console = string.Empty;
         private string[] fileFilter = new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" };
         private object _context;
 
@@ -117,7 +117,7 @@ namespace ImgAssemblingLib.AditionalForms
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private string cosole = string.Empty;
+    
         private async void KeyDown(Keys keyData)
         {
             if (keyData == Keys.A)
@@ -164,8 +164,8 @@ namespace ImgAssemblingLib.AditionalForms
             }
             else
             {
-                cosole += keyData;
-                if(cosole.Length>5) cosole= cosole.Substring(cosole.Length-5);
+                console += keyData;
+                if(console.Length>5) console= console.Substring(console.Length-5);
             }
         }
 
@@ -202,17 +202,18 @@ namespace ImgAssemblingLib.AditionalForms
         {
             bool IsFirst = true;
             string serchingDir = string.Empty;
-            if (files == null) return;
-            if (files.Length == 0) return;
-            if (files.Length == 1)
+            if (files == null || files.Length == 0) return;
+            if (files.Length == 1 && !string.IsNullOrEmpty(files[0]))
             {
-                if (string.IsNullOrEmpty(files[0])) return;
-                // string file = files[0];
                 serchingDir = files[0];
-                FileAttributes attr = File.GetAttributes(serchingDir);
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                if (!fileEdit.ChkFileDir(serchingDir))
                 {
-                    //serchingDir = serchingDir;
+                    RTB.Text = "Err File\\Dir not found!!!";
+                    return ;
+                }
+
+                if (fileEdit.IsDirectory(serchingDir))
+                {
                     FileInfo[] fileInfo = fileEdit.SearchFiles(serchingDir);
                     if (fileInfo.Length > 1)
                     {

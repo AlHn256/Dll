@@ -112,6 +112,7 @@
     <Compile Include="Models\CopyList.cs" />
     <Compile Include="Models\FileEdit.cs" />
     <Compile Include="Models\FileList.cs" />
+    <Compile Include="Models\FinalResult.cs" />
     <Compile Include="Models\FormSettings.cs" />
     <Compile Include="Models\ImgFixingSettings.cs" />
     <Compile Include="Models\MNK.cs" />

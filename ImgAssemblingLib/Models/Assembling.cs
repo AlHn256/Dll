@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WinFormsApp1.Enum;
 
 namespace ImgAssemblingLib.Models
 {
@@ -31,6 +32,7 @@ namespace ImgAssemblingLib.Models
         public bool SaveImgFixingRezultToFile { get; set; } = false;
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
+        public EnumErrCode ErrCode { get; set; }
         public List<string> ErrList { get; set; } = new List<string>();
 
         private void worker_ProcessChang(int progress) => _context.Send(OnProgressChanged, progress);
@@ -113,6 +115,30 @@ namespace ImgAssemblingLib.Models
             return true;
         }
 
+        public async Task<FinalResult> TryAssemble()
+        {
+            try
+            {
+                await StartAssembling();
+                return new FinalResult()
+                {
+                    Speed = AssemblyPlan.Speed,
+                    MatRezult = RezultImg
+                };
+            }
+            catch (Exception ex)
+            {
+                return new FinalResult() {
+                    IsErr = IsErr,
+                    ErrText = ErrText + "\nEx.Message " + ex.Message,
+                    ErrList = ErrList
+                };
+            }
+            finally
+            {
+            }
+            
+        }
         public async Task<bool> StartAssembling()
         {
             bool contectIsOn = _context == null ? false : true;
@@ -327,15 +353,12 @@ namespace ImgAssemblingLib.Models
             SendTime("  Time ", ts);
             SendTime("  AllTime ", tSum);
             stopwatch.Stop();
-
-
             
 
             return !IsErr;
         }
 
         public double GetSpeed() => AssemblyPlan.Speed;
-
         private void SendTime(string text, TimeSpan ts)
         {
             if (_context!=null) _context.Send(OnRTBAddInfo, text + String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10) + "\n");

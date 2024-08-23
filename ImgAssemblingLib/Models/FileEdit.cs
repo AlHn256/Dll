@@ -230,8 +230,8 @@ namespace ImgAssemblingLib.Models
         }
         public string[] GetAutoSaveFilesList()
         {
-            string ApplicationFileName = Path.GetFileNameWithoutExtension(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName.Split('\\').Last()) + ".inf";
-            string AdditionalFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\" + System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName.Split('\\').Last();
+            string ApplicationFileName = Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName.Split('\\').Last()) + ".inf";
+            string AdditionalFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\" + Process.GetCurrentProcess().MainModule.FileName.Split('\\').Last();
             string[] AutoSaveFiles = new string[] { @"C:\Windows\Temp", @"D:", @"E:" };
             List<string> AutoSaveFilesList = new List<string>() 
             { 
@@ -593,12 +593,13 @@ namespace ImgAssemblingLib.Models
             return true;
         }
 
-        internal bool OpenFileDir(string FilDir)
+        public bool OpenFileDir(string FilDir)
         {
             if(!ChkFileDir(FilDir))return SetErr("Err FilDir " + FilDir  + " !Exists!!!");
             try
             {
-                var dfg = IsDirectory(FilDir) ? Process.Start("explorer.exe", FilDir) : Process.Start(FilDir);
+                if (IsDirectory(FilDir)) Process.Start("explorer.exe", FilDir);
+                else Process.Start(FilDir);
                 return true;
             }
             catch (Win32Exception win32Exception)

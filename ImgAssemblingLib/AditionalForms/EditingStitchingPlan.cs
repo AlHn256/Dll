@@ -18,6 +18,45 @@ namespace ImgAssemblingLib.AditionalForms
         private FileEdit fileEdit = new FileEdit();
         public bool PlanIsUpDate = false;
         private Object _context;
+        public bool IsErr { get; set; } = false;
+        public string ErrText { get; set; } = string.Empty;
+        public List<string> ErrList { get; set; } = new List<string>();
+        private bool SetErr(string err)
+        {
+            if (ErrText != null) ErrList.Add(err);
+            ErrText = err;
+            return false;
+        }
+
+        private bool ClearErr()
+        {
+            ErrText = string.Empty;
+            ErrList.Clear();
+            return false;
+        }
+        public EditingStitchingPlan(string assemblingFile)
+        {
+            InitializeComponent();
+            if (string.IsNullOrEmpty(assemblingFile))
+            {
+                SetErr("Err EditingStitchingPlan.AssemblingFile IsNullOrEmpty!!!");
+                return;
+            }
+            
+            if(!File.Exists(assemblingFile))
+            {
+                SetErr("Err EditingStitchingPlan.AssemblingFile: "+ assemblingFile + " not founded!!!");
+                return;
+            }
+            LoadAssemblyPlan(assemblingFile);
+
+            if(AssemblyPlan==null)
+            {
+                SetErr("Err EditingStitchingPlan.AssemblyPlan don't loaded!!!");
+                return;
+            }
+            OpenResultChckBox.Checked = (AssemblyPlan.SaveRezults && AssemblyPlan.ShowAssemblingFile);
+        }
         public EditingStitchingPlan(AssemblyPlan assemblyPlan)
         {
             InitializeComponent();
@@ -221,8 +260,6 @@ namespace ImgAssemblingLib.AditionalForms
             AssemblyPlan.MillimetersInPixel = millimetersInPixel;
             AssemblyPlan.TimePerFrame = timePerFrame;
         }
-
-        private void ExitBtn_Click(object sender, EventArgs e) => Close();
         private void LoadBtn_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -235,15 +272,24 @@ namespace ImgAssemblingLib.AditionalForms
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    AssemblyPlan assemblyPlan;
-                    fileEdit.LoadeJson(openFileDialog.FileName, out assemblyPlan);
-                    if (assemblyPlan != null)
-                    {
-                        AssemblyPlan = assemblyPlan;
-                        LoadSettings();
-                    }
+                    LoadAssemblyPlan(openFileDialog.FileName);
+                    if(AssemblyPlan!=null) LoadSettings();
+                    //AssemblyPlan assemblyPlan;
+                    //fileEdit.LoadeJson(openFileDialog.FileName, out assemblyPlan);
+                    //if (assemblyPlan != null)
+                    //{
+                    //    AssemblyPlan = assemblyPlan;
+                    //    LoadSettings();
+                    //}
                 }
             }
+        }
+        private AssemblyPlan LoadAssemblyPlan(string file)
+        {
+            AssemblyPlan assemblyPlan;
+            fileEdit.LoadeJson(file, out assemblyPlan);
+            if (assemblyPlan != null)AssemblyPlan = assemblyPlan;
+            return assemblyPlan;
         }
         private void OpenImgFixingPlanBtn_Click(object sender, EventArgs e)
         {
@@ -357,6 +403,13 @@ namespace ImgAssemblingLib.AditionalForms
         }
 
         private async void StartBtn_Click(object sender, EventArgs e) => await StartAssembling();
+        public async Task<bool> StartAssembling(Bitmap[] bitmapArray)
+        {
+            if (bitmapArray.Length == 0) return SetErr("Err StartAssembling.bitmapArray = 0!!!");
+            Assembling assembling = new Assembling(AssemblyPlan, bitmapArray, _context);
+            if (await assembling.StartAssembling()) return true; // Запуск сборки изображения
+            else return SetErr(assembling.ErrText);
+        }
         private async Task<bool> StartAssembling()
         {
             if (AssemblyPlan == null)AssemblyPlan = new AssemblyPlan();
@@ -431,6 +484,7 @@ namespace ImgAssemblingLib.AditionalForms
             ChekStitchPlanСhckBox.Enabled = !BitMapChckBox.Checked;
         }
         private void BitMapChckBox_CheckedChanged(object sender, EventArgs e) => CheckBitMap();
+        private void ExitBtn_Click(object sender, EventArgs e) => Close();
         private void label5_Click(object sender, EventArgs e) => PersentInvok();
         private void label6_Click(object sender, EventArgs e) => PersentInvok();
         private void EditingStitchingPlan_MouseClick(object sender, MouseEventArgs e)

@@ -129,7 +129,7 @@
             this.Exampl5Btn.Name = "Exampl5Btn";
             this.Exampl5Btn.Size = new System.Drawing.Size(527, 23);
             this.Exampl5Btn.TabIndex = 9;
-            this.Exampl5Btn.Text = "Только с подсчетом скорости (без сборки изображения)";
+            this.Exampl5Btn.Text = "Подсчет скорости (без сборки изображения)";
             this.Exampl5Btn.UseVisualStyleBackColor = true;
             this.Exampl5Btn.Click += new System.EventHandler(this.Exampl5Btn_Click);
             // 

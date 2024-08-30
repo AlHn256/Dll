@@ -164,11 +164,14 @@ namespace StartTestProject
             assemblyPlan.Stitch = false;
             assemblyPlan.SaveRezults = true;
             assemblyPlan.ShowAssemblingFile = true;
+            assemblyPlan.MillimetersInPixel = 5.5; // Количество мм в одном пикселе
+            assemblyPlan.TimePerFrame  = 40; // Милисекунд в одном кадре
 
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4").Skip(10).Take(5).ToArray();
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
             FinalResult finalResult = await assembling.TryAssemble();
-            RezultLb.Text = "Speed "+ String.Format("{0:0.##}", finalResult.Speed)+" Km\\H";
+            if(finalResult.IsErr) RezultLb.Text = finalResult.ErrText; 
+            else RezultLb.Text = "Speed "+ String.Format("{0:0.##}", finalResult.Speed)+" Km\\H";
             //if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
         }
 

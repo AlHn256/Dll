@@ -123,9 +123,9 @@ namespace ImgAssemblingLib.Models
                 await StartAssembling();
                 return new FinalResult()
                 {
-                    BitRezult = BitmapConverter.ToBitmap(RezultImg),
                     Speed = AssemblyPlan.Speed,
                     MatRezult = RezultImg,
+                    BitRezult = RezultImg == null ? null : BitmapConverter.ToBitmap(RezultImg),
                     AssemblyReport = GetReport()
                 };
             }
@@ -320,8 +320,11 @@ namespace ImgAssemblingLib.Models
                 var avSpeedList = speedСounter.GetSpeedListByPoints(10);
                 double avSp = 0;
                 if (avSpeedList.Count > 1)avSp = avSpeedList.Sum(x => x.Sp) / avSpeedList.Count();
-                if (AssemblyPlan.Speed != -1 && contectIsOn) _context.Send(OnRTBAddInfo, "   Скорость ~ " + AssemblyPlan.Speed.ToString() + " Км/ч\n");
-                else { SendErr("Скорость неопределена!!!"); AssemblyPlan.SpeedCountingRezults = ErrText; }
+                if (contectIsOn)
+                {
+                    if (AssemblyPlan.Speed != -1) _context.Send(OnRTBAddInfo, "   Скорость ~ " + AssemblyPlan.Speed.ToString() + " Км/ч\n");
+                    else { SendErr("Скорость неопределена!!!"); AssemblyPlan.SpeedCountingRezults = ErrText; }
+                }
             }
             else { SendSkipped(); AssemblyPlan.SpeedCountingRezults = "Этап пропущен!!!"; }
             ts = stopwatch.Elapsed;

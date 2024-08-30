@@ -29,7 +29,7 @@ namespace ImgAssemblingLib.AditionalForms
         private int FirstFileNumber = 0, SecondFileNumber = 0;
         private List<string> FileList = new List<string>();
         private string SecondFile = string.Empty, FirstFile = string.Empty, console = string.Empty;
-        private string[] fileFilter = new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" };
+        private string[] fileFilter = new string[] {"*.jpeg", "*.jpg", "*.png", "*.bmp"};
         private object _context;
 
         public MainForm()
@@ -693,6 +693,7 @@ namespace ImgAssemblingLib.AditionalForms
         private void StopBtn_Click(object sender, EventArgs e)
         {
             StitchingBlock.StopProcess = true;
+            ImgFixingForm.StopProcess = true;
         }
         private void SaveThisImgBtn_Click(object sender, EventArgs e) => SaveImg(false);
         private void SaveBtn_Click(object sender, EventArgs e) => SaveImg();
@@ -872,7 +873,7 @@ namespace ImgAssemblingLib.AditionalForms
         private void UpDatePeriod()
         {
             if (assemblyPlan == null) return;
-            assemblyPlan.DefaultParameters = false;
+            //assemblyPlan.DefaultParameters = false;
             int period = 1;
             Int32.TryParse(PeriodTxtBox.Text, out period);
             PeriodTxtBox.Text = period.ToString();

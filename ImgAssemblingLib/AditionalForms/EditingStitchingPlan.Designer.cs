@@ -520,6 +520,7 @@ namespace ImgAssemblingLib.AditionalForms
             this.MinimumSize = new System.Drawing.Size(542, 413);
             this.Name = "EditingStitchingPlan";
             this.Text = "EditingStitchingPlan";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditingStitchingPlan_FormClosing);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.EditingStitchingPlan_MouseClick);
             this.ResumeLayout(false);
             this.PerformLayout();

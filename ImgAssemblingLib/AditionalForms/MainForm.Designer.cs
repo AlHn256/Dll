@@ -262,41 +262,41 @@ namespace ImgAssemblingLib.AditionalForms
             // imgFixingToolStripMenuItem
             // 
             this.imgFixingToolStripMenuItem.Name = "imgFixingToolStripMenuItem";
-            this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.imgFixingToolStripMenuItem.Text = "Img Fixing";
             this.imgFixingToolStripMenuItem.Click += new System.EventHandler(this.imgFixingToolStripMenuItem_Click);
             // 
             // fileNameFixingToolStripMenuItem
             // 
             this.fileNameFixingToolStripMenuItem.Name = "fileNameFixingToolStripMenuItem";
-            this.fileNameFixingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fileNameFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.fileNameFixingToolStripMenuItem.Text = "File Name Fixing";
             // 
             // deleteFileCopyToolStripMenuItem
             // 
             this.deleteFileCopyToolStripMenuItem.Name = "deleteFileCopyToolStripMenuItem";
-            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.deleteFileCopyToolStripMenuItem.Text = "Delete FileCopy";
             this.deleteFileCopyToolStripMenuItem.Click += new System.EventHandler(this.deleteFileCopyToolStripMenuItem_Click);
             // 
             // deleteResultesToolStripMenuItem
             // 
             this.deleteResultesToolStripMenuItem.Name = "deleteResultesToolStripMenuItem";
-            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.deleteResultesToolStripMenuItem.Text = "Delete Resultes";
             this.deleteResultesToolStripMenuItem.Click += new System.EventHandler(this.deleteResultesToolStripMenuItem_Click);
             // 
             // deletePlanToolStripMenuItem
             // 
             this.deletePlanToolStripMenuItem.Name = "deletePlanToolStripMenuItem";
-            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.deletePlanToolStripMenuItem.Text = "Delete Plan";
             this.deletePlanToolStripMenuItem.Click += new System.EventHandler(this.deletePlanToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 

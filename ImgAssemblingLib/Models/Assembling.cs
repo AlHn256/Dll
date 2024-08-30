@@ -1,6 +1,7 @@
 ﻿using ImgAssemblingLib.AditionalForms;
 using NLog;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -122,8 +123,10 @@ namespace ImgAssemblingLib.Models
                 await StartAssembling();
                 return new FinalResult()
                 {
+                    BitRezult = BitmapConverter.ToBitmap(RezultImg),
                     Speed = AssemblyPlan.Speed,
-                    MatRezult = RezultImg
+                    MatRezult = RezultImg,
+                    AssemblyReport = GetReport()
                 };
             }
             catch (Exception ex)
@@ -136,13 +139,14 @@ namespace ImgAssemblingLib.Models
             }
             finally
             {
+
             }
-            
         }
+
         public async Task<bool> StartAssembling()
         {
             bool contectIsOn = _context == null ? false : true;
-            if (contectIsOn) _context.Send(OnRTBAddInfo, "Start Assembling\n");
+            if (contectIsOn) _context.Send(OnRTBUpDateInfo, "Start Assembling\n");
             logger.Info("\nStart Assembling");
 
             var stopwatch = new Stopwatch();
@@ -223,7 +227,14 @@ namespace ImgAssemblingLib.Models
                     if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
 
                     ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, SaveImgFixingRezultToFile, AssemblyPlan.FixingImgDirectory);
-                    BitmapData = imgFixingForm.FixImgArray(BitmapData);
+                    if (contectIsOn)
+                    {
+                        imgFixingForm.ProcessChanged += worker_ProcessChang;
+                        imgFixingForm.TextChanged += worker_TextChang;
+                        await Task.Run(() => { BitmapData = imgFixingForm.FixImges(_context, BitmapData); });
+                    }
+                    else BitmapData = imgFixingForm.FixImges(null, BitmapData);
+
                     if (imgFixingForm.IsErr || BitmapData.Length == 0)
                     {
                         SendErr(" "); AssemblyPlan.FixImgRezult = "Не выполнено из-за ошибки!!!";
@@ -246,11 +257,11 @@ namespace ImgAssemblingLib.Models
                     if (string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory)) ImgFixingDir = AssemblyPlan.WorkingDirectory + "AutoOut";
                     else ImgFixingDir = AssemblyPlan.FixingImgDirectory;
 
-                    ImgFixingForm distortionTest = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory, false);
-                    if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = distortionTest.GetImgFixingPlan();
+                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory, false);
+                    if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = imgFixingForm.GetImgFixingPlan();
                     if (contectIsOn) _context.Send(OnRTBAddInfo, " Checking old files ");
                     logger.Info("Checking old files");
-                    if (AssemblyPlan.ChekFixImg && distortionTest.CheckFixingImg(ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
+                    if (AssemblyPlan.ChekFixImg && imgFixingForm.CheckFixingImg(ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
                     {
                         AssemblyPlan.StitchingDirectory = ImgFixingDir;
                         if (contectIsOn) _context.Send(OnRTBAddInfo, " - Using old files\n");
@@ -267,16 +278,15 @@ namespace ImgAssemblingLib.Models
                             AssemblyPlan.ChekFixImgRezult = "Исправленные файлы не найдены!!!";
                         }
 
-                        distortionTest.ProcessChanged += worker_ProcessChang;
-                        distortionTest.TextChanged += worker_TextChang;
-                        bool checkFixinImg = false;
+                        imgFixingForm.ProcessChanged += worker_ProcessChang;
+                        imgFixingForm.TextChanged += worker_TextChang;
 
                         logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                         if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
-                        await Task.Run(() => { checkFixinImg = distortionTest.FixImges(_context, ImgFixingDir); });
+                        await Task.Run(() => { imgFixingForm.FixImges(_context, ImgFixingDir); });
 
-                        if (checkFixinImg) { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
-                        else { SendErr(" "); AssemblyPlan.FixImgRezult = "Не выполнено из-за ошибки!!!"; }
+                        if (imgFixingForm.IsErr) { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
+                        else { SendErr(imgFixingForm.ErrText); AssemblyPlan.FixImgRezult =  imgFixingForm.ErrText; }
                     }
                 }
             }
@@ -293,7 +303,7 @@ namespace ImgAssemblingLib.Models
                 if (await FindKeyPoints()) { SendFinished(); AssemblyPlan.FindKeyPointsRezult = "Выполнено."; }
                 else { SendErr(ErrText); AssemblyPlan.FindKeyPointsRezult = ErrText; }
             }
-            else { SendSkipped(); AssemblyPlan.StitchRezult = "Этап пропущен!!!"; }
+            else { SendSkipped(); AssemblyPlan.FindKeyPointsRezult = "Этап пропущен!!!"; }
             ts = stopwatch.Elapsed;
             tSum += ts;
             SendTime("  Time ", ts);
@@ -388,23 +398,16 @@ namespace ImgAssemblingLib.Models
             if (_context != null) _context.Send(OnRTBAddInfo, ErrText);
             logger.Error(ErrText);
         }
-
         private async Task<bool> FindKeyPoints()
         {
-            if (AssemblyPlan.BitMap)
-            {
-                stitchingBlock = new StitchingBlock(BitmapData);
-                stitchingBlock.ProcessChanged += worker_ProcessChang;
-                stitchingBlock.TextChanged += worker_TextChang;
-                await Task.Run(() => { stitchingBlock.FindKeyPoints(_context); });
-            }
+            if (AssemblyPlan.BitMap) stitchingBlock = new StitchingBlock(BitmapData);
+            else stitchingBlock = new StitchingBlock(AssemblyPlan);
+            stitchingBlock.ProcessChanged += worker_ProcessChang;
+            stitchingBlock.TextChanged += worker_TextChang;
+
+            if (AssemblyPlan.BitMap) await Task.Run(() => { stitchingBlock.FindKeyPoints(_context); });
             else
             {
-                //stitchingBlock = new StitchingBlock(AssemblyPlan.StitchingDirectory, AssemblyPlan.AdditionalFilter,  AssemblyPlan.Percent, AssemblyPlan.From, AssemblyPlan.To, AssemblyPlan.Period);
-                stitchingBlock = new StitchingBlock(AssemblyPlan);
-                stitchingBlock.ProcessChanged += worker_ProcessChang;
-                stitchingBlock.TextChanged += worker_TextChang;
-
                 bool tryReadMapPlan = false;
                 if (stitchingBlock.IsErr) return SetErr(stitchingBlock.GetErrText());
                 if (AssemblyPlan.ChekStitchPlan) tryReadMapPlan = await stitchingBlock.TryReadMapPlan(AssemblyPlan.From, AssemblyPlan.To); // Если включенно пробуем найти старый план сборки
@@ -415,6 +418,11 @@ namespace ImgAssemblingLib.Models
                 }
             }
 
+            var areasForDelet = stitchingBlock.FindeBlockForDelet();
+            if (areasForDelet.Count > 0)
+            {
+                stitchingBlock.DeletAreas(areasForDelet);
+            }
             //stitchingBlock.CheckErr();
             //if (stitchingBlock.IsErr)
             //{
@@ -435,10 +443,15 @@ namespace ImgAssemblingLib.Models
 
                 if(_context!=null) _context.Send(OnImgUpdate, RezultImg);
                 if (RezultImg.Width == 0 && RezultImg.Height == 0) return SetErr(stitchingBlock.GetErrText());
-
                 return true;
             }
             else return SetErr("Err StitchingBlock = null !!!");
+        }
+        private string GetReport()
+        {
+            string Report = string.Empty;
+
+            return Report;
         }
     }
 }

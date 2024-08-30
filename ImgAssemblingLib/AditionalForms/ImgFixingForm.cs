@@ -21,10 +21,11 @@ namespace ImgAssemblingLib.AditionalForms
         private string imgFixingFile = imgDefoltFixingFile;
         public event Action<int> ProcessChanged;
         public event Action<string> TextChanged;
-        private Bitmap[] BitmapArray { get; set; }
-        public bool IsErr { get; set; } = false;
+        private Bitmap[] BitmapArray {get; set;}
+        public bool IsErr { get; set;} = false;
+        private bool SaveRezultToFile { get; set;} = false;
+        public static bool StopProcess = false;
         public string ErrText { get; set; } = string.Empty;
-        private bool SaveRezultToFile { get; set; } = false;
         private string SavingRezultDir { get; set; } = string.Empty;
 
         public ImgFixingForm(string directory)
@@ -90,12 +91,13 @@ namespace ImgAssemblingLib.AditionalForms
             DTxtBox.Text = D.ToString();
             RotValTxtBox.Text = RotationAngle.ToString();
 
-            var distortionMetods = Enum.GetValues(typeof(DistortMethod));
+            var distortionMetods = System.Enum.GetValues(typeof(DistortMethod));
             DistortionMetodComBox.DataSource = distortionMetods;
             DistortionMetodComBox.SelectedItem = DistortMethod.Barrel;
 
             return;
         }
+        public string GetImgFixingPlan() => imgFixingFile;
         private void CorrectFiles_Click(object sender, EventArgs e) => FixImges();
         public bool FixImges(string outputDir = "")
         {
@@ -113,29 +115,40 @@ namespace ImgAssemblingLib.AditionalForms
             foreach (var file in fileList)
             {
                 string outputFileNumber = outputDir + "\\" + file.Name;
-                File.WriteAllBytes(outputFileNumber, EditImg(file.FullName).ToByteArray());
-                // Image Img = Image.FromFile(outputFileNumber);
+                File.WriteAllBytes(outputFileNumber, СorrectImg(file.FullName).ToByteArray());
             }
             return true;
         }
         public bool FixImges(object param, string outputDir = "")
         {
-            SynchronizationContext context = (SynchronizationContext)param;
-            bool contextIsOn = context == null ? false : true;
-            ShowGridСhckBox.Checked = false;
             if (string.IsNullOrEmpty(outputDir))
             {
                 if (!Directory.Exists(InputDirTxtBox.Text)) return false;
                 outputDir = OutputDirTxtBox.Text;
             }
-
             if (!fileEdit.ChkDir(outputDir)) return false;
+
+            bool contextIsOn = param == null ? false : true;
+            SynchronizationContext context = (SynchronizationContext)param;
+            StopProcess = false;
+            ShowGridСhckBox.Checked = false;
             DistortMethod distortMethod = (DistortMethod)DistortionMetodComBox.SelectedItem;
+
             FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
             for (int i = 0; i < fileList.Length; i++)
             {
+                if (StopProcess)
+                {
+                    if (contextIsOn)
+                    {
+                        context.Send(OnProgressChanged, 100);
+                        context.Send(OnTextChanged, "Приостановленно пользователем!");
+                    }
+                    return SetErr("Коррекция кадров приостановлена пользователем!");
+                }
+                
                 string outputFileNumber = outputDir + "\\" + fileList[i].Name;
-                File.WriteAllBytes(outputFileNumber, EditImg(fileList[i].FullName).ToByteArray());
+                File.WriteAllBytes(outputFileNumber, СorrectImg(fileList[i].FullName).ToByteArray());
                 
                 if (contextIsOn)
                 {
@@ -149,6 +162,58 @@ namespace ImgAssemblingLib.AditionalForms
                 context.Send(OnTextChanged, "Imges Fixing 100 %");
             }
             return true;
+        }
+        public Bitmap[] FixImges(object param, Bitmap[] dataArray)
+        {
+            var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg", x, 99)); }).ToArray();
+            return DataArray.Length == 0 ? new Bitmap[0] : FixImges(param, DataArray);
+        }
+        public Bitmap[] FixImges(object param , MagickImage[] DataArray)
+        {
+            bool contextIsOn = param == null ? false : true;
+            SynchronizationContext context = (SynchronizationContext)param;
+            StopProcess = false;
+
+            if (DataArray == null && BitmapArray == null) return new Bitmap[0];
+            if (DataArray.Length == 0 && BitmapArray.Length == 0) return new Bitmap[0];
+
+            int DidgLeng = DataArray.Length.ToString().Length;
+            Bitmap[] rezult = new Bitmap[DataArray.Length];
+            for (int i = 0; i < DataArray.Length; i++)
+            {
+                if (StopProcess)
+                {
+                    SetErr("Коррекция кадров приостановлена пользователем!");
+                    if (contextIsOn)
+                    {
+                        context.Send(OnProgressChanged, 100);
+                        context.Send(OnTextChanged, "Приостановленно пользователем!");
+                    }
+                    return rezult;
+                }
+
+                MagickImage img = СorrectImg(DataArray[i]);
+                if (SaveRezultToFile)
+                {
+                    string savingFile = string.IsNullOrEmpty(SavingRezultDir) ? "img" + (i++).ToString().PadLeft(DidgLeng, '0') + ".bmp" 
+                        : SavingRezultDir + "\\" + (i++).ToString().PadLeft(DidgLeng, '0') + ".bmp";
+                    img.Write(savingFile);
+                }
+                rezult[i] = MagickImageToBitMap(img);
+
+                if (contextIsOn)
+                {
+                    context.Send(OnProgressChanged, i * 100 / DataArray.Length);
+                    context.Send(OnTextChanged, "Imges Fixing " + i * 100 / DataArray.Length + " %");
+                }
+            }
+
+            if (contextIsOn)
+            {
+                context.Send(OnProgressChanged, 100);
+                context.Send(OnTextChanged, "Imges Fixing 100 %");
+            }
+            return rezult;
         }
         internal bool CheckFixingImg(string imgFixingDir = "")
         {
@@ -182,7 +247,7 @@ namespace ImgAssemblingLib.AditionalForms
 
             //distortMethod = (DistortMethod)DistortionMetodComBox.SelectedItem;
 
-            MagickImage magickImage = EditImg(file);
+            MagickImage magickImage = СorrectImg(file);
             var imageData = magickImage.ToByteArray();
 
             using (var ms = new MemoryStream(imageData))
@@ -309,7 +374,6 @@ namespace ImgAssemblingLib.AditionalForms
             Decimal.TryParse(RotValTxtBox.Text, out RotationAngle);
             //ReloadImg();
         }
-
         private void DistortionMetodComBox_SelectedIndexChanged(object sender, EventArgs e) => ReloadImg();
         private void ApplyBtn_Click(object sender, EventArgs e) => ReloadImg();
         private void label5_Click(object sender, EventArgs e) => CropBeforeChkBox.Checked = !CropBeforeChkBox.Checked;
@@ -391,7 +455,7 @@ namespace ImgAssemblingLib.AditionalForms
             RotationChkBox.Checked = imgFixingSettings.Rotation;
             RotValTxtBox.Text = imgFixingSettings.RotationAngle.ToString();
             DistortionChkBox.Checked = imgFixingSettings.Distortion;
-            var distortionMetods = Enum.GetValues(typeof(DistortMethod));
+            var distortionMetods = System.Enum.GetValues(typeof(DistortMethod));
             DistortionMetodComBox.DataSource = distortionMetods;
             DistortionMetodComBox.SelectedIndex = DistortionMetodComBox.FindString(imgFixingSettings.DistortMethod.ToString());
             ATxtBox.Text = imgFixingSettings.A.ToString();
@@ -444,11 +508,10 @@ namespace ImgAssemblingLib.AditionalForms
             };
         }
 
-
         public static byte[] BitmapToByte(string path, Image img, int quality)
         {
-            var JpegCodecInfo = ImageCodecInfo.GetImageEncoders().Where(x => x.FormatDescription == "JPEG").First();
-            ImageCodecInfo jpegCodec = JpegCodecInfo;
+            //var JpegCodecInfo = ImageCodecInfo.GetImageEncoders().Where(x => x.FormatDescription == "JPEG").First();
+            ImageCodecInfo jpegCodec = ImageCodecInfo.GetImageEncoders().Where(x => x.FormatDescription == "JPEG").First();
             EncoderParameters encoderParams = new EncoderParameters(1);
             EncoderParameter qualityParam = new EncoderParameter(Encoder.Quality, quality);
             encoderParams.Param[0] = qualityParam;
@@ -463,44 +526,11 @@ namespace ImgAssemblingLib.AditionalForms
             fs.Close();
             return matriz;
         }
-        public Bitmap[] FixImgArray(Bitmap[] dataArray)
-        {
-            var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg", x, 99)); }).ToArray();
-            if (DataArray.Length == 0) return new Bitmap[0];
-            return FixImgArray(DataArray);
-        }
         private Bitmap MagickImageToBitMap(MagickImage magickImage) => new Bitmap(new MemoryStream(magickImage.ToByteArray()));
-
-        public Bitmap[] FixImgArray(MagickImage[] DataArray)
-        {
-            if (DataArray == null && BitmapArray == null) return new Bitmap[0];
-            if (DataArray.Length == 0 && BitmapArray.Length == 0) return new Bitmap[0];
-            if (SaveRezultToFile)
-            {
-                int i = 0, DidgLeng =  DataArray.Length.ToString().Length;
-
-                return DataArray.Select(x =>
-                {
-                    MagickImage img = EditImg(x);
-                    string savingFile = string.IsNullOrEmpty(SavingRezultDir) ? "img" + (i++).ToString().PadLeft(DidgLeng, '0') + ".bmp" : SavingRezultDir + "\\" + (i++).ToString().PadLeft(DidgLeng, '0') + ".bmp";
-                    img.Write(savingFile);
-                    return MagickImageToBitMap(img);
-                }).ToArray();
-            }
-            else return DataArray.Select(x => 
-            { 
-                MagickImage img = EditImg(x); 
-                return MagickImageToBitMap(img); 
-            }).ToArray();
-        }
-        private MagickImage EditImg(string InputFile)
-        {
-            return EditImg(new MagickImage(InputFile));
-        }
-        private MagickImage EditImg(MagickImage image)
+        private MagickImage СorrectImg(string InputFile)=> СorrectImg(new MagickImage(InputFile));
+        private MagickImage СorrectImg(MagickImage image)
         {
             DistortMethod distortMethod = DistortMethod.Barrel;
-
             if (CropBeforeChkBox.Checked)
             {
                 int X = 0, Y = 0, HeightPercent = 100, WidthPercent = 100;
@@ -557,8 +587,6 @@ namespace ImgAssemblingLib.AditionalForms
 
             return image;
         }
-
-        public string GetImgFixingPlan() => imgFixingFile;
         private async void SaveAsBtn_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -571,10 +599,7 @@ namespace ImgAssemblingLib.AditionalForms
             if(await fileEdit.SaveJsonAsync(saveFileDialog.FileName, GetImgFixingSettings()))
                 RezultRTB.Text = "Settings saved :\n" + saveFileDialog.FileName;
             else RezultRTB.Text = "Err save file!!!\n" + saveFileDialog.FileName;
-            //fileEdit.SaveJson(imgFixingFile, GetImgFixingSettings());
-
         }
-
         public bool TryReadSettings(bool fileLoad = false)
         {
             if (File.Exists(imgFixingFile))

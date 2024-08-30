@@ -105,6 +105,7 @@
     </Compile>
     <Compile Include="Enum\EnumDirection.cs" />
     <Compile Include="Enum\EnumErrCode.cs" />
+    <Compile Include="Enum\EnumErrorLevel.cs" />
     <Compile Include="Enum\EnumFramePosition.cs" />
     <Compile Include="Models\Assembling.cs" />
     <Compile Include="Models\AssemblyPlan.cs" />

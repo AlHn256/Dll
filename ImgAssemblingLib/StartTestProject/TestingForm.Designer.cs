@@ -38,13 +38,17 @@
             this.RezultLb = new System.Windows.Forms.Label();
             this.Exampl5Btn = new System.Windows.Forms.Button();
             this.Exampl6Btn = new System.Windows.Forms.Button();
+            this.Exampl8Btn = new System.Windows.Forms.Button();
+            this.progressBarLabel = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.CpuLb = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // MainFormBtn
             // 
-            this.MainFormBtn.Location = new System.Drawing.Point(48, 369);
+            this.MainFormBtn.Location = new System.Drawing.Point(48, 375);
             this.MainFormBtn.Name = "MainFormBtn";
-            this.MainFormBtn.Size = new System.Drawing.Size(98, 23);
+            this.MainFormBtn.Size = new System.Drawing.Size(527, 23);
             this.MainFormBtn.TabIndex = 0;
             this.MainFormBtn.Text = "Main Form";
             this.MainFormBtn.UseVisualStyleBackColor = true;
@@ -52,9 +56,9 @@
             // 
             // EditingStitchingPlanBtn
             // 
-            this.EditingStitchingPlanBtn.Location = new System.Drawing.Point(48, 398);
+            this.EditingStitchingPlanBtn.Location = new System.Drawing.Point(48, 404);
             this.EditingStitchingPlanBtn.Name = "EditingStitchingPlanBtn";
-            this.EditingStitchingPlanBtn.Size = new System.Drawing.Size(98, 23);
+            this.EditingStitchingPlanBtn.Size = new System.Drawing.Size(527, 23);
             this.EditingStitchingPlanBtn.TabIndex = 1;
             this.EditingStitchingPlanBtn.Text = "Editing Stitching Plan";
             this.EditingStitchingPlanBtn.UseVisualStyleBackColor = true;
@@ -64,9 +68,9 @@
             // 
             this.FixingImgsUsingDataArrayBtn.Location = new System.Drawing.Point(48, 206);
             this.FixingImgsUsingDataArrayBtn.Name = "FixingImgsUsingDataArrayBtn";
-            this.FixingImgsUsingDataArrayBtn.Size = new System.Drawing.Size(98, 23);
+            this.FixingImgsUsingDataArrayBtn.Size = new System.Drawing.Size(527, 23);
             this.FixingImgsUsingDataArrayBtn.TabIndex = 3;
-            this.FixingImgsUsingDataArrayBtn.Text = "Fixing Imgs";
+            this.FixingImgsUsingDataArrayBtn.Text = "Коррекции изображения без сборки";
             this.FixingImgsUsingDataArrayBtn.UseVisualStyleBackColor = true;
             this.FixingImgsUsingDataArrayBtn.Click += new System.EventHandler(this.FixingImgsUsingDataArrayBtn_Click);
             // 
@@ -74,9 +78,9 @@
             // 
             this.Exampl1Btn.Location = new System.Drawing.Point(48, 32);
             this.Exampl1Btn.Name = "Exampl1Btn";
-            this.Exampl1Btn.Size = new System.Drawing.Size(98, 23);
+            this.Exampl1Btn.Size = new System.Drawing.Size(527, 23);
             this.Exampl1Btn.TabIndex = 4;
-            this.Exampl1Btn.Text = "Exampl 1";
+            this.Exampl1Btn.Text = "Пример сборки изображения с использованием только файла плана сборки";
             this.Exampl1Btn.UseVisualStyleBackColor = true;
             this.Exampl1Btn.Click += new System.EventHandler(this.Exampl1Btn_Click);
             // 
@@ -84,9 +88,9 @@
             // 
             this.Exampl2Btn.Location = new System.Drawing.Point(48, 61);
             this.Exampl2Btn.Name = "Exampl2Btn";
-            this.Exampl2Btn.Size = new System.Drawing.Size(98, 23);
+            this.Exampl2Btn.Size = new System.Drawing.Size(527, 23);
             this.Exampl2Btn.TabIndex = 5;
-            this.Exampl2Btn.Text = "Exampl 2";
+            this.Exampl2Btn.Text = "Пример без исправления изображений";
             this.Exampl2Btn.UseVisualStyleBackColor = true;
             this.Exampl2Btn.Click += new System.EventHandler(this.Exampl2Btn_Click);
             // 
@@ -94,9 +98,9 @@
             // 
             this.Exampl3Btn.Location = new System.Drawing.Point(48, 90);
             this.Exampl3Btn.Name = "Exampl3Btn";
-            this.Exampl3Btn.Size = new System.Drawing.Size(98, 23);
+            this.Exampl3Btn.Size = new System.Drawing.Size(527, 23);
             this.Exampl3Btn.TabIndex = 6;
-            this.Exampl3Btn.Text = "Exampl 3";
+            this.Exampl3Btn.Text = "Пример с установкой другого плана корректировки изображения";
             this.Exampl3Btn.UseVisualStyleBackColor = true;
             this.Exampl3Btn.Click += new System.EventHandler(this.Exampl3Btn_Click);
             // 
@@ -104,9 +108,9 @@
             // 
             this.Exampl4Btn.Location = new System.Drawing.Point(48, 119);
             this.Exampl4Btn.Name = "Exampl4Btn";
-            this.Exampl4Btn.Size = new System.Drawing.Size(98, 23);
+            this.Exampl4Btn.Size = new System.Drawing.Size(527, 23);
             this.Exampl4Btn.TabIndex = 7;
-            this.Exampl4Btn.Text = "Exampl 4";
+            this.Exampl4Btn.Text = "Пример настройки смещения полосы сборки относительно центра катинки";
             this.Exampl4Btn.UseVisualStyleBackColor = true;
             this.Exampl4Btn.Click += new System.EventHandler(this.Exampl4Btn_Click);
             // 
@@ -114,7 +118,7 @@
             // 
             this.RezultLb.AutoSize = true;
             this.RezultLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.RezultLb.Location = new System.Drawing.Point(15, 254);
+            this.RezultLb.Location = new System.Drawing.Point(51, 301);
             this.RezultLb.Name = "RezultLb";
             this.RezultLb.Size = new System.Drawing.Size(0, 13);
             this.RezultLb.TabIndex = 8;
@@ -123,9 +127,9 @@
             // 
             this.Exampl5Btn.Location = new System.Drawing.Point(48, 148);
             this.Exampl5Btn.Name = "Exampl5Btn";
-            this.Exampl5Btn.Size = new System.Drawing.Size(98, 23);
+            this.Exampl5Btn.Size = new System.Drawing.Size(527, 23);
             this.Exampl5Btn.TabIndex = 9;
-            this.Exampl5Btn.Text = "Exampl 5";
+            this.Exampl5Btn.Text = "Только с подсчетом скорости (без сборки изображения)";
             this.Exampl5Btn.UseVisualStyleBackColor = true;
             this.Exampl5Btn.Click += new System.EventHandler(this.Exampl5Btn_Click);
             // 
@@ -133,17 +137,61 @@
             // 
             this.Exampl6Btn.Location = new System.Drawing.Point(48, 177);
             this.Exampl6Btn.Name = "Exampl6Btn";
-            this.Exampl6Btn.Size = new System.Drawing.Size(98, 23);
+            this.Exampl6Btn.Size = new System.Drawing.Size(527, 23);
             this.Exampl6Btn.TabIndex = 10;
-            this.Exampl6Btn.Text = "Exampl 6";
+            this.Exampl6Btn.Text = "Настройка параметров (без файла)";
             this.Exampl6Btn.UseVisualStyleBackColor = true;
             this.Exampl6Btn.Click += new System.EventHandler(this.Exampl6Btn_Click);
+            // 
+            // Exampl8Btn
+            // 
+            this.Exampl8Btn.Location = new System.Drawing.Point(48, 235);
+            this.Exampl8Btn.Name = "Exampl8Btn";
+            this.Exampl8Btn.Size = new System.Drawing.Size(527, 23);
+            this.Exampl8Btn.TabIndex = 11;
+            this.Exampl8Btn.Text = "Сборка с прогресбаром";
+            this.Exampl8Btn.UseVisualStyleBackColor = true;
+            this.Exampl8Btn.Click += new System.EventHandler(this.Exampl8Btn_Click);
+            // 
+            // progressBarLabel
+            // 
+            this.progressBarLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarLabel.AutoSize = true;
+            this.progressBarLabel.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.progressBarLabel.Location = new System.Drawing.Point(260, 274);
+            this.progressBarLabel.Name = "progressBarLabel";
+            this.progressBarLabel.Size = new System.Drawing.Size(39, 15);
+            this.progressBarLabel.TabIndex = 30;
+            this.progressBarLabel.Text = "Point";
+            // 
+            // progressBar
+            // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(48, 271);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(527, 20);
+            this.progressBar.TabIndex = 29;
+            // 
+            // CpuLb
+            // 
+            this.CpuLb.AutoSize = true;
+            this.CpuLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CpuLb.Location = new System.Drawing.Point(400, 301);
+            this.CpuLb.Name = "CpuLb";
+            this.CpuLb.Size = new System.Drawing.Size(0, 15);
+            this.CpuLb.TabIndex = 31;
             // 
             // TestingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(197, 450);
+            this.ClientSize = new System.Drawing.Size(624, 451);
+            this.Controls.Add(this.CpuLb);
+            this.Controls.Add(this.progressBarLabel);
+            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.Exampl8Btn);
             this.Controls.Add(this.Exampl6Btn);
             this.Controls.Add(this.Exampl5Btn);
             this.Controls.Add(this.RezultLb);
@@ -154,6 +202,8 @@
             this.Controls.Add(this.FixingImgsUsingDataArrayBtn);
             this.Controls.Add(this.EditingStitchingPlanBtn);
             this.Controls.Add(this.MainFormBtn);
+            this.MaximumSize = new System.Drawing.Size(640, 490);
+            this.MinimumSize = new System.Drawing.Size(640, 490);
             this.Name = "TestingForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -173,6 +223,10 @@
         private System.Windows.Forms.Label RezultLb;
         private System.Windows.Forms.Button Exampl5Btn;
         private System.Windows.Forms.Button Exampl6Btn;
+        private System.Windows.Forms.Button Exampl8Btn;
+        private System.Windows.Forms.Label progressBarLabel;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label CpuLb;
     }
 }
 

@@ -14,9 +14,11 @@ namespace ImgAssemblingLib.AditionalForms
     public partial class EditingStitchingPlan : Form
     {
         private AssemblyPlan AssemblyPlan;
+        private AssemblyPlan OldPlan;
+        private AssemblyPlan OldPlan2;
         private bool PersentOnOff = true;
         private FileEdit fileEdit = new FileEdit();
-        public bool PlanIsUpDate = false;
+        public bool PlanIsUpDate = true;
         private Object _context;
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
@@ -60,7 +62,7 @@ namespace ImgAssemblingLib.AditionalForms
         public EditingStitchingPlan(AssemblyPlan assemblyPlan)
         {
             InitializeComponent();
-
+            OldPlan = (AssemblyPlan)assemblyPlan.Clone();
             if (SynchronizationContext.Current != null) _context = SynchronizationContext.Current;
             else _context = new SynchronizationContext();
 
@@ -199,7 +201,6 @@ namespace ImgAssemblingLib.AditionalForms
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                PlanIsUpDate = true;
                 UpdateAssemblyPlan();
                 if (fileEdit.SaveJson(saveFileDialog1.FileName, AssemblyPlan)) InfoLabel.Text = "File saved: " + saveFileDialog1.FileName;
                 else InfoLabel.Text = "Saving Err: " + saveFileDialog1.FileName+"!!!";
@@ -484,13 +485,21 @@ namespace ImgAssemblingLib.AditionalForms
             ChekStitchPlanСhckBox.Enabled = !BitMapChckBox.Checked;
         }
         private void BitMapChckBox_CheckedChanged(object sender, EventArgs e) => CheckBitMap();
-        private void ExitBtn_Click(object sender, EventArgs e) => Close();
+        private void ExitBtn_Click(object sender, EventArgs e)
+        {
+            PlanIsUpDate = false;
+            Close();
+        }
         private void label5_Click(object sender, EventArgs e) => PersentInvok();
         private void label6_Click(object sender, EventArgs e) => PersentInvok();
         private void EditingStitchingPlan_MouseClick(object sender, MouseEventArgs e)
         { 
             if (e.X > 305 && e.X < 333 && e.Y > 173 && e.Y < 233)
             PersentInvok(); 
+        }
+        private void EditingStitchingPlan_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(PlanIsUpDate) UpdateAssemblyPlan();
         }
     }
 }

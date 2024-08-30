@@ -41,8 +41,6 @@ namespace ImgAssemblingLib.Models
         public event Action<Mat> ChangImg;
         public DrawMatchesFlags drawMatchesFlags { get; set; } = DrawMatchesFlags.NotDrawSinglePoints;
         private FileEdit fileEdit { get; set; } = new FileEdit();
-
-        //public StitchingBlock(AssemblyPlan assemblyPlan, Bitmap[] bitMapArray)
         public StitchingBlock(Bitmap[] bitMapArray)
         {
             if (bitMapArray == null || bitMapArray.Length == 0)
@@ -133,7 +131,6 @@ namespace ImgAssemblingLib.Models
                 if (To < From) To = From + 2;
                 if (To > fileList.Length) To = fileList.Length;
                 if (From > fileList.Length - 1) From = fileList.Length - 2;
-                
             }
 
             if (SelectedFiles == null) SelectedFiles = new List<SelectedFiles>();
@@ -142,7 +139,6 @@ namespace ImgAssemblingLib.Models
             int i = 0;
             for (i = From; i < To; i = i + period)
                 SelectedFiles.Add(new SelectedFiles(){Id = i,FullName = fileList[i].FullName});
-
 
             //Если нет последнего файла, добавляем его
             if(period>1 && (To==100 || To == fileList.Length) && SelectedFiles[SelectedFiles.Count - 1].FullName != fileList[fileList.Length - 1].FullName)
@@ -169,6 +165,7 @@ namespace ImgAssemblingLib.Models
         public void FindKeyPoints(object param)
         {
             StopProcess = false;
+            EraseError();
             List<EnumDirection?> directionsList = new List<EnumDirection?>();
             SynchronizationContext context = (SynchronizationContext)param;
             bool contextIsOn = context == null? false:true;
@@ -177,10 +174,11 @@ namespace ImgAssemblingLib.Models
 
             for (int i = 0; i < SelectedFiles.Count; i++)
             {
-                EraseError();
+                
                 if (StopProcess)
                 {
                     if(contextIsOn) context.Send(OnTextChanged, "Stop Process");
+                    SetErr("Поиск ключевых точек приостановлен пользователем!");
                     return;
                 }
 
@@ -193,10 +191,9 @@ namespace ImgAssemblingLib.Models
                     if(WorkingWBitmap) firstSelectedFiles.Hint = "Stitching Imgs " + firstSelectedFiles.Id + " - " + secondSelectedFiles.Id;
                     else firstSelectedFiles.Hint = "Stitching Imgs " + Path.GetFileNameWithoutExtension(firstSelectedFiles.FullName) + " - " + Path.GetFileName(secondSelectedFiles.FullName);
 
+                    IsErr = false;
                     // Получаем список векторов по ключевым точкам
-                    List<Vector> VectorList = new List <Vector>();
-                    if(WorkingWBitmap) VectorList = GetVectorList(SelectedFiles[i - 1].Mat, SelectedFiles[i].Mat);
-                    else VectorList = GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
+                    List<Vector> VectorList = WorkingWBitmap ? GetVectorList(SelectedFiles[i - 1].Mat, SelectedFiles[i].Mat) : GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
 
                     if (IsErr || VectorList.Count == 0)
                     {
@@ -234,6 +231,177 @@ namespace ImgAssemblingLib.Models
                 context.Send(OnTextChanged, "100 %");
             }
         }
+
+        public class tmp
+        {
+            public int I { get; set; }
+            public int Err { get; set; }
+            public List<string> ErrText { get; set; }
+            public string ErrLine { get; set; }
+
+            public tmp(int i)
+            {
+                I = i;
+            }
+            public tmp(int i,  string errText)
+            {
+                I= i;
+                Err= 1;
+                ErrText = new List<string>() {errText};
+                ErrLine = errText;
+            }
+            public void Add( string errText, int i =-1)
+            {
+                if(i!=-1)I = i;
+                Err ++;
+                if (ErrText == null) ErrText = new List<string> { errText};
+                else ErrText.Add(errText);
+                if (string.IsNullOrEmpty(ErrLine)) ErrLine = errText;
+                else ErrLine +=" "+ errText;
+            }
+        }
+
+        public List<AreaForDel> FindeBlockForDelet()
+        {
+            List<AreaForDel> areasForDelet = new List<AreaForDel>();
+            if (SelectedFiles == null || SelectedFiles.Count < 15 || Direction == EnumDirection.Undefined) return areasForDelet;
+
+            int[] Errors = FindErrs();
+            var Area = HaosMeasur(Errors);
+            int maxErrLvl = 4;
+            areasForDelet = GetAreasForDel(Area,maxErrLvl);
+            return JoinAreas(areasForDelet, SelectedFiles.Count);
+        }
+
+        private int[] FindErrs()
+        {
+            int[] Errors = new int[SelectedFiles.Count];
+            bool prevCopy = false;
+            //double N = 0;
+            List<tmp> tmpList = new List<tmp>();
+
+            for (int i = 0; i < SelectedFiles.Count; i++)
+            {
+                tmp Tmp = new tmp(i);
+                if (i == SelectedFiles.Count - 1)
+                {
+                    tmpList.Add(Tmp);
+                    continue;
+                }
+
+                if (SelectedFiles[i].Direction != Direction && SelectedFiles[i].ErrCode != EnumErrCode.Copy)
+                {
+                    Errors[i]++;
+                    Tmp = new tmp(i, "Direction");
+                }
+
+                if (prevCopy && SelectedFiles[i].ErrCode == EnumErrCode.Copy)
+                {
+                    Errors[i]++;
+                    Tmp.Add("DoublCopy");
+                }
+                else if (SelectedFiles[i].ErrCode == EnumErrCode.Copy) prevCopy = true;
+                else prevCopy = false;
+
+                if (SelectedFiles[i].IsErr && SelectedFiles[i].ErrCode != EnumErrCode.Copy)
+                {
+                    Errors[i]++;
+                    Tmp.Add("IsErr");
+                }
+
+                //if (SelectedFiles[i].AverageShift < 10 && SelectedFiles[i].ErrCode != EnumErrCode.Copy)
+                //{
+                //    Errors[i]++;
+                //    Tmp.Add("AverageShift less errShift");
+                //}
+
+                //if (Errors[i] > 0) N++;
+                tmpList.Add(Tmp);
+            }
+            return Errors;
+        }
+
+        private List<AreaForDel> GetAreasForDel(int[] Area, int maxErrLvl)
+        {
+            List<AreaForDel> areasForDelet = new List<AreaForDel>();
+            int fr = 0;
+            bool isin = false;
+            for (int i = 0; i < Area.Length; i++)
+            {
+                if (Area[i] >= maxErrLvl && !isin)
+                {
+                    fr = i - maxErrLvl;
+                    if (fr < 0) fr = 0;
+                    isin = true;
+                }
+
+                if (isin && Area[i] < maxErrLvl)
+                {
+                    isin = false;
+                    int to = To = i + maxErrLvl;
+                    if (to > Area.Length) to = Area.Length;
+                    areasForDelet.Add(new AreaForDel(From = fr, To = to ));
+                }
+
+                if (isin && i == Area.Length - 1) areasForDelet.Add(new AreaForDel( From = fr, To = Area.Length));
+            }
+            return areasForDelet;
+        }
+        private List<AreaForDel> JoinAreas(List<AreaForDel> areasForDelet, int ArrLeng)
+
+        {
+            if (areasForDelet.Count < 2 || ArrLeng==0) return areasForDelet;
+            int minimalGap = ArrLeng / 100 >15 ? 15: ArrLeng / 100;
+            List<AreaForDel> newListAreaForDels = new List<AreaForDel>();
+            AreaForDel newArea = new AreaForDel(-1,-1);
+            for (int i = 1; i < areasForDelet.Count; i++)
+            {
+                if(newArea.From != -1)
+                {
+                    if (newArea.To > areasForDelet[i].From - minimalGap) newArea.To = areasForDelet[i].To;
+                    else
+                    {
+                        newListAreaForDels.Add(newArea);
+                        newArea = new AreaForDel(-1, -1);
+                    }
+                }
+                else if (areasForDelet[i - 1].To > areasForDelet[i].From)
+                {
+                    newArea = new AreaForDel( areasForDelet[i - 1].From, areasForDelet[i].To );
+                }
+                else newListAreaForDels.Add(new AreaForDel(areasForDelet[i - 1].From, areasForDelet[i-1].To));
+                if(i== areasForDelet.Count - 1 && newArea.From != -1) newListAreaForDels.Add(newArea);
+            }
+
+            return newListAreaForDels;
+        }
+
+        public class AreaForDel
+        {
+            public int From {get;set;} 
+            public int To {get;set;} 
+            public AreaForDel (int from, int to) {From = from; To = to;}
+        }
+
+        private int[] HaosMeasur(int[] errors)
+        {
+            int N = 10;
+            if (N > errors.Length - 1) N = errors.Length - 1;
+            if (N < 2) N = 2;
+            List<int> result = new List<int>();
+            Queue<int> queue = new Queue<int>();
+            int n = 0;
+
+            for (int i = 0; i < errors.Length; i++)
+            {
+                if (n < errors.Length) queue.Enqueue(errors[n++]);
+                if (queue.Count > N )queue.Dequeue();
+                result.Add(queue.Sum());
+            }
+
+            return result.ToArray();
+        }
+
         public List<Vector> GetVectorList(Mat matSrc, Mat matTo, bool makeFotoRezult = false)
         {
 
@@ -608,6 +776,7 @@ namespace ImgAssemblingLib.Models
         int X = 0;
         internal Mat Stitch(object param, int Delta = 0)// Сборка кадров в один
         {
+            StopProcess = false;
             Mat rezult = new Mat();
             if (SelectedFiles == null || SelectedFiles.Count == 0)
             {
@@ -623,6 +792,11 @@ namespace ImgAssemblingLib.Models
             // Сборка картинки по частям
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
+                if (StopProcess)
+                {
+                    SetErr("Сборка кадров приостановлена пользователем!");
+                    return rezult;
+                }
                 X = i;
                 if (SelectedFiles[i].IsErr) continue;
                 if (context != null) context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
@@ -698,8 +872,12 @@ namespace ImgAssemblingLib.Models
                 }
                 if (rezult.Width == 0 || rezult.Height == 0)
                 {
-                    SetErr("Итоговая картинка не собрана. Ошибка на "+i+ " кадре!!!");
+                    SetErr("Итоговая картинка не собрана. Id кадра с ошибкой " + SelectedFiles[i].Id + " i - "+i+" !!!");
                     break;
+                }
+                if(i==461)
+                {
+
                 }
             }
 
@@ -855,19 +1033,15 @@ namespace ImgAssemblingLib.Models
                     //    }
                     //}
                 }
-
                 if (SamePoints >= matches.Length * 0.9)
                 {
                     SetErr("COPY", EnumErrCode.Copy);
                     return goodPointList;
                 }
                 if (matches.Length == goodPointList.Count) break;
-
                 if (SelectSearchArea && goodPointList.Count > MinSufficientNumberOfPoints/2 && !AllPointsChkBox) break;
                 if (goodPointList.Count > MinSufficientNumberOfPoints && !AllPointsChkBox) break;
-               // if (goodPointList.Count > MaxSufficientNumberOfPoints && AllPointsChkBox) break;
             }
-
             PointFiltr pointFiltr = new PointFiltr(goodPointList);
             if (AdditionalFilter)
             {
@@ -882,7 +1056,6 @@ namespace ImgAssemblingLib.Models
             if (goodPointList.Count >= 10)  goodPointList = pointFiltr.PointScreening();
             return goodPointList;
         }
-        
         private EnumDirection? GetAverageDirection(List<EnumDirection?> directionList)
         {
             if (directionList == null) return null;
@@ -898,7 +1071,6 @@ namespace ImgAssemblingLib.Models
                     Amount = amaunt
                 });
             }
-
             return DirectionCheckList.Where(x => x.Amount == DirectionCheckList.Max(y => y.Amount)).Select(z => z.EnumDirection).FirstOrDefault();
         }
         class DirectionCheck
@@ -916,12 +1088,11 @@ namespace ImgAssemblingLib.Models
                 AverageYShift = dYSum / VectorList.Count
             };
         }
-
         private bool SetErr(string err, EnumErrCode enumErrCode = EnumErrCode.NoErr)
         {
             ErrCode = enumErrCode;
-            if (IsErr) ErrList.Add(err);
-            else IsErr = true;
+            ErrList.Add(err);
+            IsErr = true;
             ErrText = err;
             return false;
         }
@@ -941,12 +1112,6 @@ namespace ImgAssemblingLib.Models
             ErrCode = EnumErrCode.NoErr;
             ErrText = string.Empty;
         }
-        private void EraseErrors()
-        {
-            ErrList.Clear();
-            ErrText = string.Empty;
-            IsErr = false;
-        }
         private void AddStitchingInfo()
         {
             StitchingInfo = string.Empty;
@@ -965,32 +1130,12 @@ namespace ImgAssemblingLib.Models
             }
         }
         //private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0) => JoinImg(new Mat(file1), file2, shift, enumFramePosition, Delta);
-        private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)
-        {
-            return JoinImg(new Mat(file1), new Mat(file2), shift, enumFramePosition, Delta);
-        }
-
-        //private Mat JoinImg(string file1, Mat Img2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)
-        //{
-        //    return JoinImg(new Mat(file1), Img2, shift, enumFramePosition, Delta);
-        //}
-
-        private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)
-        {
-            return JoinImg(Img1, new Mat(file2), shift, enumFramePosition, Delta);
-        }
-
-        //private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition FramePosition, int Delta = 0)
+        private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)=>JoinImg(new Mat(file1), new Mat(file2), shift, enumFramePosition, Delta);
+        private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)=>JoinImg(Img1, new Mat(file2), shift, enumFramePosition, Delta);
         private Mat JoinImg(Mat Img1, Mat Img2, int shift, EnumFramePosition FramePosition, int Delta = 0)
         {
             shift = Math.Abs(shift);
             Mat rezult = new Mat();
-            //if (!File.Exists(file2))
-            //{
-            //    SetErr("Err !File.Exists(file2) !!!");
-            //    return rezult;
-            //}
-            //Mat Img2 = new Mat(file2);
 
             if (Img1.Width == 0 || Img1.Height == 0 || Img2.Width == 0 || Img2.Height == 0)
             {
@@ -1167,26 +1312,11 @@ namespace ImgAssemblingLib.Models
 
             return PlanName;
         }
-        //private List<double> LineAveraging(List<double> line, int N = 10)
-        //{
-        //    List<double> result = new List<double>();
-        //    Queue<double> queue = new Queue<double>();
-        //    for (int i = 0; i < (N - 1) / 2; i++) result.Add(0);
 
-        //    foreach (var elem in line)
-        //    {
-        //        queue.Enqueue(elem);
-        //        if (queue.Count == N + 1) queue.Dequeue();
-        //        if (queue.Count == N) result.Add(queue.Sum() / N);
-        //    }
-
-        //    for (int i = 0; i < (N - 1) / 2; i++)
-        //    {
-        //        if ((N / 2 + 1) >= result.Count) result[i] = result[N / 2];
-        //        else result[i] = result[N / 2 + 1];
-        //    }
-        //    while (result.Count < line.Count) result.Add(result[result.Count - 1]);
-        //    return result;
-        //}
+        public void DeletAreas(List<StitchingBlock.AreaForDel> areasForDelet)
+        {
+            if (areasForDelet.Count == 0 || SelectedFiles == null || SelectedFiles.Count == 0) return;
+            for (int i = areasForDelet.Count - 1; i > -1; i--)SelectedFiles.RemoveRange(areasForDelet[i].From, areasForDelet[i].To - areasForDelet[i].From);
+        }
     }
 }

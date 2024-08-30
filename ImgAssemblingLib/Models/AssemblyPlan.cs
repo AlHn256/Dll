@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ImgAssemblingLib.Models
 {
-    public class AssemblyPlan
+    public class AssemblyPlan : ICloneable
     {
         public bool BitMap { get; set; } = false; // Работаем не через файлы, а через массивы Bitmapов
         public string WorkingDirectory { get; set; } = string.Empty;
@@ -81,5 +82,7 @@ namespace ImgAssemblingLib.Models
             ErrText = err;
             return false;
         }
+
+        public object Clone() => MemberwiseClone();
     }
 }

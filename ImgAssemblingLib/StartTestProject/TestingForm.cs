@@ -1,9 +1,13 @@
 ﻿using ImgAssemblingLib.AditionalForms;
 using ImgAssemblingLib.Models;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace StartTestProject
@@ -12,7 +16,47 @@ namespace StartTestProject
     {
         private FileEdit fileEdit = new FileEdit(new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" });
         private string consol = string.Empty;
-        public TestingForm()=>InitializeComponent();
+        private object _context;
+        BackgroundWorker worker;
+
+        PerformanceCounter cpuCounter;
+        PerformanceCounter ramCounter;
+        public TestingForm()
+        {
+            InitializeComponent();
+            progressBar.Visible = false;
+            progressBarLabel.Visible = false;
+            if (SynchronizationContext.Current != null) _context = SynchronizationContext.Current;
+            else _context = new SynchronizationContext();
+
+
+            cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+
+            worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.WorkerSupportsCancellation = true;
+
+            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+            worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
+            //worker.RunWorkerCompleted +=
+            //           new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+
+            //Thread.Sleep(1000);
+            //RezultLb.Text = "CPU "+ getCurrentCpuUsage()+ " RAM " + getAvailableRAM();
+            worker.RunWorkerAsync();
+        }
+        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)=>CpuLb.Text = "CPU " + e.ProgressPercentage + "% RAM " + getAvailableRAM();
+        public string getAvailableRAM()=> ramCounter.NextValue() + "MB";
+        void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while (true)
+            {
+                Thread.Sleep(800);
+                worker.ReportProgress((int)cpuCounter.NextValue());
+            }
+        }
+
         private void ShowMainForm()
         {
             MainForm imgFixingForm = new MainForm();
@@ -55,11 +99,20 @@ namespace StartTestProject
         {
             AssemblyPlan assemblyPlan; 
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan); // Загружаем план сборки
+            if (assemblyPlan == null)
+            {
+                RezultLb.Text = "ERR Exampl1Btn_Click.файл сборки не найден!!!";
+                return;
+            }
             // Для имитации загружаем файлы из папки и создаем массив битмапов
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3179_3_0", 40);
+
             // Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3179_3_2");
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null); // Запускаем сборку
-            if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+            //if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+
+            FinalResult finalResult = await assembling.TryAssemble();
+            if (finalResult.IsErr)RezultLb.Text = finalResult.ErrText;
         }
         
         // Пример без исправления изображений
@@ -69,7 +122,8 @@ namespace StartTestProject
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
             assemblyPlan.FixImg = false; // Отключаем исправление изображений
             // Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3162_25_3AutoOut", 40);
-            Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\20Up");
+            //Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\20Up");
+            Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\15AutoOut");
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
             if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
         }
@@ -87,7 +141,7 @@ namespace StartTestProject
             if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
         }
 
-        // Настройка смещения полсы сборки относительно центра катинки (иногда помогает избавиться от повторяющихся объектов на заднем фоне вроде столбов)
+        // Пример настройки смещения полосы сборки относительно центра катинки (иногда помогает избавиться от повторяющихся объектов на заднем фоне вроде столбов)
         private async void Exampl4Btn_Click(object sender, EventArgs e)
         {
             AssemblyPlan assemblyPlan;
@@ -147,21 +201,21 @@ namespace StartTestProject
             RezultLb.Text = "Speed "+ assembling.GetSpeed() + "Km\\H";
         }
 
-        // Пример корректировки изображений без сборки
-        private void FixingImgsUsingDataArrayBtn_Click(object sender, EventArgs e)
+        // Пример коррекции изображений без сборки
+        private async void FixingImgsUsingDataArrayBtn_Click(object sender, EventArgs e)
         {
             //Для имитации загружаем файлы из папки и создаем массив битмапов
             Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\14(3)");
             ImgFixingForm imgFixingForm = new ImgFixingForm("14.fip", false); // Загружаем файл с параментрами корректировки изображений
-            Bitmap[] respBitmapArray = imgFixingForm.FixImgArray(dataArray);
+            await Task.Run(() => { dataArray = imgFixingForm.FixImges(_context, dataArray); });
 
-            if (respBitmapArray == null || respBitmapArray.Length == 0 || imgFixingForm.IsErr)
+            if (dataArray == null || dataArray.Length == 0 || imgFixingForm.IsErr)
             {
                 RezultLb.Text = imgFixingForm.ErrText;
                 return;
             }
             // Для проверки можно записать один файл из итогового массива
-            respBitmapArray[22].Save("test2022.jpg");
+            dataArray[22].Save("test2022.jpg");
             fileEdit.OpenFileDir("test2022.jpg");
         }
         private Bitmap[] LoadeBitmap(string file, int N = 0)
@@ -173,5 +227,51 @@ namespace StartTestProject
             if (fileList.Length == 0) return new Bitmap[] { };
             return fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
         }
+
+        private async void Exampl8Btn_Click(object sender, EventArgs e)=>await StartAssembling();
+        private async Task<bool> StartAssembling()
+        {
+
+            progressBar.Visible = true;
+            progressBarLabel.Visible = true;
+            progressBarLabel.BringToFront();
+
+            try
+            {
+                AssemblyPlan assemblyPlan;
+
+                fileEdit.LoadeJson(assemblingFile, out assemblyPlan); // Загружаем план сборки
+                if (assemblyPlan == null)
+                {
+                    RezultLb.Text = "ERR Exampl1Btn_Click.файл сборки не найден!!!";
+                    return false;
+                }
+                // Для имитации загружаем файлы из папки и создаем массив битмапов
+                Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3179_3_0", 40);
+
+                // Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3179_3_2");
+                Assembling assembling = new Assembling(assemblyPlan, dataArray, _context); // Запускаем сборку
+
+                assembling.ProcessChanged += worker_ProcessChang;
+                assembling.TextChanged += worker_TextChang;
+
+                FinalResult finalResult = await assembling.TryAssemble();
+                if (finalResult.IsErr) RezultLb.Text = finalResult.ErrText;
+            }
+            catch (Exception ex){RezultLb.Text = ex.Message;}
+            finally {
+                progressBar.Visible = false;
+                progressBarLabel.Visible = false;
+            }
+            return true;
+        }
+
+        private void worker_ProcessChang(int progress)
+        {
+            if (progress < 0) progressBar.Value = 0;
+            else if (progress > 100) progressBar.Value = 100;
+            else progressBar.Value = progress;
+        }
+        private void worker_TextChang(string text) => progressBarLabel.Text = text;
     }
 }

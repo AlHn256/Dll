@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace ImgAssemblingLib.Models
+namespace NewImgFixingLib.Models
 {
     public class FileList
     {
-        private  List<CopyList> CheckFileList { get; set; }
+        private List<CopyList> CheckFileList { get; set; }
         private String Dir { get; set; }
         private long MaxLenghtFile { get; set; }
         private SearchOption serrchOption { get; set; }

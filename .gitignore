@@ -84,3 +84,9 @@ dkms.conf
 /TestLib/.vs
 /TestLib/obj
 /TestLib/WindowsForms/obj
+/NewImgFixingLib(OpenCvVersion)/NewImgFixingLib/.vs
+/NewImgFixingLib(OpenCvVersion)/NewImgFixingLib/bin
+/NewImgFixingLib(OpenCvVersion)/NewImgFixingLib/obj
+/NewImgFixingLib(OpenCvVersion)/NewImgFixingLib/packages
+/NewImgFixingLib(OpenCvVersion)/TestStartingPr/bin
+/NewImgFixingLib(OpenCvVersion)/TestStartingPr/obj

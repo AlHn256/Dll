@@ -73,14 +73,12 @@ namespace NewImgFixingLib
             this.label9 = new System.Windows.Forms.Label();
             this.ApplyBtn = new System.Windows.Forms.Button();
             this.RezultRTB = new System.Windows.Forms.RichTextBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.HeightAfterTxtBox = new System.Windows.Forms.TextBox();
-            this.WidthAfterTxtBox = new System.Windows.Forms.TextBox();
+            this.dYAfterTxtBox = new System.Windows.Forms.TextBox();
+            this.dXAfterTxtBox = new System.Windows.Forms.TextBox();
             this.YAfterTxtBox = new System.Windows.Forms.TextBox();
             this.XAfterTxtBox = new System.Windows.Forms.TextBox();
             this.CropAfterChkBox = new System.Windows.Forms.CheckBox();
@@ -103,6 +101,10 @@ namespace NewImgFixingLib
             this.Sm33TxtBox = new System.Windows.Forms.TextBox();
             this.Sm32TxtBox = new System.Windows.Forms.TextBox();
             this.Sm31TxtBox = new System.Windows.Forms.TextBox();
+            this.ZeroCropAfterBtn = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.DistChkBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -113,7 +115,7 @@ namespace NewImgFixingLib
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(7, 31);
+            this.pictureBox1.Location = new System.Drawing.Point(7, 30);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(1100, 802);
             this.pictureBox1.TabIndex = 0;
@@ -225,6 +227,7 @@ namespace NewImgFixingLib
             this.InputDirTxtBox.Name = "InputDirTxtBox";
             this.InputDirTxtBox.Size = new System.Drawing.Size(867, 20);
             this.InputDirTxtBox.TabIndex = 14;
+            this.InputDirTxtBox.TextChanged += new System.EventHandler(this.InputDirTxtBox_TextChanged);
             // 
             // label1
             // 
@@ -262,6 +265,7 @@ namespace NewImgFixingLib
             this.InputFileTxtBox.Name = "InputFileTxtBox";
             this.InputFileTxtBox.Size = new System.Drawing.Size(126, 20);
             this.InputFileTxtBox.TabIndex = 18;
+            this.InputFileTxtBox.TextChanged += new System.EventHandler(this.InputFileTxtBox_TextChanged);
             // 
             // ATxtBox
             // 
@@ -270,6 +274,7 @@ namespace NewImgFixingLib
             this.ATxtBox.Name = "ATxtBox";
             this.ATxtBox.Size = new System.Drawing.Size(55, 20);
             this.ATxtBox.TabIndex = 19;
+            this.ATxtBox.TextChanged += new System.EventHandler(this.ATxtBox_TextChanged);
             // 
             // BTxtBox
             // 
@@ -278,6 +283,7 @@ namespace NewImgFixingLib
             this.BTxtBox.Name = "BTxtBox";
             this.BTxtBox.Size = new System.Drawing.Size(55, 20);
             this.BTxtBox.TabIndex = 20;
+            this.BTxtBox.TextChanged += new System.EventHandler(this.BTxtBox_TextChanged);
             // 
             // CTxtBox
             // 
@@ -286,6 +292,7 @@ namespace NewImgFixingLib
             this.CTxtBox.Name = "CTxtBox";
             this.CTxtBox.Size = new System.Drawing.Size(55, 20);
             this.CTxtBox.TabIndex = 21;
+            this.CTxtBox.TextChanged += new System.EventHandler(this.CTxtBox_TextChanged);
             // 
             // DTxtBox
             // 
@@ -294,6 +301,7 @@ namespace NewImgFixingLib
             this.DTxtBox.Name = "DTxtBox";
             this.DTxtBox.Size = new System.Drawing.Size(55, 20);
             this.DTxtBox.TabIndex = 22;
+            this.DTxtBox.TextChanged += new System.EventHandler(this.DTxtBox_TextChanged);
             // 
             // RotValTxtBox
             // 
@@ -370,7 +378,7 @@ namespace NewImgFixingLib
             this.DistortionMetodLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DistortionMetodLabel.AutoSize = true;
             this.DistortionMetodLabel.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.DistortionMetodLabel.Location = new System.Drawing.Point(1114, 186);
+            this.DistortionMetodLabel.Location = new System.Drawing.Point(1104, 186);
             this.DistortionMetodLabel.Name = "DistortionMetodLabel";
             this.DistortionMetodLabel.Size = new System.Drawing.Size(123, 19);
             this.DistortionMetodLabel.TabIndex = 31;
@@ -531,56 +539,34 @@ namespace NewImgFixingLib
             this.RezultRTB.TabIndex = 49;
             this.RezultRTB.Text = "";
             // 
-            // label12
-            // 
-            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label12.Location = new System.Drawing.Point(1221, 588);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(21, 19);
-            this.label12.TabIndex = 61;
-            this.label12.Text = "%";
-            // 
-            // label13
-            // 
-            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label13.Location = new System.Drawing.Point(1222, 613);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(21, 19);
-            this.label13.TabIndex = 60;
-            this.label13.Text = "%";
-            // 
             // label14
             // 
             this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label14.Location = new System.Drawing.Point(1109, 613);
+            this.label14.Location = new System.Drawing.Point(1120, 563);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(54, 19);
+            this.label14.Size = new System.Drawing.Size(27, 19);
             this.label14.TabIndex = 59;
-            this.label14.Text = "Height";
+            this.label14.Text = "dY";
             // 
             // label15
             // 
             this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label15.Location = new System.Drawing.Point(1112, 588);
+            this.label15.Location = new System.Drawing.Point(1120, 511);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(49, 19);
+            this.label15.Size = new System.Drawing.Size(27, 19);
             this.label15.TabIndex = 58;
-            this.label15.Text = "Width";
+            this.label15.Text = "dX";
             // 
             // label16
             // 
             this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label16.Location = new System.Drawing.Point(1129, 563);
+            this.label16.Location = new System.Drawing.Point(1129, 537);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(18, 19);
             this.label16.TabIndex = 57;
@@ -591,45 +577,45 @@ namespace NewImgFixingLib
             this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label17.Location = new System.Drawing.Point(1129, 538);
+            this.label17.Location = new System.Drawing.Point(1129, 484);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(18, 19);
             this.label17.TabIndex = 56;
             this.label17.Text = "X";
             // 
-            // HeightAfterTxtBox
+            // dYAfterTxtBox
             // 
-            this.HeightAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.HeightAfterTxtBox.Location = new System.Drawing.Point(1163, 611);
-            this.HeightAfterTxtBox.Name = "HeightAfterTxtBox";
-            this.HeightAfterTxtBox.Size = new System.Drawing.Size(55, 20);
-            this.HeightAfterTxtBox.TabIndex = 55;
-            this.HeightAfterTxtBox.Text = "100";
+            this.dYAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.dYAfterTxtBox.Location = new System.Drawing.Point(1155, 562);
+            this.dYAfterTxtBox.Name = "dYAfterTxtBox";
+            this.dYAfterTxtBox.Size = new System.Drawing.Size(47, 20);
+            this.dYAfterTxtBox.TabIndex = 55;
+            this.dYAfterTxtBox.Text = "100";
             // 
-            // WidthAfterTxtBox
+            // dXAfterTxtBox
             // 
-            this.WidthAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.WidthAfterTxtBox.Location = new System.Drawing.Point(1163, 587);
-            this.WidthAfterTxtBox.Name = "WidthAfterTxtBox";
-            this.WidthAfterTxtBox.Size = new System.Drawing.Size(55, 20);
-            this.WidthAfterTxtBox.TabIndex = 54;
-            this.WidthAfterTxtBox.Text = "100";
+            this.dXAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.dXAfterTxtBox.Location = new System.Drawing.Point(1155, 510);
+            this.dXAfterTxtBox.Name = "dXAfterTxtBox";
+            this.dXAfterTxtBox.Size = new System.Drawing.Size(47, 20);
+            this.dXAfterTxtBox.TabIndex = 54;
+            this.dXAfterTxtBox.Text = "100";
             // 
             // YAfterTxtBox
             // 
             this.YAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.YAfterTxtBox.Location = new System.Drawing.Point(1163, 562);
+            this.YAfterTxtBox.Location = new System.Drawing.Point(1155, 536);
             this.YAfterTxtBox.Name = "YAfterTxtBox";
-            this.YAfterTxtBox.Size = new System.Drawing.Size(55, 20);
+            this.YAfterTxtBox.Size = new System.Drawing.Size(47, 20);
             this.YAfterTxtBox.TabIndex = 53;
             this.YAfterTxtBox.Text = "0";
             // 
             // XAfterTxtBox
             // 
             this.XAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.XAfterTxtBox.Location = new System.Drawing.Point(1163, 538);
+            this.XAfterTxtBox.Location = new System.Drawing.Point(1155, 484);
             this.XAfterTxtBox.Name = "XAfterTxtBox";
-            this.XAfterTxtBox.Size = new System.Drawing.Size(55, 20);
+            this.XAfterTxtBox.Size = new System.Drawing.Size(47, 20);
             this.XAfterTxtBox.TabIndex = 52;
             this.XAfterTxtBox.Text = "0";
             // 
@@ -639,7 +625,7 @@ namespace NewImgFixingLib
             this.CropAfterChkBox.AutoSize = true;
             this.CropAfterChkBox.Checked = true;
             this.CropAfterChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CropAfterChkBox.Location = new System.Drawing.Point(1205, 520);
+            this.CropAfterChkBox.Location = new System.Drawing.Point(1212, 460);
             this.CropAfterChkBox.Name = "CropAfterChkBox";
             this.CropAfterChkBox.Size = new System.Drawing.Size(15, 14);
             this.CropAfterChkBox.TabIndex = 51;
@@ -650,7 +636,7 @@ namespace NewImgFixingLib
             this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label18.Location = new System.Drawing.Point(1124, 516);
+            this.label18.Location = new System.Drawing.Point(1131, 456);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(80, 19);
             this.label18.TabIndex = 50;
@@ -707,6 +693,7 @@ namespace NewImgFixingLib
             this.ETxtBox.Name = "ETxtBox";
             this.ETxtBox.Size = new System.Drawing.Size(55, 20);
             this.ETxtBox.TabIndex = 70;
+            this.ETxtBox.TextChanged += new System.EventHandler(this.ETxtBox_TextChanged);
             // 
             // EBtnDn
             // 
@@ -736,7 +723,7 @@ namespace NewImgFixingLib
             this.AutoReloadChkBox.AutoSize = true;
             this.AutoReloadChkBox.Checked = true;
             this.AutoReloadChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.AutoReloadChkBox.Location = new System.Drawing.Point(1195, 212);
+            this.AutoReloadChkBox.Location = new System.Drawing.Point(1128, 608);
             this.AutoReloadChkBox.Name = "AutoReloadChkBox";
             this.AutoReloadChkBox.Size = new System.Drawing.Size(15, 14);
             this.AutoReloadChkBox.TabIndex = 71;
@@ -747,7 +734,7 @@ namespace NewImgFixingLib
             this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label19.Location = new System.Drawing.Point(1109, 207);
+            this.label19.Location = new System.Drawing.Point(1147, 605);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(81, 19);
             this.label19.TabIndex = 72;
@@ -756,7 +743,7 @@ namespace NewImgFixingLib
             // Sm11TxtBox
             // 
             this.Sm11TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm11TxtBox.Location = new System.Drawing.Point(1110, 368);
+            this.Sm11TxtBox.Location = new System.Drawing.Point(1110, 379);
             this.Sm11TxtBox.Name = "Sm11TxtBox";
             this.Sm11TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm11TxtBox.TabIndex = 73;
@@ -765,7 +752,7 @@ namespace NewImgFixingLib
             // Sm12TxtBox
             // 
             this.Sm12TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm12TxtBox.Location = new System.Drawing.Point(1156, 368);
+            this.Sm12TxtBox.Location = new System.Drawing.Point(1156, 379);
             this.Sm12TxtBox.Name = "Sm12TxtBox";
             this.Sm12TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm12TxtBox.TabIndex = 74;
@@ -774,7 +761,7 @@ namespace NewImgFixingLib
             // Sm13TxtBox
             // 
             this.Sm13TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm13TxtBox.Location = new System.Drawing.Point(1199, 368);
+            this.Sm13TxtBox.Location = new System.Drawing.Point(1199, 379);
             this.Sm13TxtBox.Name = "Sm13TxtBox";
             this.Sm13TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm13TxtBox.TabIndex = 75;
@@ -783,7 +770,7 @@ namespace NewImgFixingLib
             // Sm23TxtBox
             // 
             this.Sm23TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm23TxtBox.Location = new System.Drawing.Point(1199, 394);
+            this.Sm23TxtBox.Location = new System.Drawing.Point(1199, 405);
             this.Sm23TxtBox.Name = "Sm23TxtBox";
             this.Sm23TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm23TxtBox.TabIndex = 78;
@@ -792,7 +779,7 @@ namespace NewImgFixingLib
             // Sm22TxtBox
             // 
             this.Sm22TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm22TxtBox.Location = new System.Drawing.Point(1156, 394);
+            this.Sm22TxtBox.Location = new System.Drawing.Point(1156, 405);
             this.Sm22TxtBox.Name = "Sm22TxtBox";
             this.Sm22TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm22TxtBox.TabIndex = 77;
@@ -801,7 +788,7 @@ namespace NewImgFixingLib
             // Sm21TxtBox
             // 
             this.Sm21TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm21TxtBox.Location = new System.Drawing.Point(1110, 394);
+            this.Sm21TxtBox.Location = new System.Drawing.Point(1110, 405);
             this.Sm21TxtBox.Name = "Sm21TxtBox";
             this.Sm21TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm21TxtBox.TabIndex = 76;
@@ -810,7 +797,7 @@ namespace NewImgFixingLib
             // Sm33TxtBox
             // 
             this.Sm33TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm33TxtBox.Location = new System.Drawing.Point(1199, 420);
+            this.Sm33TxtBox.Location = new System.Drawing.Point(1199, 431);
             this.Sm33TxtBox.Name = "Sm33TxtBox";
             this.Sm33TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm33TxtBox.TabIndex = 81;
@@ -819,7 +806,7 @@ namespace NewImgFixingLib
             // Sm32TxtBox
             // 
             this.Sm32TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm32TxtBox.Location = new System.Drawing.Point(1156, 420);
+            this.Sm32TxtBox.Location = new System.Drawing.Point(1156, 431);
             this.Sm32TxtBox.Name = "Sm32TxtBox";
             this.Sm32TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm32TxtBox.TabIndex = 80;
@@ -828,17 +815,67 @@ namespace NewImgFixingLib
             // Sm31TxtBox
             // 
             this.Sm31TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm31TxtBox.Location = new System.Drawing.Point(1110, 420);
+            this.Sm31TxtBox.Location = new System.Drawing.Point(1110, 431);
             this.Sm31TxtBox.Name = "Sm31TxtBox";
             this.Sm31TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm31TxtBox.TabIndex = 79;
             this.Sm31TxtBox.TextChanged += new System.EventHandler(this.Sm31TxtBox_TextChanged);
+            // 
+            // ZeroCropAfterBtn
+            // 
+            this.ZeroCropAfterBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ZeroCropAfterBtn.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.ZeroCropAfterBtn.Location = new System.Drawing.Point(1212, 482);
+            this.ZeroCropAfterBtn.Name = "ZeroCropAfterBtn";
+            this.ZeroCropAfterBtn.Size = new System.Drawing.Size(21, 100);
+            this.ZeroCropAfterBtn.TabIndex = 82;
+            this.ZeroCropAfterBtn.Text = "zero";
+            this.ZeroCropAfterBtn.UseVisualStyleBackColor = true;
+            this.ZeroCropAfterBtn.Click += new System.EventHandler(this.ZeroCropAfterBtn_Click);
+            // 
+            // label12
+            // 
+            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.label12.Location = new System.Drawing.Point(1105, 208);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(143, 19);
+            this.label12.TabIndex = 83;
+            this.label12.Text = "Distortion parameters";
+            // 
+            // label13
+            // 
+            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.label13.Location = new System.Drawing.Point(1109, 355);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(129, 19);
+            this.label13.TabIndex = 84;
+            this.label13.Text = "Camera parameters";
+            // 
+            // DistChkBox
+            // 
+            this.DistChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DistChkBox.AutoSize = true;
+            this.DistChkBox.Checked = true;
+            this.DistChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DistChkBox.Location = new System.Drawing.Point(1228, 190);
+            this.DistChkBox.Name = "DistChkBox";
+            this.DistChkBox.Size = new System.Drawing.Size(15, 14);
+            this.DistChkBox.TabIndex = 85;
+            this.DistChkBox.UseVisualStyleBackColor = true;
             // 
             // ImgFixingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1243, 869);
+            this.Controls.Add(this.DistChkBox);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.ZeroCropAfterBtn);
             this.Controls.Add(this.Sm33TxtBox);
             this.Controls.Add(this.Sm32TxtBox);
             this.Controls.Add(this.Sm31TxtBox);
@@ -857,14 +894,12 @@ namespace NewImgFixingLib
             this.Controls.Add(this.LoadFrBtn);
             this.Controls.Add(this.SaveAsBtn);
             this.Controls.Add(this.DistZeroBtn);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label13);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label17);
-            this.Controls.Add(this.HeightAfterTxtBox);
-            this.Controls.Add(this.WidthAfterTxtBox);
+            this.Controls.Add(this.dYAfterTxtBox);
+            this.Controls.Add(this.dXAfterTxtBox);
             this.Controls.Add(this.YAfterTxtBox);
             this.Controls.Add(this.XAfterTxtBox);
             this.Controls.Add(this.CropAfterChkBox);
@@ -964,14 +999,12 @@ namespace NewImgFixingLib
         private Label label9;
         private Button ApplyBtn;
         private RichTextBox RezultRTB;
-        private Label label12;
-        private Label label13;
         private Label label14;
         private Label label15;
         private Label label16;
         private Label label17;
-        private TextBox HeightAfterTxtBox;
-        private TextBox WidthAfterTxtBox;
+        private TextBox dYAfterTxtBox;
+        private TextBox dXAfterTxtBox;
         private TextBox YAfterTxtBox;
         private TextBox XAfterTxtBox;
         private CheckBox CropAfterChkBox;
@@ -994,5 +1027,9 @@ namespace NewImgFixingLib
         private TextBox Sm33TxtBox;
         private TextBox Sm32TxtBox;
         private TextBox Sm31TxtBox;
+        private Button ZeroCropAfterBtn;
+        private Label label12;
+        private Label label13;
+        private CheckBox DistChkBox;
     }
 }

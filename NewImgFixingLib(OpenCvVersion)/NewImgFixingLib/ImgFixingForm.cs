@@ -185,92 +185,123 @@ namespace NewImgFixingLib
                 pictureBox1.BackgroundImage = MyImage;
             }
         }
+        private void InputDirTxtBox_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(InputDirTxtBox.Text)) return;
+            var files = fileEdit.SearchFiles(InputDirTxtBox.Text);
+            if (files[0] != null)
+            {
+                InputFileTxtBox.Text = files[0].Name;
+                pictureBox1.BackgroundImage = Image.FromFile(files[0].FullName);
+            }
+            OutputDirTxtBox.Text = InputDirTxtBox.Text.FirstOf('\\') + "\\" + InputDirTxtBox.Text.LastOf('\\') + "Out";
+            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+        }
+        private void InputFileTxtBox_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(InputDirTxtBox.Text) || string.IsNullOrEmpty(InputFileTxtBox.Text)) return;
 
+            //string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
+            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+        }
         private void ATxtBox_TextChanged(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(ATxtBox.Text)) return;
             A = Math.Round(Convert.ToDouble(ATxtBox.Text), 2);
-            ATxtBox.Text = A.ToString();
+            //ATxtBox.Text = A.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void BTxtBox_TextChanged(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(BTxtBox.Text)) return;
             B = Math.Round(Convert.ToDouble(BTxtBox.Text), 2);
-            BTxtBox.Text = B.ToString();
+            //BTxtBox.Text = B.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void CTxtBox_TextChanged(object sender, EventArgs e)
         {
-            C = Convert.ToDouble(CTxtBox.Text);
+            if (string.IsNullOrEmpty(CTxtBox.Text)) return;
+            C = Math.Round(Convert.ToDouble(CTxtBox.Text), 2);
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void DTxtBox_TextChanged(object sender, EventArgs e)
         {
-            D = Convert.ToDouble(DTxtBox.Text);
+            if (string.IsNullOrEmpty(DTxtBox.Text)) return;
+            D = Math.Round(Convert.ToDouble(DTxtBox.Text), 2);
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void ETxtBox_TextChanged(object sender, EventArgs e)
         {
-            E = Convert.ToDouble(ETxtBox.Text);
+            if (string.IsNullOrEmpty(ETxtBox.Text)) return;
+            E = Math.Round(Convert.ToDouble(ETxtBox.Text), 2);
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void Sm11TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm11 = Math.Round(Convert.ToDouble(Sm11TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm11TxtBox.Text)) return;
+            Sm11 = Math.Round(Convert.ToDouble(Sm11TxtBox.Text), 3);
             Sm11TxtBox.Text = Sm11.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void Sm12TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm12 = Math.Round(Convert.ToDouble(Sm12TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm12TxtBox.Text)) return;
+            Double.TryParse(Sm12TxtBox.Text, out Sm12);
+            Sm12 = Math.Round(Sm12, 3);
             Sm12TxtBox.Text = Sm12.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void Sm13TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm13 = Math.Round(Convert.ToDouble(Sm13TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm13TxtBox.Text)) return;
+            Sm13 = Math.Round(Convert.ToDouble(Sm13TxtBox.Text), 3);
             Sm13TxtBox.Text = Sm13.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
-
-
         private void Sm21TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm21 = Math.Round(Convert.ToDouble(Sm21TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm21TxtBox.Text)) return;
+            Sm21 = Math.Round(Convert.ToDouble(Sm21TxtBox.Text), 3);
             Sm21TxtBox.Text = Sm21.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
 
         private void Sm22TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm22 = Math.Round(Convert.ToDouble(Sm22TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm22TxtBox.Text)) return;
+            Sm22 = Math.Round(Convert.ToDouble(Sm22TxtBox.Text), 3);
             Sm22TxtBox.Text = Sm22.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
 
         private void Sm23TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm23 = Math.Round(Convert.ToDouble(Sm23TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm23TxtBox.Text)) return;
+            Sm23 = Math.Round(Convert.ToDouble(Sm23TxtBox.Text), 3 );
             Sm23TxtBox.Text = Sm23.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
 
         private void Sm31TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm31 = Math.Round(Convert.ToDouble(Sm31TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm31TxtBox.Text)) return;
+            Sm31 = Math.Round(Convert.ToDouble(Sm31TxtBox.Text), 3);
             Sm31TxtBox.Text = Sm31.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
 
         private void Sm32TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm32 = Math.Round(Convert.ToDouble(Sm32TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm32TxtBox.Text)) return;
+            Sm32 = Math.Round(Convert.ToDouble(Sm32TxtBox.Text), 3);
             Sm32TxtBox.Text = Sm32.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
 
         private void Sm33TxtBox_TextChanged(object sender, EventArgs e)
         {
-            Sm33 = Math.Round(Convert.ToDouble(Sm33TxtBox.Text), 2);
+            if (string.IsNullOrEmpty(Sm33TxtBox.Text)) return;
+            Sm33 = Math.Round(Convert.ToDouble(Sm33TxtBox.Text), 3);
             Sm33TxtBox.Text = Sm33.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
@@ -349,43 +380,6 @@ namespace NewImgFixingLib
             ETxtBox.Text = E.ToString();
             if(AutoReloadChkBox.Checked)OpenCvReloadImg();
         }
-        //private void RBtnUp001_Click(object sender, EventArgs e)
-        //{
-        //    Decimal.TryParse(RotValTxtBox.Text, out RotationAngle);
-        //    RotationAngle += 0.01m;
-        //    RotValTxtBox.Text = RotationAngle.ToString();
-        //    if(AutoReloadChkBox.Checked)OpenCvReloadImg();
-        //}
-
-        //private void RBtnDn001_Click(object sender, EventArgs e)
-        //{
-        //    Decimal.TryParse(RotValTxtBox.Text, out RotationAngle);
-        //    RotationAngle -= 0.01m;
-        //    RotValTxtBox.Text = RotationAngle.ToString();
-        //    if(AutoReloadChkBox.Checked)OpenCvReloadImg();
-        //}
-        //private void RBtnUp01_Click(object sender, EventArgs e)
-        //{
-        //    Decimal.TryParse(RotValTxtBox.Text, out RotationAngle);
-        //    RotationAngle += 0.1;
-        //    RotValTxtBox.Text = RotationAngle.ToString();
-        //    if(AutoReloadChkBox.Checked)OpenCvReloadImg();
-        //}
-        //private void RBtnDn01_Click(object sender, EventArgs e)
-        //{
-        //    Decimal.TryParse(RotValTxtBox.Text, out RotationAngle);
-        //    RotationAngle -= 0.1;
-        //    RotValTxtBox.Text = RotationAngle.ToString();
-        //    if(AutoReloadChkBox.Checked)OpenCvReloadImg();
-        //}
-
-
-
-        //private void RotValTxtBox_TextChanged(object sender, EventArgs e)
-        //{
-        //    Decimal.TryParse(RotValTxtBox.Text, out RotationAngle);
-        //    if(AutoReloadChkBox.Checked)OpenCvReloadImg();
-        //}
 
         private void DistortionMetodComBox_SelectedIndexChanged(object sender, EventArgs e) => ReloadImg();
         private void ApplyBtn_Click(object sender, EventArgs e) => ReloadImg();
@@ -420,25 +414,6 @@ namespace NewImgFixingLib
                 Dir = textdir;
             }
         }
-        private void InputDirTxtBox_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(InputDirTxtBox.Text)) return;
-            var files = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            if (files[0]!=null)
-            {
-                InputFileTxtBox.Text = files[0].Name;
-                pictureBox1.BackgroundImage = Image.FromFile(files[0].FullName);
-            }
-
-            OutputDirTxtBox.Text = InputDirTxtBox.Text.FirstOf('\\') + "\\" + InputDirTxtBox.Text.LastOf('\\') + "Out";
-        }
-        private void InputFileTxtBox_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(InputFileTxtBox.Text)) return;
-
-            string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
-            if (File.Exists(file)) pictureBox1.BackgroundImage = Image.FromFile(file);
-        }
         private void DistZeroBtn_Click(object sender, EventArgs e)
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
@@ -456,9 +431,22 @@ namespace NewImgFixingLib
             DTxtBox.Text = "0";
             ETxtBox.Text = "0";
 
-            Sm11TxtBox.Text = "1261"; Sm12TxtBox.Text = "0"; Sm13TxtBox.Text = "9,4";
-            Sm21TxtBox.Text = "0,5";  Sm22TxtBox.Text = "1217"; Sm23TxtBox.Text = "5,9";
+            Sm11TxtBox.Text = "1500"; Sm12TxtBox.Text = "0"; Sm13TxtBox.Text = "0";
+            Sm21TxtBox.Text = "0";  Sm22TxtBox.Text = "1500"; Sm23TxtBox.Text = "0";
             Sm31TxtBox.Text = "0";  Sm32TxtBox.Text = "0";  Sm33TxtBox.Text = "1";
+
+            AutoReloadChkBox.Checked = AutoReloadSave;
+            OpenCvReloadImg();
+        }
+        private void ZeroCropAfterBtn_Click(object sender, EventArgs e)
+        {
+            bool AutoReloadSave = AutoReloadChkBox.Checked;
+            AutoReloadChkBox.Checked = false;
+
+            XAfterTxtBox.Text = "0";
+            YAfterTxtBox.Text = "0";
+            dXAfterTxtBox.Text = "0";
+            dYAfterTxtBox.Text = "0";
 
             AutoReloadChkBox.Checked = AutoReloadSave;
             OpenCvReloadImg();
@@ -466,27 +454,37 @@ namespace NewImgFixingLib
 
         private bool SetImgFixingSettings(DistorSettings distorSettings, bool fileLoad)
         {
-            A = distorSettings.A;
+            bool AutoReloadSave = AutoReloadChkBox.Checked;
+            AutoReloadChkBox.Checked = false;
             ATxtBox.Text = distorSettings.A.ToString();
-            B = distorSettings.B;
             BTxtBox.Text = distorSettings.B.ToString();
-            C = distorSettings.C;
             CTxtBox.Text = distorSettings.C.ToString();
-            D = distorSettings.D;
             DTxtBox.Text = distorSettings.D.ToString();
-            E = distorSettings.E;
             ETxtBox.Text = distorSettings.E.ToString();
-            Sm11 = distorSettings.Sm11;
-            Sm12 = distorSettings.Sm12;
-            Sm13 = distorSettings.Sm13;
-            Sm21 = distorSettings.Sm21;
-            Sm22 = distorSettings.Sm22;
-            Sm23 = distorSettings.Sm23;
-            Sm31 = distorSettings.Sm31;
-            Sm32 = distorSettings.Sm32;
-            Sm33 = distorSettings.Sm33;
-
-
+            Sm11TxtBox.Text = distorSettings.Sm11.ToString();
+            Sm12TxtBox.Text = distorSettings.Sm12.ToString();
+            Sm13TxtBox.Text = distorSettings.Sm13.ToString();
+            Sm21TxtBox.Text = distorSettings.Sm21.ToString();
+            Sm22TxtBox.Text = distorSettings.Sm22.ToString();
+            Sm23TxtBox.Text = distorSettings.Sm23.ToString();
+            Sm31TxtBox.Text = distorSettings.Sm31.ToString();
+            Sm32TxtBox.Text = distorSettings.Sm32.ToString();
+            Sm33TxtBox.Text = distorSettings.Sm33.ToString();
+            AutoReloadChkBox.Checked = AutoReloadSave;
+            //A = distorSettings.A;
+            //B = distorSettings.B;
+            //C = distorSettings.C;
+            //D = distorSettings.D;
+            //E = distorSettings.E;
+            //Sm11 = distorSettings.Sm11;
+            //Sm12 = distorSettings.Sm12;
+            //Sm13 = distorSettings.Sm13;
+            //Sm21 = distorSettings.Sm21;
+            //Sm22 = distorSettings.Sm22;
+            //Sm23 = distorSettings.Sm23;
+            //Sm31 = distorSettings.Sm31;
+            //Sm32 = distorSettings.Sm32;
+            //Sm33 = distorSettings.Sm33;
 
             //if (imgFixingSettings == null) return false;
             //CropBeforeChkBox.Checked = imgFixingSettings.CropBeforeChkBox;
@@ -570,7 +568,6 @@ namespace NewImgFixingLib
         //    };
         }
 
-
         public static byte[] BitmapToByte(string path, Image img, int quality)
         {
             var JpegCodecInfo = ImageCodecInfo.GetImageEncoders().Where(x => x.FormatDescription == "JPEG").First();
@@ -602,7 +599,6 @@ namespace NewImgFixingLib
         //    mss.Close();
         //    return matriz;
         //}
-
         public Bitmap[] FixImgArray(Bitmap[] dataArray)
         {
             var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg",x, 99)); }).ToArray();
@@ -611,6 +607,7 @@ namespace NewImgFixingLib
 
             return DataArray.Select(x => MagickImageToBitMap(x)).ToArray();
         }
+
         private async void SaveAsBtn_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -662,7 +659,6 @@ namespace NewImgFixingLib
         private MagickImage EditImg(MagickImage image)
         {
             DistortMethod distortMethod = DistortMethod.Barrel;
-
             if (CropBeforeChkBox.Checked)
             {
                 int X = 0, Y = 0, HeightPercent = 100, WidthPercent = 100;
@@ -693,8 +689,8 @@ namespace NewImgFixingLib
                 int X = 0, Y = 0, HeightPercent = 100, WidthPercent = 100;
                 Int32.TryParse(XAfterTxtBox.Text, out X);
                 Int32.TryParse(YAfterTxtBox.Text, out Y);
-                Int32.TryParse(HeightAfterTxtBox.Text, out HeightPercent);
-                Int32.TryParse(WidthAfterTxtBox.Text, out WidthPercent);
+                Int32.TryParse(dYAfterTxtBox.Text, out HeightPercent);
+                Int32.TryParse(dXAfterTxtBox.Text, out WidthPercent);
 
                 MagickGeometry geometry = new MagickGeometry();
                 geometry.Width = image.Width * WidthPercent / 100;
@@ -719,150 +715,71 @@ namespace NewImgFixingLib
 
             return image;
         }
-
-        private void ApplyBtn_Click_1(object sender, EventArgs e)=>OpenCvReloadImg();
-
+        private void ApplyBtn_Click_1(object sender, EventArgs e) => OpenCvReloadImg();
         private void OpenCvReloadImg()
         {
-
             string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
             if (!File.Exists(file))
             {
-                RezultRTB.Text = "Err ReloadImg.File " + file + " не найден!!!";
+                RezultRTB.Text = "Err File: " + file + " не найден!!!";
                 return;
             }
-
-            //OpenCvSharp.Size board_size = new OpenCvSharp.Size(9, 6);
-
-            /// <summary>
-            /// Фактический размер каждой шахматной доски на калибровочной доске
-            /// </summary>
-            //OpenCvSharp.Size square_size = new OpenCvSharp.Size(10, 10);
-            /// <summary>
-            /// Матрица параметров в камере
-            /// </summary>
-
-            Mat cameraMatrix = new Mat(3, 3, MatType.CV_32FC1, Scalar.All(0));
-            /// <summary>
-            /// 5 коэффициентов искажения камеры: k1,k2,p1,p2,k3
-            /// </summary>
-            Mat distCoeffs = new Mat(1, 5, MatType.CV_32FC1, Scalar.All(0));
-
-            //double[,] cameraMatrix_ = new double[,]
-            //{
-            //    { 0, 0, 1151.7 },
-            //    { 0, 985.6, 0 },
-            //    { 985.6, 0, 1153.4 }
-            //};
-
-
-            //camera_matrix = np.array(
-            //      [[1.26125746e+03, 0.00000000e+00, 9.40592038e+02],
-            //      [0.00000000e+00, 1.21705719e+03, 5.96848905e+02],
-            //      [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]);
-            //dist_coefs = np.array([-3.18345478e+01, 7.26874187e+02, -1.20480816e-01, 9.43789095e-02, 5.28916586e-01]);
-
-
-            //K.put(0, 0, 1151.7, 0, 985.6, 0, 1153.4, 573.004, 0, 0, 1);
-            //double[] cameraMatrix_ = new double[] { 0, 0, 1151.7, 0, 985.6, 0, 1153.4, 573.004, 0, 0, 1 };
-
-            //double[] distCoeffs_ = new double[] { distCoeffs.Get<double>(0), distCoeffs.Get<double>(1), distCoeffs.Get<double>(2), distCoeffs.Get<double>(3), distCoeffs.Get<double>(4) };
-            //D.put(0, 0, -0.42, 0.2196, 0.0038, 0.013, -0.06);
-            //double[] distCoeffs_ = new double[] { -3.18345478e+01, 7.26874187e+02, -1.20480816e-01, 9.43789095e-02, 5.28916586e-01 };
-
             Mat img = Cv2.ImRead(file);
-            //Mat img = Cv2.ImRead(@"E:\Work\Exampels\14\40.bmp");
-            Mat correct = new Mat();
+            Mat rezult = new Mat();
 
-            double[,] cameraMatrix_ = new double[,]
+            double[] distCoeffs_ = new double[] { A,B,C,D,E };
+            InputArray _cameraMatrix = InputArray.Create<double>(new double[,]
                 {
                     { Sm11, Sm12, Sm13},
                     { Sm21, Sm22, Sm23 },
                     { Sm31, Sm32, Sm33 }
-                };
+                });
+            InputArray _distCoeffs = InputArray.Create<double>(new double[] { A, B, C, D, E });
+            Cv2.Undistort(img, rezult, _cameraMatrix, _distCoeffs);
 
-            double[] distCoeffs_ = new double[] { Math.Round(A, 2), Math.Round(B, 2), Math.Round(C, 2), Math.Round(D, 2), Math.Round(E, 2) };
+            if (CropAfterChkBox.Checked)
+            {
+                if (string.IsNullOrEmpty(XAfterTxtBox.Text)) dYAfterTxtBox.Text = "0";
+                if (string.IsNullOrEmpty(YAfterTxtBox.Text)) dYAfterTxtBox.Text = "0";
+                if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = rezult.Width.ToString();
+                if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = rezult.Width.ToString();
 
-            InputArray _cameraMatrix = InputArray.Create<double>(cameraMatrix_);
-            InputArray _distCoeffs = InputArray.Create<double>(distCoeffs_);
+                int Y = 0, X = 0, HeightPercent = 1000, WidthPercent = 1000;
+                Int32.TryParse(XAfterTxtBox.Text, out X);
+                Int32.TryParse(YAfterTxtBox.Text, out Y);
+                if (Y < 0) Y = 0; if(X<0) X = 0;
+                if (Y > rezult.Width) Y = rezult.Width / 2;
+                if (X > rezult.Height) X = rezult.Height / 2;
+                Int32.TryParse(dYAfterTxtBox.Text, out HeightPercent);
+                Int32.TryParse(dXAfterTxtBox.Text, out WidthPercent);
+                int dY = HeightPercent, dX = WidthPercent;
+                if (dY <= 0 || Y + dY > rezult.Height) dY = rezult.Height - Y;
+                if (dX <= 0 || X + dX > rezult.Width) dX = rezult.Width - X;
+                XAfterTxtBox.Text = X.ToString();
+                YAfterTxtBox.Text = Y.ToString();
+                dYAfterTxtBox.Text = dY.ToString();
+                dXAfterTxtBox.Text = dX.ToString();
 
-            //Cv2.Undistort(img, correct, K, D);
-            Cv2.Undistort(img, correct, _cameraMatrix, _distCoeffs);
-            //Cv2.Undistort(img, correct, 10 , null, _cameraMatrix);
+                Rect rect;
+                if (dY!=0 || dX!=0) rect = new Rect(X, Y,dX, dY);
+                else rect = new Rect( X, Y, rezult.Width - X, rezult.Height - Y);
+                rezult = new Mat(rezult, rect);
+            }
 
+            int n = 6;
+            Cv2.Line(rezult, rezult.Width / n,0, rezult.Width / n,rezult.Height,Scalar.Red, 1);
+            Cv2.Line(rezult, rezult.Width - rezult.Width / n, 0, rezult.Width - rezult.Width / n, rezult.Height, Scalar.Red, 1);
+            Cv2.Line(rezult, 0,  rezult.Height/n, rezult.Width, rezult.Height/n, Scalar.Red, 1);
+            Cv2.Line(rezult, 0, rezult.Height - rezult.Height / n, rezult.Width, rezult.Height - rezult.Height / n, Scalar.Red, 1);
 
-            //Cv2.Resize(undistorted, undistortedScaled, Size(0, 0), scaleX, scaleY);
-
-            //pictureBox1.Image = null;
-            pictureBox1.BackgroundImage = MatToBitmap(correct);
-
-            //       Point3f[][] obj_points = new Point3f[calibFrames.Count][];
-            //       Point2f[][] img_points = new Point2f[calibFrames.Count][];
-            //       int index = 0;
-            //       foreach (CalibFrame frame in calibFrames)
-            //       {
-            //           img_points[index] = frame.Corners;
-            //           obj_points[index] = new Point3f[board_size.Width * board_size.Height];
-
-            //           int index1 = 0;
-            //           for (float y = 0; y < board_size.Height; y++)
-            //               for (float x = 0; x < board_size.Width; x++)
-            //               {
-            //                   Point3f p = new Point3f(x * square_size.Width, y * square_size.Height, 0);
-            //                   obj_points[index][index1] = p;
-            //                   index1++;
-            //               }
-
-            //           /*for (int i = 0; i < obj_points[index].Length; i++)
-            //obj_points[index][i] = new Point3f(i * (float)10, i % (float)10, 0);*/
-            //           index++;
-            //       }
-
-            //double error = Cv2.CalibrateCamera(obj_points, img_points, calibFrames.First().Gray.Size(), cameraMatrix_, distCoeffs_, out var revecs, out var tvecs);
+            pictureBox1.BackgroundImage = MatToBitmap(rezult);
 
             double[] array_ = (double[])distCoeffs_.Clone();
             string params_ = $"k1:{array_[0]};\n k2:{array_[1]}; \n k3:{array_[2]}; \n p1:{array_[3]}; \n p2:{array_[4]};";
             RezultRTB.Text = params_;
-
-            //InputArray _cameraMatrix = InputArray.Create<double>(cameraMatrix_);
-            //InputArray _distCoeffs = InputArray.Create<double>(distCoeffs_);
-
-            //Cv2.Undistort(img, correct, _cameraMatrix, _distCoeffs);
-
-            //Cv2.Rema
-
-            //pictureBox1.Image = null;
-            //pictureBox1.Image = MatToBitmap(correct);
-
-            //img_objects = corners
-            //Mat[] tvecMat = new Mat[] { };
-            //Mat[] rvecsMat = new Mat[] { };
-
-            //OpenCvSharp.Size imageSize = new OpenCvSharp.Size(0,0);
-
-            //int index = 0;
-            //foreach (CalibFrame frame in calibFrames)
-            //{
-            //	obj_points[index] = new Mat(frame.Gray.Rows, frame.Gray.Cols, frame.Gray.Type(), Scalar.All(0));
-
-            //	img_points[index] = new Mat(frame.Corners.Count(), 2, MatType.CV_32FC1);
-
-            //	index++;
-
-            //	imageSize = new OpenCvSharp.Size(frame.Gray.Width, frame.Gray.Height);
-            //}
-            //Cv2.CalibrateCamera(obj_points, img_points, imageSize, cameraMatrix, distCoeffs, out tvecMat, out rvecsMat);
-
         }
-
-        Bitmap MatToBitmap(Mat mat)
-        {
-            //mat.ConvertTo(mat, MatType.CV_8U);
-            return BitmapConverter.ToBitmap(mat);
-        }
-
+        Bitmap MatToBitmap(Mat mat) => BitmapConverter.ToBitmap(mat);
         public string GetImgFixingPlan() => imgFixingFile;
-
         public bool TryReadSettings(bool fileLoad = false)
         {
             if (File.Exists(imgFixingFile))

@@ -1214,8 +1214,6 @@ namespace ImgAssemblingLib.Models
                     int d2 = w2 - shift + Delta;
                     int d3 = d2 + shift - 1;
 
-
-
                     if (d2 > 0 && d2 < Img2.Width - 1 && d3 > 0 && d3 < Img2.Width - 1)
                     {
                         Rect rect2 = new Rect(d2, 0, shift - 1, Img2.Height - 1);

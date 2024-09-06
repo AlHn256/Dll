@@ -130,6 +130,8 @@ namespace NewImgFixingLib
             this.CorrectFilesBtn.TabIndex = 1;
             this.CorrectFilesBtn.Text = "Correct Files";
             this.CorrectFilesBtn.UseVisualStyleBackColor = true;
+            this.CorrectFilesBtn.Click += new System.EventHandler(this.CorrectFiles_Click);
+
             // 
             // ABtnUp
             // 
@@ -378,7 +380,7 @@ namespace NewImgFixingLib
             this.DistortionMetodLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DistortionMetodLabel.AutoSize = true;
             this.DistortionMetodLabel.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.DistortionMetodLabel.Location = new System.Drawing.Point(1104, 186);
+            this.DistortionMetodLabel.Location = new System.Drawing.Point(1107, 186);
             this.DistortionMetodLabel.Name = "DistortionMetodLabel";
             this.DistortionMetodLabel.Size = new System.Drawing.Size(123, 19);
             this.DistortionMetodLabel.TabIndex = 31;
@@ -401,7 +403,7 @@ namespace NewImgFixingLib
             this.CropBeforeChkBox.AutoSize = true;
             this.CropBeforeChkBox.Checked = true;
             this.CropBeforeChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CropBeforeChkBox.Location = new System.Drawing.Point(1200, 10);
+            this.CropBeforeChkBox.Location = new System.Drawing.Point(1214, 11);
             this.CropBeforeChkBox.Name = "CropBeforeChkBox";
             this.CropBeforeChkBox.Size = new System.Drawing.Size(15, 14);
             this.CropBeforeChkBox.TabIndex = 34;
@@ -521,7 +523,7 @@ namespace NewImgFixingLib
             // 
             // ApplyBtn
             // 
-            this.ApplyBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ApplyBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ApplyBtn.Location = new System.Drawing.Point(1111, 665);
             this.ApplyBtn.Name = "ApplyBtn";
             this.ApplyBtn.Size = new System.Drawing.Size(123, 36);
@@ -590,7 +592,7 @@ namespace NewImgFixingLib
             this.dYAfterTxtBox.Name = "dYAfterTxtBox";
             this.dYAfterTxtBox.Size = new System.Drawing.Size(47, 20);
             this.dYAfterTxtBox.TabIndex = 55;
-            this.dYAfterTxtBox.Text = "100";
+            this.dYAfterTxtBox.Text = "0";
             // 
             // dXAfterTxtBox
             // 
@@ -599,7 +601,7 @@ namespace NewImgFixingLib
             this.dXAfterTxtBox.Name = "dXAfterTxtBox";
             this.dXAfterTxtBox.Size = new System.Drawing.Size(47, 20);
             this.dXAfterTxtBox.TabIndex = 54;
-            this.dXAfterTxtBox.Text = "100";
+            this.dXAfterTxtBox.Text = "0";
             // 
             // YAfterTxtBox
             // 
@@ -656,7 +658,7 @@ namespace NewImgFixingLib
             // 
             // SaveAsBtn
             // 
-            this.SaveAsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SaveAsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.SaveAsBtn.Location = new System.Drawing.Point(1111, 707);
             this.SaveAsBtn.Name = "SaveAsBtn";
             this.SaveAsBtn.Size = new System.Drawing.Size(53, 50);
@@ -667,7 +669,7 @@ namespace NewImgFixingLib
             // 
             // LoadFrBtn
             // 
-            this.LoadFrBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LoadFrBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.LoadFrBtn.Location = new System.Drawing.Point(1181, 707);
             this.LoadFrBtn.Name = "LoadFrBtn";
             this.LoadFrBtn.Size = new System.Drawing.Size(53, 50);
@@ -678,8 +680,9 @@ namespace NewImgFixingLib
             // 
             // ShowGridСhckBox
             // 
+            this.ShowGridСhckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ShowGridСhckBox.AutoSize = true;
-            this.ShowGridСhckBox.Location = new System.Drawing.Point(1112, 641);
+            this.ShowGridСhckBox.Location = new System.Drawing.Point(1114, 642);
             this.ShowGridСhckBox.Name = "ShowGridСhckBox";
             this.ShowGridСhckBox.Size = new System.Drawing.Size(75, 17);
             this.ShowGridСhckBox.TabIndex = 67;
@@ -719,11 +722,11 @@ namespace NewImgFixingLib
             // 
             // AutoReloadChkBox
             // 
-            this.AutoReloadChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.AutoReloadChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AutoReloadChkBox.AutoSize = true;
             this.AutoReloadChkBox.Checked = true;
             this.AutoReloadChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.AutoReloadChkBox.Location = new System.Drawing.Point(1128, 608);
+            this.AutoReloadChkBox.Location = new System.Drawing.Point(1114, 622);
             this.AutoReloadChkBox.Name = "AutoReloadChkBox";
             this.AutoReloadChkBox.Size = new System.Drawing.Size(15, 14);
             this.AutoReloadChkBox.TabIndex = 71;
@@ -731,12 +734,12 @@ namespace NewImgFixingLib
             // 
             // label19
             // 
-            this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label19.AutoSize = true;
-            this.label19.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label19.Location = new System.Drawing.Point(1147, 605);
+            this.label19.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.label19.Location = new System.Drawing.Point(1130, 621);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(81, 19);
+            this.label19.Size = new System.Drawing.Size(69, 15);
             this.label19.TabIndex = 72;
             this.label19.Text = "Auto reload";
             // 
@@ -838,7 +841,7 @@ namespace NewImgFixingLib
             this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label12.Location = new System.Drawing.Point(1105, 208);
+            this.label12.Location = new System.Drawing.Point(1107, 208);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(143, 19);
             this.label12.TabIndex = 83;

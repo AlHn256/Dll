@@ -112,8 +112,8 @@ namespace NewImgFixingLib
             foreach (var file in fileList)
             {
                 string outputFileNumber = outputDir + "\\" + file.Name;
-                File.WriteAllBytes(outputFileNumber, EditImg(file.FullName).ToByteArray());
-               // Image Img = Image.FromFile(outputFileNumber);
+                EditImg(file.FullName).SaveImage(outputFileNumber);
+                //File.WriteAllBytes(outputFileNumber, EditImg(file.FullName).ToByteArray());
             }
             return true;
         }
@@ -133,8 +133,7 @@ namespace NewImgFixingLib
             for (int i = 0; i < fileList.Length; i++)
             {
                 string outputFileNumber = outputDir + "\\" + fileList[i].Name;
-                File.WriteAllBytes(outputFileNumber, EditImg(fileList[i].FullName).ToByteArray());
-                //Image Img = Image.FromFile(outputFileNumber);
+                EditImg(fileList[i].FullName).SaveImage(outputFileNumber);
                 context.Send(OnProgressChanged, i * 100 / fileList.Length);
                 context.Send(OnTextChanged, "Imges Fixing " + i * 100 / fileList.Length + " %");
             }
@@ -159,31 +158,31 @@ namespace NewImgFixingLib
 
         private void ReloadImg()
         {
-            string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
-            if (!File.Exists(file))
-            {
-                RezultRTB.Text = "Err ReloadImg.File " + file + " не найден!!!";
-                return;
-            }
+            //string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
+            //if (!File.Exists(file))
+            //{
+            //    RezultRTB.Text = "Err ReloadImg.File " + file + " не найден!!!";
+            //    return;
+            //}
 
-            //DistortMethod distortMethod = new DistortMethod();
-            //if (DistortionMetodComBox.SelectedItem == null ||
-            //    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Undefined ||
-            //    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Sentinel ||
-            //    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Polynomial ||
-            //    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Perspective ||
-            //    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Arc) return;
+            ////DistortMethod distortMethod = new DistortMethod();
+            ////if (DistortionMetodComBox.SelectedItem == null ||
+            ////    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Undefined ||
+            ////    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Sentinel ||
+            ////    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Polynomial ||
+            ////    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Perspective ||
+            ////    (DistortMethod)DistortionMetodComBox.SelectedItem == DistortMethod.Arc) return;
 
-            //distortMethod = (DistortMethod)DistortionMetodComBox.SelectedItem;
+            ////distortMethod = (DistortMethod)DistortionMetodComBox.SelectedItem;
 
-            MagickImage magickImage = EditImg(file);
-            var imageData = magickImage.ToByteArray();
+            //MagickImage magickImage = EditImg(file);
+            //var imageData = magickImage.ToByteArray();
             
-            using (var ms = new MemoryStream(imageData))
-            {
-                Bitmap MyImage = new Bitmap(ms);
-                pictureBox1.BackgroundImage = MyImage;
-            }
+            //using (var ms = new MemoryStream(imageData))
+            //{
+            //    Bitmap MyImage = new Bitmap(ms);
+            //    pictureBox1.BackgroundImage = MyImage;
+            //}
         }
         private void InputDirTxtBox_TextChanged(object sender, EventArgs e)
         {
@@ -452,10 +451,16 @@ namespace NewImgFixingLib
             OpenCvReloadImg();
         }
 
-        private bool SetImgFixingSettings(DistorSettings distorSettings, bool fileLoad)
+        private bool SetImgFixingSettings(ImgFixingSettings imgFixingSettings , bool fileLoad)
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
+
+
+            DistChkBox.Checked = imgFixingSettings.Distortion;
+            DistorSettings distorSettings = imgFixingSettings.DistorSettings;
+           
+            
             ATxtBox.Text = distorSettings.A.ToString();
             BTxtBox.Text = distorSettings.B.ToString();
             CTxtBox.Text = distorSettings.C.ToString();
@@ -470,6 +475,13 @@ namespace NewImgFixingLib
             Sm31TxtBox.Text = distorSettings.Sm31.ToString();
             Sm32TxtBox.Text = distorSettings.Sm32.ToString();
             Sm33TxtBox.Text = distorSettings.Sm33.ToString();
+
+            CropAfterChkBox.Checked = imgFixingSettings.CropAfterChkBox;
+            XAfterTxtBox.Text = imgFixingSettings.XAfter.ToString();
+            YAfterTxtBox.Text = imgFixingSettings.YAfter.ToString();
+            dXAfterTxtBox.Text = imgFixingSettings.DXAfter.ToString();
+            dYAfterTxtBox.Text = imgFixingSettings.DYAfter.ToString();
+
             AutoReloadChkBox.Checked = AutoReloadSave;
             //A = distorSettings.A;
             //B = distorSettings.B;
@@ -488,11 +500,8 @@ namespace NewImgFixingLib
 
             //if (imgFixingSettings == null) return false;
             //CropBeforeChkBox.Checked = imgFixingSettings.CropBeforeChkBox;
-            //CropAfterChkBox.Checked = imgFixingSettings.CropAfterChkBox;
             //XBeforeTxtBox.Text = imgFixingSettings.XBefore.ToString();
-            //XAfterTxtBox.Text = imgFixingSettings.XAfter.ToString();
             //YBeforeTxtBox.Text = imgFixingSettings.YBefore.ToString();
-            //YAfterTxtBox.Text = imgFixingSettings.YAfter.ToString();
             //HeightBeforeTxtBox.Text = imgFixingSettings.HeightBefore.ToString();
             //HeightAfterTxtBox.Text = imgFixingSettings.HeightAfter.ToString();
             //WidthAfterTxtBox.Text = imgFixingSettings.WidthAfter.ToString();
@@ -514,9 +523,9 @@ namespace NewImgFixingLib
             //}
             return true;
         }
-        private DistorSettings GetImgFixingSettings()
+        private ImgFixingSettings GetImgFixingSettings()
         {
-            return new DistorSettings()
+            DistorSettings distorSettings =  new DistorSettings()
             {
                 A = A,
                 B = B,
@@ -534,38 +543,32 @@ namespace NewImgFixingLib
                 Sm33 = Sm33,
             };
 
-        //int X = 0, Y = 0, HeightPercent = 100, WidthPercent = 100;
-        //    Int32.TryParse(XBeforeTxtBox.Text, out X);
-        //    Int32.TryParse(YBeforeTxtBox.Text, out Y);
-        //    Int32.TryParse(HeightBeforeTxtBox.Text, out HeightPercent);
-        //    Int32.TryParse(WidthBeforeTxtBox.Text, out WidthPercent);
+            int Y = 0, X = 0, dY = 0, dX = 0;
+            Int32.TryParse(XAfterTxtBox.Text, out X);
+            Int32.TryParse(YAfterTxtBox.Text, out Y);
+            Int32.TryParse(dYAfterTxtBox.Text, out dY);
+            Int32.TryParse(dXAfterTxtBox.Text, out dX);
+            XAfterTxtBox.Text = X.ToString();
+            YAfterTxtBox.Text = Y.ToString();
+            dYAfterTxtBox.Text = dY.ToString();
+            dXAfterTxtBox.Text = dX.ToString();
 
-        //    int Xa = 0, Ya = 0, HeightAPercent = 100, WidthAPercent = 100;
-        //    Int32.TryParse(XAfterTxtBox.Text, out Xa);
-        //    Int32.TryParse(YAfterTxtBox.Text, out Ya);
-        //    Int32.TryParse(HeightAfterTxtBox.Text, out HeightAPercent);
-        //    Int32.TryParse(WidthAfterTxtBox.Text, out WidthAPercent);
+            return new ImgFixingSettings
+            {
+                Dir = InputDirTxtBox.Text,
+                File = InputFileTxtBox.Text,
+                Rotation = RotationChkBox.Checked,
+                CropBeforeChkBox = CropBeforeChkBox.Checked,
 
-        //    return new ImgFixingSettings
-        //    {
-        //        Dir = InputDirTxtBox.Text,
-        //        File = InputFileTxtBox.Text,
-        //        CropBeforeChkBox = CropBeforeChkBox.Checked,
-        //        XBefore = X,
-        //        YBefore = Y,
-        //        HeightBefore = HeightPercent,
-        //        WidthBefore = WidthPercent,
-        //        Rotation = RotationChkBox.Checked,
-        //        A = A,
-        //        B = B,
-        //        C = C,
-        //        D = D,
-        //        CropAfterChkBox = CropAfterChkBox.Checked,
-        //        XAfter = Xa,
-        //        YAfter = Ya,
-        //        HeightAfter = HeightAPercent,
-        //        WidthAfter = WidthAPercent
-        //    };
+                Distortion = DistChkBox.Checked,
+                DistorSettings = distorSettings,
+
+                CropAfterChkBox = CropAfterChkBox.Checked,
+                XAfter = X,
+                YAfter = Y,
+                DXAfter = dX,
+                DYAfter = dY
+            };
         }
 
         public static byte[] BitmapToByte(string path, Image img, int quality)
@@ -599,14 +602,6 @@ namespace NewImgFixingLib
         //    mss.Close();
         //    return matriz;
         //}
-        public Bitmap[] FixImgArray(Bitmap[] dataArray)
-        {
-            var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg",x, 99)); }).ToArray();
-            if(DataArray.Length == 0)return new Bitmap[0];
-            DataArray = FixImgArray(DataArray);
-
-            return DataArray.Select(x => MagickImageToBitMap(x)).ToArray();
-        }
 
         private async void SaveAsBtn_Click(object sender, EventArgs e)
         {
@@ -614,9 +609,7 @@ namespace NewImgFixingLib
             saveFileDialog.InitialDirectory = fileEdit.GetDefoltDirectory();
             saveFileDialog.Filter = "Fixing img plan (*.fip)|*.fip|All files(*.*)|*.*";
             saveFileDialog.FilterIndex = 1;
-            if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
-                return;
-
+            if (saveFileDialog.ShowDialog() == DialogResult.Cancel)return;
             if (await fileEdit.SaveJsonAsync(saveFileDialog.FileName, GetImgFixingSettings())) RezultRTB.Text = "Settings save in " + saveFileDialog.FileName;
             else RezultRTB.Text = fileEdit.ErrText;
         }
@@ -639,103 +632,126 @@ namespace NewImgFixingLib
         }
         private Bitmap MagickImageToBitMap(MagickImage magickImage)
         {
+
             // MagickImage magickImage = EditImg(Image);
             //var imageData = ;
             MemoryStream ms = new MemoryStream(magickImage.ToByteArray());
             return new Bitmap(ms);
         }
 
-        public MagickImage[] FixImgArray(MagickImage[] DataArray)
+        public Bitmap[] FixImgArray(Bitmap[] dataArray)
         {
-            if (DataArray == null && BitmapArray == null) return new MagickImage[0];
-            if (DataArray.Length == 0 && BitmapArray.Length == 0) return new MagickImage[0];
+            //var DataArray = dataArray.Select(x => BitmapConverter.ToMat(x)).ToArray();
+            //if (DataArray.Length == 0) return new Bitmap[0];
+            //DataArray = FixImgArray(DataArray);
 
+            //return DataArray.Select(x => MagickImageToBitMap(x)).ToArray();
+            return dataArray;
+        }
+        public Mat[] FixImgArray(Mat[] DataArray)
+        {
+            if (DataArray == null && BitmapArray == null) return new Mat[0];
+            if (DataArray.Length == 0 && BitmapArray.Length == 0) return new Mat[0];
             return DataArray.Select(x => EditImg(x)).ToArray();
-        }
-        private MagickImage EditImg(string InputFile)
-        {
-            return EditImg(new MagickImage(InputFile));
-        }
-        private MagickImage EditImg(MagickImage image)
-        {
-            DistortMethod distortMethod = DistortMethod.Barrel;
-            if (CropBeforeChkBox.Checked)
-            {
-                int X = 0, Y = 0, HeightPercent = 100, WidthPercent = 100;
-                Int32.TryParse(XBeforeTxtBox.Text, out X);
-                Int32.TryParse(YBeforeTxtBox.Text, out Y);
-                Int32.TryParse(HeightBeforeTxtBox.Text, out HeightPercent);
-                Int32.TryParse(WidthBeforeTxtBox.Text, out WidthPercent);
-
-                MagickGeometry geometry = new MagickGeometry();
-                geometry.Width = image.Width * WidthPercent / 100;
-                geometry.Height = image.Height * HeightPercent / 100;
-                geometry.X = X;
-                geometry.Y = Y;
-                image.Crop(geometry);
-            }
-
-            if (RotationAngle != 0 && RotationChkBox.Checked) image.Rotate((double)RotationAngle);
-            //if (DistortionChkBox.Checked)
-            //{
-            //    if (distortMethod != DistortMethod.Undefined && distortMethod != DistortMethod.Sentinel && distortMethod != DistortMethod.Polynomial && distortMethod != DistortMethod.Perspective && distortMethod != DistortMethod.Arc) image.Distort(distortMethod, new double[] { (double)A, (double)B, (double)C, (double)D });
-            //    // if (distortMethod == DistortMethod.Perspective) image.Distort(DistortMethod.Perspective, new double[] { 0, 0, 20, 60, 90, 0, 70, 63, 0, 90, 5, 83, 90, 90, 85, 88 });
-            //    if (distortMethod == DistortMethod.Perspective) image.Distort(DistortMethod.Perspective, new double[] { 0.0, 20.60, 90.0, 70.63, 0.90, 5.83, 90.90, 85.88 });
-            //    if (distortMethod == DistortMethod.Arc) image.Distort(DistortMethod.Arc, 360);
-            //}
-
-            if (CropAfterChkBox.Checked)
-            {
-                int X = 0, Y = 0, HeightPercent = 100, WidthPercent = 100;
-                Int32.TryParse(XAfterTxtBox.Text, out X);
-                Int32.TryParse(YAfterTxtBox.Text, out Y);
-                Int32.TryParse(dYAfterTxtBox.Text, out HeightPercent);
-                Int32.TryParse(dXAfterTxtBox.Text, out WidthPercent);
-
-                MagickGeometry geometry = new MagickGeometry();
-                geometry.Width = image.Width * WidthPercent / 100;
-                geometry.Height = image.Height * HeightPercent / 100;
-                geometry.X = X;
-                geometry.Y = Y;
-                image.Crop(geometry);
-            }
-
-            if (ShowGridСhckBox.Checked)
-            {
-                IDrawable[] drawables = new IDrawable[] {
-                    new DrawableFillColor(MagickColors.Red),
-                    new DrawableLine(80 * image.Width / 100, 0, 80 * image.Width / 100, image.Height),
-                    new DrawableLine(20 * image.Width / 100, 0, 20 * image.Width / 100, image.Height),
-                    new DrawableLine(0, 80 * image.Height / 100, image.Width, 80 * image.Height / 100),
-                    new DrawableLine(0, 20 * image.Height / 100, image.Width, 20 * image.Height / 100)
-                };
-
-                image.Draw(drawables);
-            }
-
-            return image;
         }
         private void ApplyBtn_Click_1(object sender, EventArgs e) => OpenCvReloadImg();
         private void OpenCvReloadImg()
         {
-            string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
+            
+            //string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
+            //if (!File.Exists(file))
+            //{
+            //    RezultRTB.Text = "Err File: " + file + " не найден!!!";
+            //    return;
+            //}
+            //Mat img = Cv2.ImRead(file);
+            //Mat rezult = new Mat();
+
+            //if (DistChkBox.Checked)
+            //{
+            //    double[] distCoeffs = new double[] { A, B, C, D, E };
+            //    InputArray _cameraMatrix = InputArray.Create<double>(new double[,]
+            //        {
+            //        { Sm11, Sm12, Sm13},
+            //        { Sm21, Sm22, Sm23 },
+            //        { Sm31, Sm32, Sm33 }
+            //        });
+            //    InputArray _distCoeffs = InputArray.Create<double>(distCoeffs);
+            //    Cv2.Undistort(img, rezult, _cameraMatrix, _distCoeffs);
+
+            //    double[] array_ = (double[])distCoeffs.Clone();
+            //    RezultRTB.Text = $"k1:{array_[0]};\n k2:{array_[1]}; \n k3:{array_[2]}; \n p1:{array_[3]}; \n p2:{array_[4]};";
+            //}
+            //if (CropAfterChkBox.Checked)
+            //{
+            //    if (string.IsNullOrEmpty(XAfterTxtBox.Text)) dYAfterTxtBox.Text = "0";
+            //    if (string.IsNullOrEmpty(YAfterTxtBox.Text)) dYAfterTxtBox.Text = "0";
+            //    if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = rezult.Width.ToString();
+            //    if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = rezult.Width.ToString();
+
+            //    int Y = 0, X = 0, dY = 0, dX = 0;
+            //    Int32.TryParse(XAfterTxtBox.Text, out X);
+            //    Int32.TryParse(YAfterTxtBox.Text, out Y);
+            //    if (Y < 0) Y = 0; if(X<0) X = 0;
+            //    if (Y > rezult.Width) Y = rezult.Width / 2;
+            //    if (X > rezult.Height) X = rezult.Height / 2;
+            //    Int32.TryParse(dYAfterTxtBox.Text, out dY);
+            //    Int32.TryParse(dXAfterTxtBox.Text, out dX);
+
+            //    if (dY <= 0 || Y + dY > rezult.Height) dY = rezult.Height - Y;
+            //    if (dX <= 0 || X + dX > rezult.Width) dX = rezult.Width - X;
+            //    XAfterTxtBox.Text = X.ToString();
+            //    YAfterTxtBox.Text = Y.ToString();
+            //    dYAfterTxtBox.Text = dY.ToString();
+            //    dXAfterTxtBox.Text = dX.ToString();
+
+            //    Rect rect;
+            //    if (dY!=0 || dX!=0) rect = new Rect(X, Y,dX, dY);
+            //    else rect = new Rect( X, Y, rezult.Width - X, rezult.Height - Y);
+            //    rezult = new Mat(rezult, rect);
+            //}
+
+            //if (ShowGridСhckBox.Checked)
+            //{
+            //    int n = 6;
+            //    Cv2.Line(rezult, rezult.Width / n, 0, rezult.Width / n, rezult.Height, Scalar.Red, 1);
+            //    Cv2.Line(rezult, rezult.Width - rezult.Width / n, 0, rezult.Width - rezult.Width / n, rezult.Height, Scalar.Red, 1);
+            //    Cv2.Line(rezult, 0, rezult.Height / n, rezult.Width, rezult.Height / n, Scalar.Red, 1);
+            //    Cv2.Line(rezult, 0, rezult.Height - rezult.Height / n, rezult.Width, rezult.Height - rezult.Height / n, Scalar.Red, 1);
+            //}
+
+            pictureBox1.BackgroundImage = MatToBitmap(EditImg());
+        }
+
+        private Mat EditImg(string file = "")
+        {
+            if(string.IsNullOrEmpty(file) && !string.IsNullOrEmpty(InputDirTxtBox.Text) && !string.IsNullOrEmpty(InputFileTxtBox.Text)) 
+                file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
             if (!File.Exists(file))
             {
-                RezultRTB.Text = "Err File: " + file + " не найден!!!";
-                return;
+                SetErr("Err File: " + file + " не найден!!!");
+                return new Mat();
             }
-            Mat img = Cv2.ImRead(file);
+            return EditImg(Cv2.ImRead(file));
+        }
+        private Mat EditImg(Mat img)
+        {
             Mat rezult = new Mat();
-
-            double[] distCoeffs_ = new double[] { A,B,C,D,E };
-            InputArray _cameraMatrix = InputArray.Create<double>(new double[,]
-                {
-                    { Sm11, Sm12, Sm13},
+            if (DistChkBox.Checked)
+            {
+                double[] distCoeffs = new double[] { A, B, C, D, E };
+                InputArray _cameraMatrix = InputArray.Create<double>(new double[,]
+                    {
+                    { Sm11, Sm12, Sm13 },
                     { Sm21, Sm22, Sm23 },
                     { Sm31, Sm32, Sm33 }
-                });
-            InputArray _distCoeffs = InputArray.Create<double>(new double[] { A, B, C, D, E });
-            Cv2.Undistort(img, rezult, _cameraMatrix, _distCoeffs);
+                    });
+                InputArray _distCoeffs = InputArray.Create<double>(distCoeffs);
+                Cv2.Undistort(img, rezult, _cameraMatrix, _distCoeffs);
+
+                double[] array_ = (double[])distCoeffs.Clone();
+                RezultRTB.Text = $"k1:{array_[0]};\n k2:{array_[1]}; \n k3:{array_[2]}; \n p1:{array_[3]}; \n p2:{array_[4]};";
+            }
 
             if (CropAfterChkBox.Checked)
             {
@@ -744,15 +760,15 @@ namespace NewImgFixingLib
                 if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = rezult.Width.ToString();
                 if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = rezult.Width.ToString();
 
-                int Y = 0, X = 0, HeightPercent = 1000, WidthPercent = 1000;
+                int Y = 0, X = 0, dY = 0, dX = 0;
                 Int32.TryParse(XAfterTxtBox.Text, out X);
                 Int32.TryParse(YAfterTxtBox.Text, out Y);
                 if (Y < 0) Y = 0; if(X<0) X = 0;
                 if (Y > rezult.Width) Y = rezult.Width / 2;
                 if (X > rezult.Height) X = rezult.Height / 2;
-                Int32.TryParse(dYAfterTxtBox.Text, out HeightPercent);
-                Int32.TryParse(dXAfterTxtBox.Text, out WidthPercent);
-                int dY = HeightPercent, dX = WidthPercent;
+                Int32.TryParse(dYAfterTxtBox.Text, out dY);
+                Int32.TryParse(dXAfterTxtBox.Text, out dX);
+
                 if (dY <= 0 || Y + dY > rezult.Height) dY = rezult.Height - Y;
                 if (dX <= 0 || X + dX > rezult.Width) dX = rezult.Width - X;
                 XAfterTxtBox.Text = X.ToString();
@@ -766,19 +782,77 @@ namespace NewImgFixingLib
                 rezult = new Mat(rezult, rect);
             }
 
-            int n = 6;
-            Cv2.Line(rezult, rezult.Width / n,0, rezult.Width / n,rezult.Height,Scalar.Red, 1);
-            Cv2.Line(rezult, rezult.Width - rezult.Width / n, 0, rezult.Width - rezult.Width / n, rezult.Height, Scalar.Red, 1);
-            Cv2.Line(rezult, 0,  rezult.Height/n, rezult.Width, rezult.Height/n, Scalar.Red, 1);
-            Cv2.Line(rezult, 0, rezult.Height - rezult.Height / n, rezult.Width, rezult.Height - rezult.Height / n, Scalar.Red, 1);
+            if (ShowGridСhckBox.Checked)
+            {
+                int n = 6;
+                Cv2.Line(rezult, rezult.Width / n, 0, rezult.Width / n, rezult.Height, Scalar.Red, 1);
+                Cv2.Line(rezult, rezult.Width - rezult.Width / n, 0, rezult.Width - rezult.Width / n, rezult.Height, Scalar.Red, 1);
+                Cv2.Line(rezult, 0, rezult.Height / n, rezult.Width, rezult.Height / n, Scalar.Red, 1);
+                Cv2.Line(rezult, 0, rezult.Height - rezult.Height / n, rezult.Width, rezult.Height - rezult.Height / n, Scalar.Red, 1);
+            }
 
-            pictureBox1.BackgroundImage = MatToBitmap(rezult);
+            //DistortMethod distortMethod = DistortMethod.Barrel;
+            //if (CropBeforeChkBox.Checked)
+            //{
+            //    int X = 0, Y = 0, HeightPercent = 100, WidthPercent = 100;
+            //    Int32.TryParse(XBeforeTxtBox.Text, out X);
+            //    Int32.TryParse(YBeforeTxtBox.Text, out Y);
+            //    Int32.TryParse(HeightBeforeTxtBox.Text, out HeightPercent);
+            //    Int32.TryParse(WidthBeforeTxtBox.Text, out WidthPercent);
 
-            double[] array_ = (double[])distCoeffs_.Clone();
-            string params_ = $"k1:{array_[0]};\n k2:{array_[1]}; \n k3:{array_[2]}; \n p1:{array_[3]}; \n p2:{array_[4]};";
-            RezultRTB.Text = params_;
+            //    MagickGeometry geometry = new MagickGeometry();
+            //    geometry.Width = image.Width * WidthPercent / 100;
+            //    geometry.Height = image.Height * HeightPercent / 100;
+            //    geometry.X = X;
+            //    geometry.Y = Y;
+            //    image.Crop(geometry);
+            //}
+
+            //if (RotationAngle != 0 && RotationChkBox.Checked) image.Rotate((double)RotationAngle);
+            //if (DistortionChkBox.Checked)
+            //{
+            //    if (distortMethod != DistortMethod.Undefined && distortMethod != DistortMethod.Sentinel && distortMethod != DistortMethod.Polynomial && distortMethod != DistortMethod.Perspective && distortMethod != DistortMethod.Arc) image.Distort(distortMethod, new double[] { (double)A, (double)B, (double)C, (double)D });
+            //    // if (distortMethod == DistortMethod.Perspective) image.Distort(DistortMethod.Perspective, new double[] { 0, 0, 20, 60, 90, 0, 70, 63, 0, 90, 5, 83, 90, 90, 85, 88 });
+            //    if (distortMethod == DistortMethod.Perspective) image.Distort(DistortMethod.Perspective, new double[] { 0.0, 20.60, 90.0, 70.63, 0.90, 5.83, 90.90, 85.88 });
+            //    if (distortMethod == DistortMethod.Arc) image.Distort(DistortMethod.Arc, 360);
+            //}
+
+            //if (CropAfterChkBox.Checked)
+            //{
+            //    int X = 0, Y = 0, HeightPercent = 100, WidthPercent = 100;
+            //    Int32.TryParse(XAfterTxtBox.Text, out X);
+            //    Int32.TryParse(YAfterTxtBox.Text, out Y);
+            //    Int32.TryParse(dYAfterTxtBox.Text, out HeightPercent);
+            //    Int32.TryParse(dXAfterTxtBox.Text, out WidthPercent);
+
+            //    MagickGeometry geometry = new MagickGeometry();
+            //    geometry.Width = image.Width * WidthPercent / 100;
+            //    geometry.Height = image.Height * HeightPercent / 100;
+            //    geometry.X = X;
+            //    geometry.Y = Y;
+            //    image.Crop(geometry);
+            //}
+
+            //if (ShowGridСhckBox.Checked)
+            //{
+            //    IDrawable[] drawables = new IDrawable[] {
+            //        new DrawableFillColor(MagickColors.Red),
+            //        new DrawableLine(80 * image.Width / 100, 0, 80 * image.Width / 100, image.Height),
+            //        new DrawableLine(20 * image.Width / 100, 0, 20 * image.Width / 100, image.Height),
+            //        new DrawableLine(0, 80 * image.Height / 100, image.Width, 80 * image.Height / 100),
+            //        new DrawableLine(0, 20 * image.Height / 100, image.Width, 20 * image.Height / 100)
+            //    };
+
+            //    image.Draw(drawables);
+            //}
+
+            return rezult;
         }
-        Bitmap MatToBitmap(Mat mat) => BitmapConverter.ToBitmap(mat);
+        private Bitmap MatToBitmap(Mat mat)
+        {
+            if(mat.Width == 0 && mat.Height ==0) return null;
+            else return BitmapConverter.ToBitmap(mat);
+        }
         public string GetImgFixingPlan() => imgFixingFile;
         public bool TryReadSettings(bool fileLoad = false)
         {
@@ -793,7 +867,8 @@ namespace NewImgFixingLib
                         string jsonString = sr.ReadToEnd();
                         if (jsonString != null)
                         {
-                            DistorSettings imgFixingSettings = JsonConvert.DeserializeObject<DistorSettings>(jsonString);
+
+                            ImgFixingSettings imgFixingSettings = JsonConvert.DeserializeObject<ImgFixingSettings>(jsonString);
                             return SetImgFixingSettings(imgFixingSettings, fileLoad);
                         }
                     }

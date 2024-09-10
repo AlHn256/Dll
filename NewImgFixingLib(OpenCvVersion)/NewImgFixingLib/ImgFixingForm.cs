@@ -128,7 +128,7 @@ namespace NewImgFixingLib
             }
 
             if (!fileEdit.ChkDir(outputDir)) return false;
-           // DistortMethod distortMethod = (DistortMethod)DistortionMetodComBox.SelectedItem;
+            // DistortMethod distortMethod = (DistortMethod)DistortionMetodComBox.SelectedItem;
             FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
             for (int i = 0; i < fileList.Length; i++)
             {
@@ -430,8 +430,24 @@ namespace NewImgFixingLib
             DTxtBox.Text = "0";
             ETxtBox.Text = "0";
 
-            Sm11TxtBox.Text = "1500"; Sm12TxtBox.Text = "0"; Sm13TxtBox.Text = "0";
-            Sm21TxtBox.Text = "0";  Sm22TxtBox.Text = "1500"; Sm23TxtBox.Text = "0";
+            string file = string.Empty;
+            if (!string.IsNullOrEmpty(InputDirTxtBox.Text) && !string.IsNullOrEmpty(InputFileTxtBox.Text))
+                file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
+            if (!File.Exists(file))
+            {
+                Sm13TxtBox.Text = "0";
+                Sm23TxtBox.Text = "0";
+            }
+            else
+            {
+                Mat mat = new Mat(file);
+
+                Sm13TxtBox.Text = (mat.Width / 2).ToString();
+                Sm23TxtBox.Text = (mat.Height / 2).ToString();
+            }
+
+            Sm11TxtBox.Text = "1500"; Sm12TxtBox.Text = "0"; 
+            Sm21TxtBox.Text = "0";  Sm22TxtBox.Text = "1500"; 
             Sm31TxtBox.Text = "0";  Sm32TxtBox.Text = "0";  Sm33TxtBox.Text = "1";
 
             AutoReloadChkBox.Checked = AutoReloadSave;

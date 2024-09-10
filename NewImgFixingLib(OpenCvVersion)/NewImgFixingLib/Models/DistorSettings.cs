@@ -1,4 +1,4 @@
-﻿namespace NewImgFixingLib.Models
+﻿namespace ImgFixingLibOpenCvVersion.Models
 {
     public class DistorSettings
     {

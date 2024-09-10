@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace NewImgFixingLib.Models
+namespace ImgFixingLibOpenCvVersion.Models
 {
     public static class StringExtension
     {

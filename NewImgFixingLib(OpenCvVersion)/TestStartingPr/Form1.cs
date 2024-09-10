@@ -1,6 +1,5 @@
-using NewImgFixingLib;
-using NewImgFixingLib.Models;
-using ImageMagick;
+using ImgFixingLibOpenCvVersion;
+using ImgFixingLibOpenCvVersion.Models;
 namespace TestStartingPr
 {
     public partial class Form1 : Form

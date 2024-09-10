@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace NewImgFixingLib.Models
+namespace ImgFixingLibOpenCvVersion.Models
 {
     public class FileEdit
     {

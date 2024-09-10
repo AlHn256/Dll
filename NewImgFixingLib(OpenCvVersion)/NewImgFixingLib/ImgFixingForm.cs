@@ -1,5 +1,5 @@
 ﻿using ImageMagick;
-using NewImgFixingLib.Models;
+using ImgFixingLibOpenCvVersion.Models;
 using Newtonsoft.Json;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace NewImgFixingLib
+namespace ImgFixingLibOpenCvVersion
 {
     public partial class ImgFixingForm : Form
     {

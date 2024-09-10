@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace NewImgFixingLib
+namespace ImgFixingLibOpenCvVersion
 {
     partial class ImgFixingForm
     {

@@ -104,7 +104,6 @@
     <Compile Include="Models\FileEdit.cs" />
     <Compile Include="Models\FileList.cs" />
     <Compile Include="Models\ImgFixingSettings.cs" />
-    <Compile Include="Models\MagickImageExtensions.cs" />
     <Compile Include="Models\TextEdit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

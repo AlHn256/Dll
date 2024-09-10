@@ -91,7 +91,6 @@ namespace NewImgFixingLib
             this.EBtnDn = new System.Windows.Forms.Button();
             this.EBtnUp = new System.Windows.Forms.Button();
             this.AutoReloadChkBox = new System.Windows.Forms.CheckBox();
-            this.label19 = new System.Windows.Forms.Label();
             this.Sm11TxtBox = new System.Windows.Forms.TextBox();
             this.Sm12TxtBox = new System.Windows.Forms.TextBox();
             this.Sm13TxtBox = new System.Windows.Forms.TextBox();
@@ -131,7 +130,6 @@ namespace NewImgFixingLib
             this.CorrectFilesBtn.Text = "Correct Files";
             this.CorrectFilesBtn.UseVisualStyleBackColor = true;
             this.CorrectFilesBtn.Click += new System.EventHandler(this.CorrectFiles_Click);
-
             // 
             // ABtnUp
             // 
@@ -322,6 +320,7 @@ namespace NewImgFixingLib
             this.RBtnDn001.TabIndex = 24;
             this.RBtnDn001.Text = "v";
             this.RBtnDn001.UseVisualStyleBackColor = true;
+            this.RBtnDn001.Click += new System.EventHandler(this.RBtnDn001_Click);
             // 
             // RBtnUp001
             // 
@@ -332,6 +331,7 @@ namespace NewImgFixingLib
             this.RBtnUp001.TabIndex = 23;
             this.RBtnUp001.Text = "^";
             this.RBtnUp001.UseVisualStyleBackColor = true;
+            this.RBtnUp001.Click += new System.EventHandler(this.RBtnUp001_Click);
             // 
             // RBtnDn01
             // 
@@ -342,6 +342,7 @@ namespace NewImgFixingLib
             this.RBtnDn01.TabIndex = 27;
             this.RBtnDn01.Text = "v";
             this.RBtnDn01.UseVisualStyleBackColor = true;
+            this.RBtnDn01.Click += new System.EventHandler(this.RBtnDn01_Click);
             // 
             // RBtnUp01
             // 
@@ -352,6 +353,7 @@ namespace NewImgFixingLib
             this.RBtnUp01.TabIndex = 26;
             this.RBtnUp01.Text = "^";
             this.RBtnUp01.UseVisualStyleBackColor = true;
+            this.RBtnUp01.Click += new System.EventHandler(this.RBtnUp01_Click);
             // 
             // label3
             // 
@@ -524,7 +526,7 @@ namespace NewImgFixingLib
             // ApplyBtn
             // 
             this.ApplyBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyBtn.Location = new System.Drawing.Point(1111, 665);
+            this.ApplyBtn.Location = new System.Drawing.Point(1111, 630);
             this.ApplyBtn.Name = "ApplyBtn";
             this.ApplyBtn.Size = new System.Drawing.Size(123, 36);
             this.ApplyBtn.TabIndex = 48;
@@ -535,9 +537,9 @@ namespace NewImgFixingLib
             // RezultRTB
             // 
             this.RezultRTB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.RezultRTB.Location = new System.Drawing.Point(1113, 762);
+            this.RezultRTB.Location = new System.Drawing.Point(1113, 728);
             this.RezultRTB.Name = "RezultRTB";
-            this.RezultRTB.Size = new System.Drawing.Size(121, 68);
+            this.RezultRTB.Size = new System.Drawing.Size(121, 102);
             this.RezultRTB.TabIndex = 49;
             this.RezultRTB.Text = "";
             // 
@@ -659,7 +661,7 @@ namespace NewImgFixingLib
             // SaveAsBtn
             // 
             this.SaveAsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveAsBtn.Location = new System.Drawing.Point(1111, 707);
+            this.SaveAsBtn.Location = new System.Drawing.Point(1111, 672);
             this.SaveAsBtn.Name = "SaveAsBtn";
             this.SaveAsBtn.Size = new System.Drawing.Size(53, 50);
             this.SaveAsBtn.TabIndex = 65;
@@ -670,7 +672,7 @@ namespace NewImgFixingLib
             // LoadFrBtn
             // 
             this.LoadFrBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.LoadFrBtn.Location = new System.Drawing.Point(1181, 707);
+            this.LoadFrBtn.Location = new System.Drawing.Point(1181, 672);
             this.LoadFrBtn.Name = "LoadFrBtn";
             this.LoadFrBtn.Size = new System.Drawing.Size(53, 50);
             this.LoadFrBtn.TabIndex = 66;
@@ -682,12 +684,13 @@ namespace NewImgFixingLib
             // 
             this.ShowGridСhckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ShowGridСhckBox.AutoSize = true;
-            this.ShowGridСhckBox.Location = new System.Drawing.Point(1114, 642);
+            this.ShowGridСhckBox.Location = new System.Drawing.Point(1113, 611);
             this.ShowGridСhckBox.Name = "ShowGridСhckBox";
             this.ShowGridСhckBox.Size = new System.Drawing.Size(75, 17);
             this.ShowGridСhckBox.TabIndex = 67;
             this.ShowGridСhckBox.Text = "Show Grid";
             this.ShowGridСhckBox.UseVisualStyleBackColor = true;
+            this.ShowGridСhckBox.CheckedChanged += new System.EventHandler(this.ShowGridСhckBox_CheckedChanged);
             // 
             // ETxtBox
             // 
@@ -726,22 +729,12 @@ namespace NewImgFixingLib
             this.AutoReloadChkBox.AutoSize = true;
             this.AutoReloadChkBox.Checked = true;
             this.AutoReloadChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.AutoReloadChkBox.Location = new System.Drawing.Point(1114, 622);
+            this.AutoReloadChkBox.Location = new System.Drawing.Point(1115, 588);
             this.AutoReloadChkBox.Name = "AutoReloadChkBox";
-            this.AutoReloadChkBox.Size = new System.Drawing.Size(15, 14);
+            this.AutoReloadChkBox.Size = new System.Drawing.Size(80, 17);
             this.AutoReloadChkBox.TabIndex = 71;
+            this.AutoReloadChkBox.Text = "Auto reload";
             this.AutoReloadChkBox.UseVisualStyleBackColor = true;
-            // 
-            // label19
-            // 
-            this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label19.AutoSize = true;
-            this.label19.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.label19.Location = new System.Drawing.Point(1130, 621);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(69, 15);
-            this.label19.TabIndex = 72;
-            this.label19.Text = "Auto reload";
             // 
             // Sm11TxtBox
             // 
@@ -888,7 +881,6 @@ namespace NewImgFixingLib
             this.Controls.Add(this.Sm13TxtBox);
             this.Controls.Add(this.Sm12TxtBox);
             this.Controls.Add(this.Sm11TxtBox);
-            this.Controls.Add(this.label19);
             this.Controls.Add(this.AutoReloadChkBox);
             this.Controls.Add(this.ETxtBox);
             this.Controls.Add(this.EBtnDn);
@@ -1020,7 +1012,6 @@ namespace NewImgFixingLib
         private Button EBtnDn;
         private Button EBtnUp;
         private CheckBox AutoReloadChkBox;
-        private Label label19;
         private TextBox Sm11TxtBox;
         private TextBox Sm12TxtBox;
         private TextBox Sm13TxtBox;

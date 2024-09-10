@@ -17,8 +17,8 @@ namespace NewImgFixingLib
     {
         private int Xdn = 0, Ydn = 0, Xup = 0, Yup = 0;
         private double A = -0.13, B = 0.39, C = 0.08, D = 0, E = 0,  RotationAngle = 0;
-        private double Sm11 = 1261, Sm12 = 0.0, Sm13 = 9.4;
-        private double Sm21 = 0.5, Sm22 = 1217, Sm23 = 5.9;
+        private double Sm11 = 1500, Sm12 = 0.0, Sm13 = 9.4;
+        private double Sm21 = 0.0, Sm22 = 1500, Sm23 = 5.9;
         private double Sm31 = 0.0, Sm32 = 0.0,  Sm33 = 1.0;
         private FileEdit fileEdit = new FileEdit(new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" });
         private const string imgDefoltFixingFile = "imgFixingSettings.fip";
@@ -629,6 +629,30 @@ namespace NewImgFixingLib
             if (await fileEdit.SaveJsonAsync(saveFileDialog.FileName, GetImgFixingSettings())) RezultRTB.Text = "Settings save in " + saveFileDialog.FileName;
             else RezultRTB.Text = fileEdit.ErrText;
         }
+
+        private void RBtnUp001_Click(object sender, EventArgs e)=>Rotation(100);
+
+        private void RBtnDn001_Click(object sender, EventArgs e) => Rotation(-100);
+
+        private void RBtnUp01_Click(object sender, EventArgs e) => Rotation(10);
+
+        private void RBtnDn01_Click(object sender, EventArgs e) => Rotation(-10);
+
+        private void Rotation(int N)
+        {
+            Sm21 = Convert.ToDouble(Sm21TxtBox.Text);
+            Sm21 += N;
+            Sm12 -= N;
+            RotValTxtBox.Text = Sm21.ToString();
+            Sm21TxtBox.Text = Sm21.ToString();
+            Sm12TxtBox.Text = Sm12.ToString();
+            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+        }
+        private void ShowGridСhckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+        }
+
         private void LoadFrBtn_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())

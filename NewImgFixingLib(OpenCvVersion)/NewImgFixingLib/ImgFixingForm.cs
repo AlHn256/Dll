@@ -206,39 +206,43 @@ namespace ImgFixingLibOpenCvVersion
         private void ATxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(ATxtBox.Text)) return;
-            A = Math.Round(Convert.ToDouble(ATxtBox.Text), 2);
-            //ATxtBox.Text = A.ToString();
+            double.TryParse(ATxtBox.Text, out A);
+            A = Math.Round(A, 2);
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void BTxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(BTxtBox.Text)) return;
-            B = Math.Round(Convert.ToDouble(BTxtBox.Text), 2);
-            //BTxtBox.Text = B.ToString();
+            double.TryParse(BTxtBox.Text, out B);
+            B = Math.Round(B, 2);
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void CTxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(CTxtBox.Text)) return;
-            C = Math.Round(Convert.ToDouble(CTxtBox.Text), 2);
+            double.TryParse(CTxtBox.Text, out C);
+            C = Math.Round(C,2);
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void DTxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(DTxtBox.Text)) return;
-            D = Math.Round(Convert.ToDouble(DTxtBox.Text), 2);
+            double.TryParse(DTxtBox.Text, out D);
+            D = Math.Round(D, 2);
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void ETxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(ETxtBox.Text)) return;
-            E = Math.Round(Convert.ToDouble(ETxtBox.Text), 2);
+            double.TryParse(ETxtBox.Text, out E);
+            E = Math.Round(E, 2);
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void Sm11TxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(Sm11TxtBox.Text)) return;
-            Sm11 = Math.Round(Convert.ToDouble(Sm11TxtBox.Text), 3);
+            double.TryParse(Sm11TxtBox.Text, out Sm11);
+            Sm11 = Math.Round(Sm11, 3);
             Sm11TxtBox.Text = Sm11.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
@@ -383,7 +387,7 @@ namespace ImgFixingLibOpenCvVersion
         private void DistortionMetodComBox_SelectedIndexChanged(object sender, EventArgs e) => ReloadImg();
         private void ApplyBtn_Click(object sender, EventArgs e) => ReloadImg();
         private void label5_Click(object sender, EventArgs e) => CropBeforeChkBox.Checked = !CropBeforeChkBox.Checked;
-        private void label3_Click(object sender, EventArgs e) => RotationChkBox.Checked = !RotationChkBox.Checked;
+        //private void label3_Click(object sender, EventArgs e) => RotationChkBox.Checked = !RotationChkBox.Checked;
         //private void DistortionMetodLabel_Click(object sender, EventArgs e) => DistortionChkBox.Checked = !DistortionChkBox.Checked;
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -417,6 +421,7 @@ namespace ImgFixingLibOpenCvVersion
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
+            rotation90 = 0; 
 
             A = 0;
             B = 0;
@@ -451,9 +456,10 @@ namespace ImgFixingLibOpenCvVersion
             Sm31TxtBox.Text = "0";  Sm32TxtBox.Text = "0";  Sm33TxtBox.Text = "1";
 
             AutoReloadChkBox.Checked = AutoReloadSave;
+            ZeroCropAfter();
             OpenCvReloadImg();
         }
-        private void ZeroCropAfterBtn_Click(object sender, EventArgs e)
+        private void ZeroCropAfter()
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
@@ -466,7 +472,7 @@ namespace ImgFixingLibOpenCvVersion
             AutoReloadChkBox.Checked = AutoReloadSave;
             OpenCvReloadImg();
         }
-
+        private void ZeroCropAfterBtn_Click(object sender, EventArgs e)=>ZeroCropAfter();
         private bool SetImgFixingSettings(ImgFixingSettings imgFixingSettings , bool fileLoad)
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
@@ -573,7 +579,7 @@ namespace ImgFixingLibOpenCvVersion
             {
                 Dir = InputDirTxtBox.Text,
                 File = InputFileTxtBox.Text,
-                Rotation = RotationChkBox.Checked,
+                //Rotation = RotationChkBox.Checked,
                 CropBeforeChkBox = CropBeforeChkBox.Checked,
 
                 Distortion = DistChkBox.Checked,
@@ -629,21 +635,36 @@ namespace ImgFixingLibOpenCvVersion
             if (await fileEdit.SaveJsonAsync(saveFileDialog.FileName, GetImgFixingSettings())) RezultRTB.Text = "Settings save in " + saveFileDialog.FileName;
             else RezultRTB.Text = fileEdit.ErrText;
         }
-
+        private void RBtnUpDn_Click(object sender, EventArgs e)
+        {
+            Rotation90(false);
+            ZeroCropAfter();
+        }
+        private void RBtnUp90_Click(object sender, EventArgs e)
+        {
+            Rotation90(true);
+            ZeroCropAfter();
+        }
         private void RBtnUp001_Click(object sender, EventArgs e)=>Rotation(100);
-
         private void RBtnDn001_Click(object sender, EventArgs e) => Rotation(-100);
-
         private void RBtnUp01_Click(object sender, EventArgs e) => Rotation(10);
-
         private void RBtnDn01_Click(object sender, EventArgs e) => Rotation(-10);
 
+        private int rotation90 = 0;
+        private void Rotation90(bool direction)
+        {
+            if (direction) rotation90++;
+            else rotation90--;
+            if(rotation90 < 0) rotation90 = 3;
+            if (rotation90 > 3) rotation90 = 0;
+            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+        }
         private void Rotation(int N)
         {
             Sm21 = Convert.ToDouble(Sm21TxtBox.Text);
             Sm21 += N;
             Sm12 -= N;
-            RotValTxtBox.Text = Sm21.ToString();
+            //RotValTxtBox.Text = Sm21.ToString();
             Sm21TxtBox.Text = Sm21.ToString();
             Sm12TxtBox.Text = Sm12.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
@@ -697,70 +718,8 @@ namespace ImgFixingLibOpenCvVersion
         private void ApplyBtn_Click_1(object sender, EventArgs e) => OpenCvReloadImg();
         private void OpenCvReloadImg()
         {
-            
-            //string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
-            //if (!File.Exists(file))
-            //{
-            //    RezultRTB.Text = "Err File: " + file + " не найден!!!";
-            //    return;
-            //}
-            //Mat img = Cv2.ImRead(file);
-            //Mat rezult = new Mat();
-
-            //if (DistChkBox.Checked)
-            //{
-            //    double[] distCoeffs = new double[] { A, B, C, D, E };
-            //    InputArray _cameraMatrix = InputArray.Create<double>(new double[,]
-            //        {
-            //        { Sm11, Sm12, Sm13},
-            //        { Sm21, Sm22, Sm23 },
-            //        { Sm31, Sm32, Sm33 }
-            //        });
-            //    InputArray _distCoeffs = InputArray.Create<double>(distCoeffs);
-            //    Cv2.Undistort(img, rezult, _cameraMatrix, _distCoeffs);
-
-            //    double[] array_ = (double[])distCoeffs.Clone();
-            //    RezultRTB.Text = $"k1:{array_[0]};\n k2:{array_[1]}; \n k3:{array_[2]}; \n p1:{array_[3]}; \n p2:{array_[4]};";
-            //}
-            //if (CropAfterChkBox.Checked)
-            //{
-            //    if (string.IsNullOrEmpty(XAfterTxtBox.Text)) dYAfterTxtBox.Text = "0";
-            //    if (string.IsNullOrEmpty(YAfterTxtBox.Text)) dYAfterTxtBox.Text = "0";
-            //    if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = rezult.Width.ToString();
-            //    if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = rezult.Width.ToString();
-
-            //    int Y = 0, X = 0, dY = 0, dX = 0;
-            //    Int32.TryParse(XAfterTxtBox.Text, out X);
-            //    Int32.TryParse(YAfterTxtBox.Text, out Y);
-            //    if (Y < 0) Y = 0; if(X<0) X = 0;
-            //    if (Y > rezult.Width) Y = rezult.Width / 2;
-            //    if (X > rezult.Height) X = rezult.Height / 2;
-            //    Int32.TryParse(dYAfterTxtBox.Text, out dY);
-            //    Int32.TryParse(dXAfterTxtBox.Text, out dX);
-
-            //    if (dY <= 0 || Y + dY > rezult.Height) dY = rezult.Height - Y;
-            //    if (dX <= 0 || X + dX > rezult.Width) dX = rezult.Width - X;
-            //    XAfterTxtBox.Text = X.ToString();
-            //    YAfterTxtBox.Text = Y.ToString();
-            //    dYAfterTxtBox.Text = dY.ToString();
-            //    dXAfterTxtBox.Text = dX.ToString();
-
-            //    Rect rect;
-            //    if (dY!=0 || dX!=0) rect = new Rect(X, Y,dX, dY);
-            //    else rect = new Rect( X, Y, rezult.Width - X, rezult.Height - Y);
-            //    rezult = new Mat(rezult, rect);
-            //}
-
-            //if (ShowGridСhckBox.Checked)
-            //{
-            //    int n = 6;
-            //    Cv2.Line(rezult, rezult.Width / n, 0, rezult.Width / n, rezult.Height, Scalar.Red, 1);
-            //    Cv2.Line(rezult, rezult.Width - rezult.Width / n, 0, rezult.Width - rezult.Width / n, rezult.Height, Scalar.Red, 1);
-            //    Cv2.Line(rezult, 0, rezult.Height / n, rezult.Width, rezult.Height / n, Scalar.Red, 1);
-            //    Cv2.Line(rezult, 0, rezult.Height - rezult.Height / n, rezult.Width, rezult.Height - rezult.Height / n, Scalar.Red, 1);
-            //}
-
             pictureBox1.BackgroundImage = MatToBitmap(EditImg());
+            //pictureBox1.Image = MatToBitmap(EditImg());
         }
 
         private Mat EditImg(string file = "")
@@ -774,8 +733,13 @@ namespace ImgFixingLibOpenCvVersion
             }
             return EditImg(Cv2.ImRead(file));
         }
+
         private Mat EditImg(Mat img)
         {
+            if (rotation90 == 1) Cv2.Rotate(img, img, RotateFlags.Rotate90Clockwise);
+            else if (rotation90 == 2) Cv2.Rotate(img, img, RotateFlags.Rotate180);
+            else if (rotation90 == 3) Cv2.Rotate(img, img, RotateFlags.Rotate90Counterclockwise);
+
             Mat rezult = new Mat();
             if (DistChkBox.Checked)
             {
@@ -792,6 +756,15 @@ namespace ImgFixingLibOpenCvVersion
                 double[] array_ = (double[])distCoeffs.Clone();
                 RezultRTB.Text = $"k1:{array_[0]};\n k2:{array_[1]}; \n k3:{array_[2]}; \n p1:{array_[3]}; \n p2:{array_[4]};";
             }
+            else rezult = img;
+
+
+            //180度
+            //Cv2.Rotate(Src_Images, SRC2, RotateFlags.Rotate180);
+            //270度
+            //Cv2.Rotate(Src_Images, SRC1, RotateFlags.Rotate90Counterclockwise);
+      
+
 
             if (CropAfterChkBox.Checked)
             {

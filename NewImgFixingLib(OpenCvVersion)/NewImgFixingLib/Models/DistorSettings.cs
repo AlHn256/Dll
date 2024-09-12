@@ -14,7 +14,7 @@
         public double Sm22 { get; set; } = 1217;
         public double Sm23 { get; set; } = 5.9;
         public double Sm31 { get; set; } = 0.0; 
-        public double Sm32 { get; set; }= 0.0;
+        public double Sm32 { get; set; } = 0.0;
         public double Sm33 { get; set; } = 1.0;
     }
 }

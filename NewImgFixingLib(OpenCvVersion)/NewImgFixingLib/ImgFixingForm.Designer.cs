@@ -50,7 +50,6 @@ namespace ImgFixingLibOpenCvVersion
             this.BTxtBox = new System.Windows.Forms.TextBox();
             this.CTxtBox = new System.Windows.Forms.TextBox();
             this.DTxtBox = new System.Windows.Forms.TextBox();
-            this.RotValTxtBox = new System.Windows.Forms.TextBox();
             this.RBtnDn001 = new System.Windows.Forms.Button();
             this.RBtnUp001 = new System.Windows.Forms.Button();
             this.RBtnDn01 = new System.Windows.Forms.Button();
@@ -60,7 +59,6 @@ namespace ImgFixingLibOpenCvVersion
             this.DistortionMetodLabel = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.CropBeforeChkBox = new System.Windows.Forms.CheckBox();
-            this.RotationChkBox = new System.Windows.Forms.CheckBox();
             this.HeightBeforeTxtBox = new System.Windows.Forms.TextBox();
             this.WidthBeforeTxtBox = new System.Windows.Forms.TextBox();
             this.YBeforeTxtBox = new System.Windows.Forms.TextBox();
@@ -101,9 +99,10 @@ namespace ImgFixingLibOpenCvVersion
             this.Sm32TxtBox = new System.Windows.Forms.TextBox();
             this.Sm31TxtBox = new System.Windows.Forms.TextBox();
             this.ZeroCropAfterBtn = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
             this.DistChkBox = new System.Windows.Forms.CheckBox();
+            this.RBtnUpDn = new System.Windows.Forms.Button();
+            this.RBtnUp90 = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -134,7 +133,7 @@ namespace ImgFixingLibOpenCvVersion
             // ABtnUp
             // 
             this.ABtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ABtnUp.Location = new System.Drawing.Point(1173, 233);
+            this.ABtnUp.Location = new System.Drawing.Point(1192, 217);
             this.ABtnUp.Name = "ABtnUp";
             this.ABtnUp.Size = new System.Drawing.Size(13, 16);
             this.ABtnUp.TabIndex = 3;
@@ -145,7 +144,7 @@ namespace ImgFixingLibOpenCvVersion
             // ABtnDn
             // 
             this.ABtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ABtnDn.Location = new System.Drawing.Point(1192, 233);
+            this.ABtnDn.Location = new System.Drawing.Point(1174, 217);
             this.ABtnDn.Name = "ABtnDn";
             this.ABtnDn.Size = new System.Drawing.Size(13, 16);
             this.ABtnDn.TabIndex = 4;
@@ -156,7 +155,7 @@ namespace ImgFixingLibOpenCvVersion
             // BBtnDn
             // 
             this.BBtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BBtnDn.Location = new System.Drawing.Point(1192, 257);
+            this.BBtnDn.Location = new System.Drawing.Point(1174, 241);
             this.BBtnDn.Name = "BBtnDn";
             this.BBtnDn.Size = new System.Drawing.Size(13, 16);
             this.BBtnDn.TabIndex = 7;
@@ -167,7 +166,7 @@ namespace ImgFixingLibOpenCvVersion
             // BBtnUp
             // 
             this.BBtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BBtnUp.Location = new System.Drawing.Point(1173, 257);
+            this.BBtnUp.Location = new System.Drawing.Point(1192, 241);
             this.BBtnUp.Name = "BBtnUp";
             this.BBtnUp.Size = new System.Drawing.Size(13, 16);
             this.BBtnUp.TabIndex = 6;
@@ -178,7 +177,7 @@ namespace ImgFixingLibOpenCvVersion
             // CBtnDn
             // 
             this.CBtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CBtnDn.Location = new System.Drawing.Point(1192, 282);
+            this.CBtnDn.Location = new System.Drawing.Point(1174, 266);
             this.CBtnDn.Name = "CBtnDn";
             this.CBtnDn.Size = new System.Drawing.Size(13, 16);
             this.CBtnDn.TabIndex = 10;
@@ -189,7 +188,7 @@ namespace ImgFixingLibOpenCvVersion
             // CBtnUp
             // 
             this.CBtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CBtnUp.Location = new System.Drawing.Point(1173, 282);
+            this.CBtnUp.Location = new System.Drawing.Point(1192, 266);
             this.CBtnUp.Name = "CBtnUp";
             this.CBtnUp.Size = new System.Drawing.Size(13, 16);
             this.CBtnUp.TabIndex = 9;
@@ -200,7 +199,7 @@ namespace ImgFixingLibOpenCvVersion
             // DBtnDn
             // 
             this.DBtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DBtnDn.Location = new System.Drawing.Point(1192, 306);
+            this.DBtnDn.Location = new System.Drawing.Point(1174, 290);
             this.DBtnDn.Name = "DBtnDn";
             this.DBtnDn.Size = new System.Drawing.Size(13, 16);
             this.DBtnDn.TabIndex = 13;
@@ -211,7 +210,7 @@ namespace ImgFixingLibOpenCvVersion
             // DBtnUp
             // 
             this.DBtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DBtnUp.Location = new System.Drawing.Point(1173, 306);
+            this.DBtnUp.Location = new System.Drawing.Point(1192, 290);
             this.DBtnUp.Name = "DBtnUp";
             this.DBtnUp.Size = new System.Drawing.Size(13, 16);
             this.DBtnUp.TabIndex = 12;
@@ -270,7 +269,7 @@ namespace ImgFixingLibOpenCvVersion
             // ATxtBox
             // 
             this.ATxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ATxtBox.Location = new System.Drawing.Point(1113, 232);
+            this.ATxtBox.Location = new System.Drawing.Point(1113, 216);
             this.ATxtBox.Name = "ATxtBox";
             this.ATxtBox.Size = new System.Drawing.Size(55, 20);
             this.ATxtBox.TabIndex = 19;
@@ -279,7 +278,7 @@ namespace ImgFixingLibOpenCvVersion
             // BTxtBox
             // 
             this.BTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTxtBox.Location = new System.Drawing.Point(1113, 257);
+            this.BTxtBox.Location = new System.Drawing.Point(1113, 241);
             this.BTxtBox.Name = "BTxtBox";
             this.BTxtBox.Size = new System.Drawing.Size(55, 20);
             this.BTxtBox.TabIndex = 20;
@@ -288,7 +287,7 @@ namespace ImgFixingLibOpenCvVersion
             // CTxtBox
             // 
             this.CTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CTxtBox.Location = new System.Drawing.Point(1113, 281);
+            this.CTxtBox.Location = new System.Drawing.Point(1113, 265);
             this.CTxtBox.Name = "CTxtBox";
             this.CTxtBox.Size = new System.Drawing.Size(55, 20);
             this.CTxtBox.TabIndex = 21;
@@ -297,24 +296,16 @@ namespace ImgFixingLibOpenCvVersion
             // DTxtBox
             // 
             this.DTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DTxtBox.Location = new System.Drawing.Point(1113, 305);
+            this.DTxtBox.Location = new System.Drawing.Point(1113, 289);
             this.DTxtBox.Name = "DTxtBox";
             this.DTxtBox.Size = new System.Drawing.Size(55, 20);
             this.DTxtBox.TabIndex = 22;
             this.DTxtBox.TextChanged += new System.EventHandler(this.DTxtBox_TextChanged);
             // 
-            // RotValTxtBox
-            // 
-            this.RotValTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RotValTxtBox.Location = new System.Drawing.Point(1111, 153);
-            this.RotValTxtBox.Name = "RotValTxtBox";
-            this.RotValTxtBox.Size = new System.Drawing.Size(55, 20);
-            this.RotValTxtBox.TabIndex = 25;
-            // 
             // RBtnDn001
             // 
             this.RBtnDn001.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnDn001.Location = new System.Drawing.Point(1189, 153);
+            this.RBtnDn001.Location = new System.Drawing.Point(1177, 157);
             this.RBtnDn001.Name = "RBtnDn001";
             this.RBtnDn001.Size = new System.Drawing.Size(13, 20);
             this.RBtnDn001.TabIndex = 24;
@@ -325,7 +316,7 @@ namespace ImgFixingLibOpenCvVersion
             // RBtnUp001
             // 
             this.RBtnUp001.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUp001.Location = new System.Drawing.Point(1171, 153);
+            this.RBtnUp001.Location = new System.Drawing.Point(1162, 157);
             this.RBtnUp001.Name = "RBtnUp001";
             this.RBtnUp001.Size = new System.Drawing.Size(13, 20);
             this.RBtnUp001.TabIndex = 23;
@@ -336,7 +327,7 @@ namespace ImgFixingLibOpenCvVersion
             // RBtnDn01
             // 
             this.RBtnDn01.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnDn01.Location = new System.Drawing.Point(1223, 153);
+            this.RBtnDn01.Location = new System.Drawing.Point(1213, 157);
             this.RBtnDn01.Name = "RBtnDn01";
             this.RBtnDn01.Size = new System.Drawing.Size(13, 20);
             this.RBtnDn01.TabIndex = 27;
@@ -347,7 +338,7 @@ namespace ImgFixingLibOpenCvVersion
             // RBtnUp01
             // 
             this.RBtnUp01.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUp01.Location = new System.Drawing.Point(1206, 153);
+            this.RBtnUp01.Location = new System.Drawing.Point(1198, 157);
             this.RBtnUp01.Name = "RBtnUp01";
             this.RBtnUp01.Size = new System.Drawing.Size(13, 20);
             this.RBtnUp01.TabIndex = 26;
@@ -360,7 +351,7 @@ namespace ImgFixingLibOpenCvVersion
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(1130, 131);
+            this.label3.Location = new System.Drawing.Point(1141, 131);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 19);
             this.label3.TabIndex = 28;
@@ -410,16 +401,6 @@ namespace ImgFixingLibOpenCvVersion
             this.CropBeforeChkBox.Size = new System.Drawing.Size(15, 14);
             this.CropBeforeChkBox.TabIndex = 34;
             this.CropBeforeChkBox.UseVisualStyleBackColor = true;
-            // 
-            // RotationChkBox
-            // 
-            this.RotationChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RotationChkBox.AutoSize = true;
-            this.RotationChkBox.Location = new System.Drawing.Point(1195, 135);
-            this.RotationChkBox.Name = "RotationChkBox";
-            this.RotationChkBox.Size = new System.Drawing.Size(15, 14);
-            this.RotationChkBox.TabIndex = 35;
-            this.RotationChkBox.UseVisualStyleBackColor = true;
             // 
             // HeightBeforeTxtBox
             // 
@@ -650,7 +631,7 @@ namespace ImgFixingLibOpenCvVersion
             // 
             this.DistZeroBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DistZeroBtn.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.DistZeroBtn.Location = new System.Drawing.Point(1213, 231);
+            this.DistZeroBtn.Location = new System.Drawing.Point(1213, 215);
             this.DistZeroBtn.Name = "DistZeroBtn";
             this.DistZeroBtn.Size = new System.Drawing.Size(21, 120);
             this.DistZeroBtn.TabIndex = 62;
@@ -695,7 +676,7 @@ namespace ImgFixingLibOpenCvVersion
             // ETxtBox
             // 
             this.ETxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ETxtBox.Location = new System.Drawing.Point(1113, 331);
+            this.ETxtBox.Location = new System.Drawing.Point(1113, 315);
             this.ETxtBox.Name = "ETxtBox";
             this.ETxtBox.Size = new System.Drawing.Size(55, 20);
             this.ETxtBox.TabIndex = 70;
@@ -704,7 +685,7 @@ namespace ImgFixingLibOpenCvVersion
             // EBtnDn
             // 
             this.EBtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EBtnDn.Location = new System.Drawing.Point(1192, 332);
+            this.EBtnDn.Location = new System.Drawing.Point(1174, 316);
             this.EBtnDn.Name = "EBtnDn";
             this.EBtnDn.Size = new System.Drawing.Size(13, 16);
             this.EBtnDn.TabIndex = 69;
@@ -715,7 +696,7 @@ namespace ImgFixingLibOpenCvVersion
             // EBtnUp
             // 
             this.EBtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EBtnUp.Location = new System.Drawing.Point(1173, 332);
+            this.EBtnUp.Location = new System.Drawing.Point(1192, 316);
             this.EBtnUp.Name = "EBtnUp";
             this.EBtnUp.Size = new System.Drawing.Size(13, 16);
             this.EBtnUp.TabIndex = 68;
@@ -739,7 +720,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm11TxtBox
             // 
             this.Sm11TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm11TxtBox.Location = new System.Drawing.Point(1110, 379);
+            this.Sm11TxtBox.Location = new System.Drawing.Point(1110, 363);
             this.Sm11TxtBox.Name = "Sm11TxtBox";
             this.Sm11TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm11TxtBox.TabIndex = 73;
@@ -748,7 +729,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm12TxtBox
             // 
             this.Sm12TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm12TxtBox.Location = new System.Drawing.Point(1156, 379);
+            this.Sm12TxtBox.Location = new System.Drawing.Point(1156, 363);
             this.Sm12TxtBox.Name = "Sm12TxtBox";
             this.Sm12TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm12TxtBox.TabIndex = 74;
@@ -757,7 +738,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm13TxtBox
             // 
             this.Sm13TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm13TxtBox.Location = new System.Drawing.Point(1199, 379);
+            this.Sm13TxtBox.Location = new System.Drawing.Point(1199, 363);
             this.Sm13TxtBox.Name = "Sm13TxtBox";
             this.Sm13TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm13TxtBox.TabIndex = 75;
@@ -766,7 +747,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm23TxtBox
             // 
             this.Sm23TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm23TxtBox.Location = new System.Drawing.Point(1199, 405);
+            this.Sm23TxtBox.Location = new System.Drawing.Point(1199, 389);
             this.Sm23TxtBox.Name = "Sm23TxtBox";
             this.Sm23TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm23TxtBox.TabIndex = 78;
@@ -775,7 +756,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm22TxtBox
             // 
             this.Sm22TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm22TxtBox.Location = new System.Drawing.Point(1156, 405);
+            this.Sm22TxtBox.Location = new System.Drawing.Point(1156, 389);
             this.Sm22TxtBox.Name = "Sm22TxtBox";
             this.Sm22TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm22TxtBox.TabIndex = 77;
@@ -784,7 +765,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm21TxtBox
             // 
             this.Sm21TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm21TxtBox.Location = new System.Drawing.Point(1110, 405);
+            this.Sm21TxtBox.Location = new System.Drawing.Point(1110, 389);
             this.Sm21TxtBox.Name = "Sm21TxtBox";
             this.Sm21TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm21TxtBox.TabIndex = 76;
@@ -793,7 +774,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm33TxtBox
             // 
             this.Sm33TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm33TxtBox.Location = new System.Drawing.Point(1199, 431);
+            this.Sm33TxtBox.Location = new System.Drawing.Point(1199, 415);
             this.Sm33TxtBox.Name = "Sm33TxtBox";
             this.Sm33TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm33TxtBox.TabIndex = 81;
@@ -802,7 +783,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm32TxtBox
             // 
             this.Sm32TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm32TxtBox.Location = new System.Drawing.Point(1156, 431);
+            this.Sm32TxtBox.Location = new System.Drawing.Point(1156, 415);
             this.Sm32TxtBox.Name = "Sm32TxtBox";
             this.Sm32TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm32TxtBox.TabIndex = 80;
@@ -811,7 +792,7 @@ namespace ImgFixingLibOpenCvVersion
             // Sm31TxtBox
             // 
             this.Sm31TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm31TxtBox.Location = new System.Drawing.Point(1110, 431);
+            this.Sm31TxtBox.Location = new System.Drawing.Point(1110, 415);
             this.Sm31TxtBox.Name = "Sm31TxtBox";
             this.Sm31TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm31TxtBox.TabIndex = 79;
@@ -829,28 +810,6 @@ namespace ImgFixingLibOpenCvVersion
             this.ZeroCropAfterBtn.UseVisualStyleBackColor = true;
             this.ZeroCropAfterBtn.Click += new System.EventHandler(this.ZeroCropAfterBtn_Click);
             // 
-            // label12
-            // 
-            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label12.Location = new System.Drawing.Point(1107, 208);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(143, 19);
-            this.label12.TabIndex = 83;
-            this.label12.Text = "Distortion parameters";
-            // 
-            // label13
-            // 
-            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label13.Location = new System.Drawing.Point(1109, 355);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(129, 19);
-            this.label13.TabIndex = 84;
-            this.label13.Text = "Camera parameters";
-            // 
             // DistChkBox
             // 
             this.DistChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -863,14 +822,48 @@ namespace ImgFixingLibOpenCvVersion
             this.DistChkBox.TabIndex = 85;
             this.DistChkBox.UseVisualStyleBackColor = true;
             // 
+            // RBtnUpDn
+            // 
+            this.RBtnUpDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.RBtnUpDn.Location = new System.Drawing.Point(1141, 157);
+            this.RBtnUpDn.Name = "RBtnUpDn";
+            this.RBtnUpDn.Size = new System.Drawing.Size(13, 20);
+            this.RBtnUpDn.TabIndex = 87;
+            this.RBtnUpDn.Text = "v";
+            this.RBtnUpDn.UseVisualStyleBackColor = true;
+            this.RBtnUpDn.Click += new System.EventHandler(this.RBtnUpDn_Click);
+            // 
+            // RBtnUp90
+            // 
+            this.RBtnUp90.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.RBtnUp90.Location = new System.Drawing.Point(1125, 157);
+            this.RBtnUp90.Name = "RBtnUp90";
+            this.RBtnUp90.Size = new System.Drawing.Size(13, 20);
+            this.RBtnUp90.TabIndex = 86;
+            this.RBtnUp90.Text = "^";
+            this.RBtnUp90.UseVisualStyleBackColor = true;
+            this.RBtnUp90.Click += new System.EventHandler(this.RBtnUp90_Click);
+            // 
+            // label13
+            // 
+            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.label13.Location = new System.Drawing.Point(1109, 339);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(129, 19);
+            this.label13.TabIndex = 84;
+            this.label13.Text = "Camera parameters";
+            // 
             // ImgFixingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1243, 869);
+            this.Controls.Add(this.RBtnUpDn);
+            this.Controls.Add(this.RBtnUp90);
             this.Controls.Add(this.DistChkBox);
             this.Controls.Add(this.label13);
-            this.Controls.Add(this.label12);
             this.Controls.Add(this.ZeroCropAfterBtn);
             this.Controls.Add(this.Sm33TxtBox);
             this.Controls.Add(this.Sm32TxtBox);
@@ -911,7 +904,6 @@ namespace ImgFixingLibOpenCvVersion
             this.Controls.Add(this.WidthBeforeTxtBox);
             this.Controls.Add(this.YBeforeTxtBox);
             this.Controls.Add(this.XBeforeTxtBox);
-            this.Controls.Add(this.RotationChkBox);
             this.Controls.Add(this.CropBeforeChkBox);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.DistortionMetodLabel);
@@ -919,7 +911,6 @@ namespace ImgFixingLibOpenCvVersion
             this.Controls.Add(this.label3);
             this.Controls.Add(this.RBtnDn01);
             this.Controls.Add(this.RBtnUp01);
-            this.Controls.Add(this.RotValTxtBox);
             this.Controls.Add(this.RBtnDn001);
             this.Controls.Add(this.RBtnUp001);
             this.Controls.Add(this.DTxtBox);
@@ -971,7 +962,6 @@ namespace ImgFixingLibOpenCvVersion
         private TextBox BTxtBox;
         private TextBox CTxtBox;
         private TextBox DTxtBox;
-        private TextBox RotValTxtBox;
         private Button RBtnDn001;
         private Button RBtnUp001;
         private Button RBtnDn01;
@@ -981,7 +971,6 @@ namespace ImgFixingLibOpenCvVersion
         private Label DistortionMetodLabel;
         private Label label5;
         private CheckBox CropBeforeChkBox;
-        private CheckBox RotationChkBox;
         private TextBox HeightBeforeTxtBox;
         private TextBox WidthBeforeTxtBox;
         private TextBox YBeforeTxtBox;
@@ -1022,8 +1011,9 @@ namespace ImgFixingLibOpenCvVersion
         private TextBox Sm32TxtBox;
         private TextBox Sm31TxtBox;
         private Button ZeroCropAfterBtn;
-        private Label label12;
-        private Label label13;
         private CheckBox DistChkBox;
+        private Button RBtnUpDn;
+        private Button RBtnUp90;
+        private Label label13;
     }
 }

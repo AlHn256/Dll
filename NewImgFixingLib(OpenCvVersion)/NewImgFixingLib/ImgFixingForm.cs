@@ -691,14 +691,6 @@ namespace ImgFixingLibOpenCvVersion
                 }
             }
         }
-        private Bitmap MagickImageToBitMap(MagickImage magickImage)
-        {
-
-            // MagickImage magickImage = EditImg(Image);
-            //var imageData = ;
-            MemoryStream ms = new MemoryStream(magickImage.ToByteArray());
-            return new Bitmap(ms);
-        }
 
         public Bitmap[] FixImgArray(Bitmap[] dataArray)
         {

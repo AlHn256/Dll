@@ -114,7 +114,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.CorrectFilesBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CorrectFilesBtn.Location = new System.Drawing.Point(1115, 836);
             this.CorrectFilesBtn.Name = "CorrectFilesBtn";
-            this.CorrectFilesBtn.Size = new System.Drawing.Size(130, 24);
+            this.CorrectFilesBtn.Size = new System.Drawing.Size(120, 24);
             this.CorrectFilesBtn.TabIndex = 1;
             this.CorrectFilesBtn.Text = "Correct Files";
             this.CorrectFilesBtn.UseVisualStyleBackColor = true;

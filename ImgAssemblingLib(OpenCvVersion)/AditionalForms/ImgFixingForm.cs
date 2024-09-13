@@ -26,7 +26,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private bool SaveRezultToFile { get; set;} = false;
         public static bool StopProcess = false;
         public string ErrText { get; set; } = string.Empty;
-        private string SavingRezultDir { get; set; } = string.Empty;
 
         public ImgFixingForm(string directory)
         {

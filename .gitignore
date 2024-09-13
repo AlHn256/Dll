@@ -90,3 +90,9 @@ dkms.conf
 /NewImgFixingLib(OpenCvVersion)/NewImgFixingLib/packages
 /NewImgFixingLib(OpenCvVersion)/TestStartingPr/bin
 /NewImgFixingLib(OpenCvVersion)/TestStartingPr/obj
+/ImgAssemblingLib(OpenCvVersion)/bin/Debug
+/ImgAssemblingLib(OpenCvVersion)/obj
+/ImgAssemblingLib(OpenCvVersion)/packages
+/ImgAssemblingLib(OpenCvVersion)/StartTestProject/bin
+/ImgAssemblingLib(OpenCvVersion)/.vs
+/ImgAssemblingLib(OpenCvVersion)/StartTestProject/obj

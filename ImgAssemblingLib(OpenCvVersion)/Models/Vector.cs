@@ -1,7 +1,7 @@
 ﻿using System;
 using WinFormsApp1.Enum;
 
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
     public class Vector
     {

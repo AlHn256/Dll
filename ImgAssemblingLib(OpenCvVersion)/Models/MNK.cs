@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
     public class MNK
     {

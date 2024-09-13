@@ -1,5 +1,5 @@
 ﻿using ImageMagick;
-using ImgAssemblingLib.Models;
+using ImgAssemblingLibOpenCV.Models;
 using Newtonsoft.Json;
 using System;
 using System.Data;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace ImgAssemblingLib.AditionalForms
+namespace ImgAssemblingLibOpenCV.AditionalForms
 {
     public partial class ImgFixingForm : Form
     {

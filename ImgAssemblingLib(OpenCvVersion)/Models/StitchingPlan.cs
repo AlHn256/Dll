@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using WinFormsApp1.Enum;
-
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
     [Serializable]
     internal class StitchingPlan

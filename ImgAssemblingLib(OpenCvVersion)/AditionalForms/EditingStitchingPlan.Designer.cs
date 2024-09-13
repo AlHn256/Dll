@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace ImgAssemblingLib.AditionalForms
+namespace ImgAssemblingLibOpenCV.AditionalForms
 {
     partial class EditingStitchingPlan
     {

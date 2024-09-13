@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
     public class AssemblyPlan : ICloneable
     {

@@ -1,4 +1,4 @@
-﻿using ImgAssemblingLib.Models;
+﻿using ImgAssemblingLibOpenCV.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ImgAssemblingLib.AditionalForms
+namespace ImgAssemblingLibOpenCV.AditionalForms
 {
     public partial class EditingStitchingPlan : Form
     {

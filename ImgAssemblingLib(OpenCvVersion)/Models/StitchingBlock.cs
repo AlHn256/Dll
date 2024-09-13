@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Drawing;
 
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
     public class StitchingBlock
     {

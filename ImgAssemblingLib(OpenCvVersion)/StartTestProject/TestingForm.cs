@@ -1,5 +1,5 @@
-﻿using ImgAssemblingLib.AditionalForms;
-using ImgAssemblingLib.Models;
+﻿using ImgAssemblingLibOpenCV.AditionalForms;
+using ImgAssemblingLibOpenCV.Models;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

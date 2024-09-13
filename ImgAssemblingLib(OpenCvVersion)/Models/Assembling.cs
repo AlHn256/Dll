@@ -1,4 +1,4 @@
-﻿using ImgAssemblingLib.AditionalForms;
+﻿using ImgAssemblingLibOpenCV.AditionalForms;
 using NLog;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WinFormsApp1.Enum;
 
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
     public class Assembling
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using WinFormsApp1.Enum;
 
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
     public class FinalResult
     {

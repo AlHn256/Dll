@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.ComponentModel;
 
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
    public class FileEdit
     {

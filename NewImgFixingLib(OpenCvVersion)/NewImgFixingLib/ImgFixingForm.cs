@@ -15,7 +15,7 @@ namespace ImgFixingLibOpenCvVersion
     public partial class ImgFixingForm : Form
     {
         private int Xdn = 0, Ydn = 0, Xup = 0, Yup = 0;
-        private double A = -0.13, B = 0.39, C = 0.08, D = 0, E = 0,  RotationAngle = 0;
+        private double A = -0.13, B = 0.39, C = 0.08, D = 0, E = 0;
         private double Sm11 = 1500, Sm12 = 0.0, Sm13 = 0.0;
         private double Sm21 = 0.0, Sm22 = 1500, Sm23 = 0.0;
         private double Sm31 = 0.0, Sm32 = 0.0,  Sm33 = 1.0;

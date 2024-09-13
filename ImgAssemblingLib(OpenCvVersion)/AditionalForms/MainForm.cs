@@ -1,4 +1,4 @@
-﻿using ImgAssemblingLib.Models;
+﻿using ImgAssemblingLibOpenCV.Models;
 using NLog;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ImgAssemblingLib.AditionalForms
+namespace ImgAssemblingLibOpenCV.AditionalForms
 {
     public partial class MainForm : Form
     {

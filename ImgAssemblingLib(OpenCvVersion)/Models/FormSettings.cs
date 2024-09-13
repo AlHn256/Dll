@@ -1,4 +1,4 @@
-﻿namespace ImgAssemblingLib.Models
+﻿namespace ImgAssemblingLibOpenCV.Models
 {
     public class FormSettings
     {

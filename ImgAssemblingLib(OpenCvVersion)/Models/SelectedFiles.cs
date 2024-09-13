@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using WinFormsApp1.Enum;
 
-namespace ImgAssemblingLib.Models
+namespace ImgAssemblingLibOpenCV.Models
 {
     public class SelectedFiles
     {

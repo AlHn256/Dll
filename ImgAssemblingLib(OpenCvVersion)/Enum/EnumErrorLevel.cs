@@ -1,4 +1,4 @@
-﻿namespace ImgAssemblingLib.Enum
+﻿namespace ImgAssemblingLibOpenCV.Enum
 {
     public enum EnumErrCode
     {

@@ -134,7 +134,7 @@ namespace StartTestProject
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
             // Заменяем план корректировки изображений
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.fip"; 
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.oip"; 
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4",27);
             
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
@@ -147,7 +147,7 @@ namespace StartTestProject
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
             // Заменяем план корректировки изображений
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.fip"; 
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.oip"; 
             // Смещяем полсу
             assemblyPlan.Delta = -120;
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
@@ -160,7 +160,7 @@ namespace StartTestProject
         {
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.fip";
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.oip";
             assemblyPlan.Stitch = false;
             assemblyPlan.SaveRezults = true;
             assemblyPlan.ShowAssemblingFile = true;
@@ -182,7 +182,7 @@ namespace StartTestProject
             {
                 BitMap = true, // Включаем работу с массивом битмапов вместо файлов
                 DelFileCopy = false, // Отключение удаления копий изображений
-                ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.fip",
+                ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.oip",
                 Delta = -120, // Смещение полосы склейки
                 SaveRezults = true,
                 ShowAssemblingFile = true,
@@ -209,7 +209,8 @@ namespace StartTestProject
         {
             //Для имитации загружаем файлы из папки и создаем массив битмапов
             Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\14(3)");
-            ImgFixingForm imgFixingForm = new ImgFixingForm("14.fip", false); // Загружаем файл с параментрами корректировки изображений
+            ImgFixingForm imgFixingForm = new ImgFixingForm("14.oip", false); // Загружаем файл с параментрами корректировки изображений
+
             await Task.Run(() => { dataArray = imgFixingForm.FixImges(_context, dataArray); });
 
             if (dataArray == null || dataArray.Length == 0 || imgFixingForm.IsErr)

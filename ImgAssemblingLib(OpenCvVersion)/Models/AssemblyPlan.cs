@@ -21,7 +21,7 @@ namespace ImgAssemblingLibOpenCV.Models
         public string FixingImgDirectory { get; set; } = string.Empty;
         public bool ChekFixImg { get; set; } = true;
         public string ChekFixImgRezult { get; set; } = "Не выполнено!";
-        public string ImgFixingPlan { get; set; } = "imgFixingSettings.fip";
+        public string ImgFixingPlan { get; set; } = "imgFixingSettings.oip";
         public string FixImgRezult { get; set; } = "Не выполнено!";
 
         public bool FindKeyPoints { get; set; } = true; // Поиск ключевых точек

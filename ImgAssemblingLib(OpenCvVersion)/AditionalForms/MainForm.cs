@@ -116,8 +116,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             KeyDown(keyData);
             return base.ProcessCmdKey(ref msg, keyData);
         }
-
-    
         private async void KeyDown(Keys keyData)
         {
             if (keyData == Keys.A)

@@ -98,7 +98,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             var sdf = files[0];
             var ggs = Path.GetExtension(files[0]);
-            files = files.Where(x => Path.GetExtension(x) == ".fip").ToArray();
+            files = files.Where(x => Path.GetExtension(x) == ".oip").ToArray();
             if (files.Length > 0) ImgFixingPlanTxtBox.Text = files[0];
             else ImgFixingPlanTxtBox.Text = string.Empty;
         }
@@ -298,7 +298,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             {
                 FileEdit fileEdit = new FileEdit();
                 openFileDialog.InitialDirectory = fileEdit.GetDefoltDirectory();
-                openFileDialog.Filter = "fixing img plan (*.fip)|*.fip|All files (*.*)|*.*";
+                openFileDialog.Filter = "fixing img plan (*.oip)|*.oip|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 

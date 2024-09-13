@@ -22,7 +22,7 @@ namespace TestStartingPr
             stopwatch.Start();
             TimeSpan ts = stopwatch.Elapsed;
 
-            string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
+            string ImgFixingPlan = "14.oip"; // Файл с параментрами корректировки изображений
             string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
             //string WorkingDirectory = "E:\All\Side1\Left"; // Папка изображений для испраления
             if (!fileEdit.ChkDir(WorkingDirectory)) return;
@@ -50,7 +50,7 @@ namespace TestStartingPr
             //stopwatch.Start();
             //TimeSpan ts = stopwatch.Elapsed;
 
-            //string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
+            //string ImgFixingPlan = "14.oip"; // Файл с параментрами корректировки изображений
             //string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
             //if (!fileEdit.ChkDir(WorkingDirectory)) return;
 
@@ -80,10 +80,10 @@ namespace TestStartingPr
         // Пример запуска корекции изображений в папке по настройкам из файла
         private void HidenFixingExampelBtn_Click(object sender, EventArgs e)
         {
-            string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
+            string ImgFixingPlan = "14.oip"; // Файл с параментрами корректировки изображений
             string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
             string outputDir = "D:\\Work\\Exampels\\14(3)AutoOut";// Результирующая папка
-            //string ImgFixingPlan = "Left.fip";// Файл с параментрами корректировки изображений
+            //string ImgFixingPlan = "Left.oip";// Файл с параментрами корректировки изображений
             //string WorkingDirectory = "D:\\Work\\Exampels\\Left";// Парака изображений для испраления
             //string outputDir = "D:\\Work\\Exampels\\LeftAutoOut";// Результирующая папка
             ImgFixingForm distortionTest = new ImgFixingForm(ImgFixingPlan, WorkingDirectory, false);
@@ -95,10 +95,10 @@ namespace TestStartingPr
         private async void HidenFixingExampel2Btn_Click(object sender, EventArgs e) => await StartFixing();
         public async Task<bool> StartFixing()
         {
-            string ImgFixingPlan = "Left.fip";// Файл с параментрами корректировки изображений
+            string ImgFixingPlan = "Left.oip";// Файл с параментрами корректировки изображений
             string WorkingDirectory = "D:\\Work\\Exampels\\Left";// Парака изображений для испраления
             string outputDir = "D:\\Work\\Exampels\\LeftAutoOut";// Результирующая папка
-            //string ImgFixingPlan = "14.fip"; // Файл с параментрами корректировки изображений
+            //string ImgFixingPlan = "14.oip"; // Файл с параментрами корректировки изображений
             //string WorkingDirectory = "D:\\Work\\Exampels\\14(3)"; // Папка изображений для испраления
             //string outputDir = "D:\\Work\\Exampels\\14(3)AutoOut";// Результирующая папка
             ImgFixingForm distortionTest = new ImgFixingForm(ImgFixingPlan, WorkingDirectory, false);

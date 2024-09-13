@@ -20,7 +20,7 @@ namespace ImgFixingLibOpenCvVersion
         private double Sm21 = 0.0, Sm22 = 1500, Sm23 = 0.0;
         private double Sm31 = 0.0, Sm32 = 0.0,  Sm33 = 1.0;
         private FileEdit fileEdit = new FileEdit(new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" });
-        private const string imgDefoltFixingFile = "imgFixingSettings.fip";
+        private const string imgDefoltFixingFile = "imgFixingSettings.oip";
         private string imgFixingFile = imgDefoltFixingFile;
         public event Action<int> ProcessChanged;
         public event Action<string> TextChanged;
@@ -628,7 +628,7 @@ namespace ImgFixingLibOpenCvVersion
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.InitialDirectory = fileEdit.GetDefoltDirectory();
-            saveFileDialog.Filter = "Fixing img plan (*.fip)|*.fip|All files(*.*)|*.*";
+            saveFileDialog.Filter = "OpenSV img plan (*.oip)|*.oip|All files(*.*)|*.*";
             saveFileDialog.FilterIndex = 1;
             if (saveFileDialog.ShowDialog() == DialogResult.Cancel)return;
             if (await fileEdit.SaveJsonAsync(saveFileDialog.FileName, GetImgFixingSettings())) RezultRTB.Text = "Settings save in " + saveFileDialog.FileName;
@@ -678,7 +678,7 @@ namespace ImgFixingLibOpenCvVersion
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = fileEdit.GetDefoltDirectory();
-                openFileDialog.Filter = "Fixing img plan (*.fip)|*.fip|All files(*.*)|*.*";
+                openFileDialog.Filter = "OpenSV img plan (*.oip)|*.oip|All files(*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 

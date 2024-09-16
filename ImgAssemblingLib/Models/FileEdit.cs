@@ -22,7 +22,7 @@ namespace ImgAssemblingLib.Models
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
         public string TextMessag { get; set; } = string.Empty;
-        private static string[] FileFilter {  get; set; }
+        private static string[] FileFilter { get; set; }
 
         public FileEdit()
         {

@@ -279,7 +279,9 @@ namespace ImgFixingLibOpenCvVersion.Models
 
         public FileInfo[] SearchFiles() => SearchFiles(GetDefoltDirectory());
         public FileInfo[] SearchFiles(string dir)
-        {
+        { 
+            if(!Directory.Exists(dir))return null;
+
             if (FileFilter.Length == 0) return SearchFiles(dir, new string[] { "*.*" });
             else return SearchFiles(dir, FileFilter);
         }
@@ -295,7 +297,7 @@ namespace ImgFixingLibOpenCvVersion.Models
 
             if (string.IsNullOrEmpty(dir)) dir = AppDomain.CurrentDomain.BaseDirectory;
 
-            FileInfo[] fileList = new FileInfo[1];
+            FileInfo[] fileList = new FileInfo[0];
 
             if (Directory.Exists(dir))
             {

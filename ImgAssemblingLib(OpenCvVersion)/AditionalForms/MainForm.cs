@@ -956,7 +956,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             public int To { get; set; }
             public int Points { get; set; }
             public double Speed { get; set; }
-
             public SpeedStat(int fr, int to, double speed)
             {
                 Fr = fr;

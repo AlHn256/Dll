@@ -15,7 +15,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
     {
         private AssemblyPlan AssemblyPlan;
         private AssemblyPlan OldPlan;
-        private AssemblyPlan OldPlan2;
         private bool PersentOnOff = true;
         private FileEdit fileEdit = new FileEdit();
         public bool PlanIsUpDate = true;
@@ -229,7 +228,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (DefaultParametersCheckBox.Checked)
             {
                 AssemblyPlan.Period = 1;
-                AssemblyPlan.Delta = 30;
+                AssemblyPlan.Delta = 0;
                 AssemblyPlan.From = 0;
                 AssemblyPlan.To = 100;
             }

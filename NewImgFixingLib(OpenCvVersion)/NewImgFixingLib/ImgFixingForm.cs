@@ -187,11 +187,23 @@ namespace ImgFixingLibOpenCvVersion
         {
             if (string.IsNullOrEmpty(InputDirTxtBox.Text)) return;
             var files = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            if (files[0] != null)
+
+            if (files == null)
             {
-                InputFileTxtBox.Text = files[0].Name;
-                pictureBox1.BackgroundImage = Image.FromFile(files[0].FullName);
+                SetErr("Err ImgFixingForm.InputDirTxtBox_TextChanged.files == null !!!");
+                return;
             }
+
+            if (files[0]== null)
+            {
+                SetErr("Err ImgFixingForm.InputDirTxtBox_TextChanged.files != null && files[0] != null!!!");
+                return;
+
+            }
+
+            InputFileTxtBox.Text = files[0].Name;
+            pictureBox1.BackgroundImage = Image.FromFile(files[0].FullName);
+
             OutputDirTxtBox.Text = InputDirTxtBox.Text.FirstOf('\\') + "\\" + InputDirTxtBox.Text.LastOf('\\') + "Out";
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }

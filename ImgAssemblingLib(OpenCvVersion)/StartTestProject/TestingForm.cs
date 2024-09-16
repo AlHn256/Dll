@@ -93,7 +93,9 @@ namespace StartTestProject
         }
         private void MainFormBtn_Click(object sender, EventArgs e)=>ShowMainForm();
         private void EditingStitchingPlanBtn_Click(object sender, EventArgs e)=>ShowEditingStitchingForm();
-        private string assemblingFile = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\3179.asp";
+        //private string assemblingFile = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\3179.asp";
+        private string assemblingFile = "16RC.asp";
+
         // Пример сборки изображения с использованием только файла плана сборки
         private async void Exampl1Btn_Click(object sender, EventArgs e)
         {
@@ -208,13 +210,16 @@ namespace StartTestProject
         private async void FixingImgsUsingDataArrayBtn_Click(object sender, EventArgs e)
         {
             //Для имитации загружаем файлы из папки и создаем массив битмапов
-            Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\14(3)");
-            ImgFixingForm imgFixingForm = new ImgFixingForm("14.oip", false); // Загружаем файл с параментрами корректировки изображений
+            Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\16RC");
+            ImgFixingForm imgFixingForm = new ImgFixingForm("16RC.oip", false); // Загружаем файл с параментрами корректировки изображений
+            if (imgFixingForm.IsErr){RezultLb.Text = imgFixingForm.ErrText;return;}
 
             await Task.Run(() => { dataArray = imgFixingForm.FixImges(_context, dataArray); });
 
             if (dataArray == null || dataArray.Length == 0 || imgFixingForm.IsErr)
             {
+                if (imgFixingForm.IsErr) { RezultLb.Text = imgFixingForm.ErrText; return; }
+                else RezultLb.Text = "ERR dataArray == null || dataArray.Length == 0 !!!";
                 RezultLb.Text = imgFixingForm.ErrText;
                 return;
             }
@@ -235,7 +240,6 @@ namespace StartTestProject
         private async void Exampl8Btn_Click(object sender, EventArgs e)=>await StartAssembling();
         private async Task<bool> StartAssembling()
         {
-
             progressBar.Visible = true;
             progressBarLabel.Visible = true;
             progressBarLabel.BringToFront();

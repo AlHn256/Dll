@@ -14,7 +14,6 @@ namespace TestStartingPr
             ShowImgFixingForm();
         }
 
-
         // Пример запуска корекции изображений в папке по настройкам из файла используя массив битмапов
         private void FixingImgsUsingDataArrayBtn_Click(object sender, EventArgs e)
         {
@@ -91,7 +90,7 @@ namespace TestStartingPr
             distortionTest.FixImges(outputDir);
         }
 
-        // Тоже самое что выше только отображением результатов
+        // Тоже самое что выше только с отображением результатов
         private async void HidenFixingExampel2Btn_Click(object sender, EventArgs e) => await StartFixing();
         public async Task<bool> StartFixing()
         {

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -146,6 +147,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (!fileEdit.ChkDir(outputDir)) return false;
             // DistortMethod distortMethod = (DistortMethod)DistortionMetodComBox.SelectedItem;
             FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
+
+            if (fileList == null) return SetErr("ERR FixImges.fileList == null !!!");
             for (int i = 0; i < fileList.Length; i++)
             {
                 string outputFileNumber = outputDir + "\\" + fileList[i].Name;
@@ -161,8 +164,28 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         }
         public Bitmap[] FixImges(object param, Bitmap[] dataArray)
         {
-            //var DataArray = dataArray.Select(x => { return new MagickImage(BitmapToByte("Test.jpg", x, 99)); }).ToArray();
-            return dataArray.Length == 0 ? new Bitmap[0] : FixImges(param, dataArray);
+            if (dataArray == null || dataArray.Length == 0)
+            {
+                SetErr("ERR FixImges.fileList == null !!!");
+                return null;
+            }
+
+            SynchronizationContext context = (SynchronizationContext)param;
+            ShowGridСhckBox.Checked = false;
+
+            List<Bitmap>  bitMapList = new List<Bitmap>();
+
+            for (int i = 0; i < dataArray.Length; i++)
+            {
+                bitMapList.Add(EditImg(dataArray[i]));
+                context.Send(OnProgressChanged, i * 100 / dataArray.Length);
+                context.Send(OnTextChanged, "Imges Fixing " + i * 100 / dataArray.Length + " %");
+            }
+
+            context.Send(OnProgressChanged, 100);
+            context.Send(OnTextChanged, "Imges Fixing 100 %");
+
+            return bitMapList.ToArray();
         }
         //public Bitmap[] FixImges(object param, MagickImage[] DataArray)
         //{
@@ -573,44 +596,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             dYAfterTxtBox.Text = imgFixingSettings.DYAfter.ToString();
 
             AutoReloadChkBox.Checked = AutoReloadSave;
-            //A = distorSettings.A;
-            //B = distorSettings.B;
-            //C = distorSettings.C;
-            //D = distorSettings.D;
-            //E = distorSettings.E;
-            //Sm11 = distorSettings.Sm11;
-            //Sm12 = distorSettings.Sm12;
-            //Sm13 = distorSettings.Sm13;
-            //Sm21 = distorSettings.Sm21;
-            //Sm22 = distorSettings.Sm22;
-            //Sm23 = distorSettings.Sm23;
-            //Sm31 = distorSettings.Sm31;
-            //Sm32 = distorSettings.Sm32;
-            //Sm33 = distorSettings.Sm33;
-
-            //if (imgFixingSettings == null) return false;
-            //CropBeforeChkBox.Checked = imgFixingSettings.CropBeforeChkBox;
-            //XBeforeTxtBox.Text = imgFixingSettings.XBefore.ToString();
-            //YBeforeTxtBox.Text = imgFixingSettings.YBefore.ToString();
-            //HeightBeforeTxtBox.Text = imgFixingSettings.HeightBefore.ToString();
-            //HeightAfterTxtBox.Text = imgFixingSettings.HeightAfter.ToString();
-            //WidthAfterTxtBox.Text = imgFixingSettings.WidthAfter.ToString();
-            //WidthBeforeTxtBox.Text = imgFixingSettings.WidthBefore.ToString();
-            //RotationChkBox.Checked = imgFixingSettings.Rotation;
-            //RotValTxtBox.Text = imgFixingSettings.RotationAngle.ToString();
-            ////DistortionChkBox.Checked = imgFixingSettings.Distortion;
-            //var distortionMetods = Enum.GetValues(typeof(DistortMethod));
-            ////DistortionMetodComBox.DataSource = distortionMetods;
-            ////DistortionMetodComBox.SelectedIndex = DistortionMetodComBox.FindString(imgFixingSettings.DistortMethod.ToString());
-            //ATxtBox.Text = imgFixingSettings.A.ToString();
-            //BTxtBox.Text = imgFixingSettings.B.ToString();
-            //CTxtBox.Text = imgFixingSettings.C.ToString();
-            //DTxtBox.Text = imgFixingSettings.D.ToString();
-            //if (fileLoad)
-            //{
-            //    InputDirTxtBox.Text = imgFixingSettings.Dir;
-            //    InputFileTxtBox.Text = imgFixingSettings.File;
-            //}
             return true;
         }
         private ImgFixingSettings GetImgFixingSettings()
@@ -794,6 +779,24 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             return EditImg(Cv2.ImRead(file));
         }
 
+
+        private Bitmap EditImg(Bitmap bitmap)
+        {
+            if(bitmap == null)
+            {
+                SetErr("Err EditImg.bitmap == null !!!");
+                return null;
+            }
+            if(bitmap.Width ==0 || bitmap.Height == 0)
+            {
+                SetErr("Err bitmap.Width ==0 || bitmap.Height == 0 !!!");
+                return null;
+            }
+
+            var image = BitmapConverter.ToMat(bitmap);
+            return MatToBitmap(EditImg(image));
+        }
+
         private Mat EditImg(Mat img)
         {
             if (rotation90 == 1) Cv2.Rotate(img, img, RotateFlags.Rotate90Clockwise);
@@ -817,14 +820,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 RezultRTB.Text = $"k1:{array_[0]};\n k2:{array_[1]}; \n k3:{array_[2]}; \n p1:{array_[3]}; \n p2:{array_[4]};";
             }
             else rezult = img;
-
-
-            //180度
-            //Cv2.Rotate(Src_Images, SRC2, RotateFlags.Rotate180);
-            //270度
-            //Cv2.Rotate(Src_Images, SRC1, RotateFlags.Rotate90Counterclockwise);
-
-
 
             if (CropAfterChkBox.Checked)
             {

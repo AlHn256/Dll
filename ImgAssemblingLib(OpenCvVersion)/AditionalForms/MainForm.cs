@@ -46,7 +46,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         {
             logger.Info("Programm starting");
 
-            //StopBtn.Enabled = false;
             this.picBox_Display.MouseDown += picBox_Display_MouseDown;
             this.picBox_Display.MouseUp += picBox_Display_MouseUp;
             this.picBox_Display.MouseWheel += panel1_MouseWheel;
@@ -110,7 +109,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             fileEdit.AutoSave(formSettings);
             return true;
         }
-
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             KeyDown(keyData);
@@ -894,7 +892,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (loadBoders) LoadBoders();
             else if (!fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
             else assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
-            assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
+            //assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
             //assemblyPlan.BitMap = false;
             //assemblyPlan.ShowAssemblingFile = true;
 
@@ -906,7 +904,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 Assembling.BitmapData = dataArray;
                 //Assembling.SaveImgFixingRezultToFile = SavingImgWBitmapChckBox.Checked;
             }
-
 
             if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
 

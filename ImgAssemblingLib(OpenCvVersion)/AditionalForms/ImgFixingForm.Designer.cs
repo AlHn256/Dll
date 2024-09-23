@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace ImgAssemblingLibOpenCV.AditionalForms
 {
@@ -57,18 +56,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.DistortionMetodLabel = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.CropBeforeChkBox = new System.Windows.Forms.CheckBox();
-            this.HeightBeforeTxtBox = new System.Windows.Forms.TextBox();
-            this.WidthBeforeTxtBox = new System.Windows.Forms.TextBox();
-            this.YBeforeTxtBox = new System.Windows.Forms.TextBox();
-            this.XBeforeTxtBox = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.ApplyBtn = new System.Windows.Forms.Button();
             this.RezultRTB = new System.Windows.Forms.RichTextBox();
             this.label14 = new System.Windows.Forms.Label();
@@ -103,13 +90,17 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.RBtnUpDn = new System.Windows.Forms.Button();
             this.RBtnUp90 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.PZoomBtn = new System.Windows.Forms.Button();
+            this.MZoomBtn = new System.Windows.Forms.Button();
+            this.ZoomLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -133,9 +124,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // ABtnUp
             // 
             this.ABtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ABtnUp.Location = new System.Drawing.Point(1192, 217);
+            this.ABtnUp.Location = new System.Drawing.Point(1192, 198);
             this.ABtnUp.Name = "ABtnUp";
-            this.ABtnUp.Size = new System.Drawing.Size(13, 16);
+            this.ABtnUp.Size = new System.Drawing.Size(13, 22);
             this.ABtnUp.TabIndex = 3;
             this.ABtnUp.Text = "^";
             this.ABtnUp.UseVisualStyleBackColor = true;
@@ -144,9 +135,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // ABtnDn
             // 
             this.ABtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ABtnDn.Location = new System.Drawing.Point(1174, 217);
+            this.ABtnDn.Location = new System.Drawing.Point(1174, 198);
             this.ABtnDn.Name = "ABtnDn";
-            this.ABtnDn.Size = new System.Drawing.Size(13, 16);
+            this.ABtnDn.Size = new System.Drawing.Size(13, 22);
             this.ABtnDn.TabIndex = 4;
             this.ABtnDn.Text = "v";
             this.ABtnDn.UseVisualStyleBackColor = true;
@@ -155,9 +146,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // BBtnDn
             // 
             this.BBtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BBtnDn.Location = new System.Drawing.Point(1174, 241);
+            this.BBtnDn.Location = new System.Drawing.Point(1174, 222);
             this.BBtnDn.Name = "BBtnDn";
-            this.BBtnDn.Size = new System.Drawing.Size(13, 16);
+            this.BBtnDn.Size = new System.Drawing.Size(13, 22);
             this.BBtnDn.TabIndex = 7;
             this.BBtnDn.Text = "v";
             this.BBtnDn.UseVisualStyleBackColor = true;
@@ -166,9 +157,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // BBtnUp
             // 
             this.BBtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BBtnUp.Location = new System.Drawing.Point(1192, 241);
+            this.BBtnUp.Location = new System.Drawing.Point(1192, 222);
             this.BBtnUp.Name = "BBtnUp";
-            this.BBtnUp.Size = new System.Drawing.Size(13, 16);
+            this.BBtnUp.Size = new System.Drawing.Size(13, 22);
             this.BBtnUp.TabIndex = 6;
             this.BBtnUp.Text = "^";
             this.BBtnUp.UseVisualStyleBackColor = true;
@@ -177,9 +168,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // CBtnDn
             // 
             this.CBtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CBtnDn.Location = new System.Drawing.Point(1174, 266);
+            this.CBtnDn.Location = new System.Drawing.Point(1174, 273);
             this.CBtnDn.Name = "CBtnDn";
-            this.CBtnDn.Size = new System.Drawing.Size(13, 16);
+            this.CBtnDn.Size = new System.Drawing.Size(13, 22);
             this.CBtnDn.TabIndex = 10;
             this.CBtnDn.Text = "v";
             this.CBtnDn.UseVisualStyleBackColor = true;
@@ -188,9 +179,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // CBtnUp
             // 
             this.CBtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CBtnUp.Location = new System.Drawing.Point(1192, 266);
+            this.CBtnUp.Location = new System.Drawing.Point(1192, 273);
             this.CBtnUp.Name = "CBtnUp";
-            this.CBtnUp.Size = new System.Drawing.Size(13, 16);
+            this.CBtnUp.Size = new System.Drawing.Size(13, 22);
             this.CBtnUp.TabIndex = 9;
             this.CBtnUp.Text = "^";
             this.CBtnUp.UseVisualStyleBackColor = true;
@@ -199,9 +190,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // DBtnDn
             // 
             this.DBtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DBtnDn.Location = new System.Drawing.Point(1174, 290);
+            this.DBtnDn.Location = new System.Drawing.Point(1174, 298);
             this.DBtnDn.Name = "DBtnDn";
-            this.DBtnDn.Size = new System.Drawing.Size(13, 16);
+            this.DBtnDn.Size = new System.Drawing.Size(13, 22);
             this.DBtnDn.TabIndex = 13;
             this.DBtnDn.Text = "v";
             this.DBtnDn.UseVisualStyleBackColor = true;
@@ -210,9 +201,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // DBtnUp
             // 
             this.DBtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DBtnUp.Location = new System.Drawing.Point(1192, 290);
+            this.DBtnUp.Location = new System.Drawing.Point(1192, 298);
             this.DBtnUp.Name = "DBtnUp";
-            this.DBtnUp.Size = new System.Drawing.Size(13, 16);
+            this.DBtnUp.Size = new System.Drawing.Size(13, 22);
             this.DBtnUp.TabIndex = 12;
             this.DBtnUp.Text = "^";
             this.DBtnUp.UseVisualStyleBackColor = true;
@@ -220,7 +211,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // InputDirTxtBox
             // 
-            this.InputDirTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.InputDirTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.InputDirTxtBox.Location = new System.Drawing.Point(73, 4);
             this.InputDirTxtBox.Name = "InputDirTxtBox";
@@ -250,7 +241,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // OutputDirTxtBox
             // 
-            this.OutputDirTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.OutputDirTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.OutputDirTxtBox.Location = new System.Drawing.Point(87, 839);
             this.OutputDirTxtBox.Name = "OutputDirTxtBox";
@@ -269,7 +260,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // ATxtBox
             // 
             this.ATxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ATxtBox.Location = new System.Drawing.Point(1113, 216);
+            this.ATxtBox.Location = new System.Drawing.Point(1113, 199);
             this.ATxtBox.Name = "ATxtBox";
             this.ATxtBox.Size = new System.Drawing.Size(55, 20);
             this.ATxtBox.TabIndex = 19;
@@ -278,7 +269,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // BTxtBox
             // 
             this.BTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTxtBox.Location = new System.Drawing.Point(1113, 241);
+            this.BTxtBox.Location = new System.Drawing.Point(1113, 224);
             this.BTxtBox.Name = "BTxtBox";
             this.BTxtBox.Size = new System.Drawing.Size(55, 20);
             this.BTxtBox.TabIndex = 20;
@@ -287,7 +278,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // CTxtBox
             // 
             this.CTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CTxtBox.Location = new System.Drawing.Point(1113, 265);
+            this.CTxtBox.Location = new System.Drawing.Point(1113, 274);
             this.CTxtBox.Name = "CTxtBox";
             this.CTxtBox.Size = new System.Drawing.Size(55, 20);
             this.CTxtBox.TabIndex = 21;
@@ -296,7 +287,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // DTxtBox
             // 
             this.DTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DTxtBox.Location = new System.Drawing.Point(1113, 289);
+            this.DTxtBox.Location = new System.Drawing.Point(1113, 299);
             this.DTxtBox.Name = "DTxtBox";
             this.DTxtBox.Size = new System.Drawing.Size(55, 20);
             this.DTxtBox.TabIndex = 22;
@@ -305,7 +296,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnDn001
             // 
             this.RBtnDn001.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnDn001.Location = new System.Drawing.Point(1177, 157);
+            this.RBtnDn001.Location = new System.Drawing.Point(1177, 133);
             this.RBtnDn001.Name = "RBtnDn001";
             this.RBtnDn001.Size = new System.Drawing.Size(13, 20);
             this.RBtnDn001.TabIndex = 24;
@@ -316,7 +307,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnUp001
             // 
             this.RBtnUp001.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUp001.Location = new System.Drawing.Point(1162, 157);
+            this.RBtnUp001.Location = new System.Drawing.Point(1162, 133);
             this.RBtnUp001.Name = "RBtnUp001";
             this.RBtnUp001.Size = new System.Drawing.Size(13, 20);
             this.RBtnUp001.TabIndex = 23;
@@ -327,7 +318,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnDn01
             // 
             this.RBtnDn01.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnDn01.Location = new System.Drawing.Point(1213, 157);
+            this.RBtnDn01.Location = new System.Drawing.Point(1136, 133);
             this.RBtnDn01.Name = "RBtnDn01";
             this.RBtnDn01.Size = new System.Drawing.Size(13, 20);
             this.RBtnDn01.TabIndex = 27;
@@ -338,7 +329,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnUp01
             // 
             this.RBtnUp01.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUp01.Location = new System.Drawing.Point(1198, 157);
+            this.RBtnUp01.Location = new System.Drawing.Point(1121, 133);
             this.RBtnUp01.Name = "RBtnUp01";
             this.RBtnUp01.Size = new System.Drawing.Size(13, 20);
             this.RBtnUp01.TabIndex = 26;
@@ -351,7 +342,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(1141, 131);
+            this.label3.Location = new System.Drawing.Point(1141, 107);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 19);
             this.label3.TabIndex = 28;
@@ -373,141 +364,16 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.DistortionMetodLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DistortionMetodLabel.AutoSize = true;
             this.DistortionMetodLabel.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.DistortionMetodLabel.Location = new System.Drawing.Point(1107, 186);
+            this.DistortionMetodLabel.Location = new System.Drawing.Point(1107, 169);
             this.DistortionMetodLabel.Name = "DistortionMetodLabel";
             this.DistortionMetodLabel.Size = new System.Drawing.Size(123, 19);
             this.DistortionMetodLabel.TabIndex = 31;
             this.DistortionMetodLabel.Text = "Distortion metod";
             // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label5.Location = new System.Drawing.Point(1123, 7);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(91, 19);
-            this.label5.TabIndex = 33;
-            this.label5.Text = "Crop Before";
-            // 
-            // CropBeforeChkBox
-            // 
-            this.CropBeforeChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CropBeforeChkBox.AutoSize = true;
-            this.CropBeforeChkBox.Checked = true;
-            this.CropBeforeChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CropBeforeChkBox.Location = new System.Drawing.Point(1214, 11);
-            this.CropBeforeChkBox.Name = "CropBeforeChkBox";
-            this.CropBeforeChkBox.Size = new System.Drawing.Size(15, 14);
-            this.CropBeforeChkBox.TabIndex = 34;
-            this.CropBeforeChkBox.UseVisualStyleBackColor = true;
-            // 
-            // HeightBeforeTxtBox
-            // 
-            this.HeightBeforeTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.HeightBeforeTxtBox.Location = new System.Drawing.Point(1159, 100);
-            this.HeightBeforeTxtBox.Name = "HeightBeforeTxtBox";
-            this.HeightBeforeTxtBox.Size = new System.Drawing.Size(55, 20);
-            this.HeightBeforeTxtBox.TabIndex = 40;
-            this.HeightBeforeTxtBox.Text = "100";
-            // 
-            // WidthBeforeTxtBox
-            // 
-            this.WidthBeforeTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.WidthBeforeTxtBox.Location = new System.Drawing.Point(1159, 75);
-            this.WidthBeforeTxtBox.Name = "WidthBeforeTxtBox";
-            this.WidthBeforeTxtBox.Size = new System.Drawing.Size(55, 20);
-            this.WidthBeforeTxtBox.TabIndex = 39;
-            this.WidthBeforeTxtBox.Text = "100";
-            // 
-            // YBeforeTxtBox
-            // 
-            this.YBeforeTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.YBeforeTxtBox.Location = new System.Drawing.Point(1159, 51);
-            this.YBeforeTxtBox.Name = "YBeforeTxtBox";
-            this.YBeforeTxtBox.Size = new System.Drawing.Size(55, 20);
-            this.YBeforeTxtBox.TabIndex = 38;
-            this.YBeforeTxtBox.Text = "0";
-            // 
-            // XBeforeTxtBox
-            // 
-            this.XBeforeTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.XBeforeTxtBox.Location = new System.Drawing.Point(1159, 27);
-            this.XBeforeTxtBox.Name = "XBeforeTxtBox";
-            this.XBeforeTxtBox.Size = new System.Drawing.Size(55, 20);
-            this.XBeforeTxtBox.TabIndex = 37;
-            this.XBeforeTxtBox.Text = "0";
-            // 
-            // label6
-            // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label6.Location = new System.Drawing.Point(1129, 27);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(18, 19);
-            this.label6.TabIndex = 41;
-            this.label6.Text = "X";
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label7.Location = new System.Drawing.Point(1129, 52);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(18, 19);
-            this.label7.TabIndex = 42;
-            this.label7.Text = "Y";
-            // 
-            // label8
-            // 
-            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label8.Location = new System.Drawing.Point(1115, 77);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(49, 19);
-            this.label8.TabIndex = 43;
-            this.label8.Text = "Width";
-            // 
-            // label10
-            // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label10.Location = new System.Drawing.Point(1111, 101);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(54, 19);
-            this.label10.TabIndex = 45;
-            this.label10.Text = "Height";
-            // 
-            // label11
-            // 
-            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label11.Location = new System.Drawing.Point(1216, 101);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(21, 19);
-            this.label11.TabIndex = 46;
-            this.label11.Text = "%";
-            // 
-            // label9
-            // 
-            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label9.Location = new System.Drawing.Point(1215, 77);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(21, 19);
-            this.label9.TabIndex = 47;
-            this.label9.Text = "%";
-            // 
             // ApplyBtn
             // 
             this.ApplyBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyBtn.Location = new System.Drawing.Point(1111, 630);
+            this.ApplyBtn.Location = new System.Drawing.Point(1111, 623);
             this.ApplyBtn.Name = "ApplyBtn";
             this.ApplyBtn.Size = new System.Drawing.Size(123, 36);
             this.ApplyBtn.TabIndex = 48;
@@ -518,18 +384,19 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RezultRTB
             // 
             this.RezultRTB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.RezultRTB.Location = new System.Drawing.Point(1113, 728);
+            this.RezultRTB.Location = new System.Drawing.Point(1113, 721);
             this.RezultRTB.Name = "RezultRTB";
-            this.RezultRTB.Size = new System.Drawing.Size(121, 102);
+            this.RezultRTB.Size = new System.Drawing.Size(121, 109);
             this.RezultRTB.TabIndex = 49;
             this.RezultRTB.Text = "";
+            this.RezultRTB.TextChanged += new System.EventHandler(this.RezultRTB_TextChanged);
             // 
             // label14
             // 
             this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label14.Location = new System.Drawing.Point(1120, 563);
+            this.label14.Location = new System.Drawing.Point(1120, 542);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(27, 19);
             this.label14.TabIndex = 59;
@@ -540,7 +407,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label15.Location = new System.Drawing.Point(1120, 511);
+            this.label15.Location = new System.Drawing.Point(1120, 490);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(27, 19);
             this.label15.TabIndex = 58;
@@ -551,7 +418,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label16.Location = new System.Drawing.Point(1129, 537);
+            this.label16.Location = new System.Drawing.Point(1129, 516);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(18, 19);
             this.label16.TabIndex = 57;
@@ -562,7 +429,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label17.Location = new System.Drawing.Point(1129, 484);
+            this.label17.Location = new System.Drawing.Point(1129, 463);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(18, 19);
             this.label17.TabIndex = 56;
@@ -571,7 +438,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // dYAfterTxtBox
             // 
             this.dYAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.dYAfterTxtBox.Location = new System.Drawing.Point(1155, 562);
+            this.dYAfterTxtBox.Location = new System.Drawing.Point(1155, 541);
             this.dYAfterTxtBox.Name = "dYAfterTxtBox";
             this.dYAfterTxtBox.Size = new System.Drawing.Size(47, 20);
             this.dYAfterTxtBox.TabIndex = 55;
@@ -580,7 +447,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // dXAfterTxtBox
             // 
             this.dXAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.dXAfterTxtBox.Location = new System.Drawing.Point(1155, 510);
+            this.dXAfterTxtBox.Location = new System.Drawing.Point(1155, 489);
             this.dXAfterTxtBox.Name = "dXAfterTxtBox";
             this.dXAfterTxtBox.Size = new System.Drawing.Size(47, 20);
             this.dXAfterTxtBox.TabIndex = 54;
@@ -589,7 +456,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // YAfterTxtBox
             // 
             this.YAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.YAfterTxtBox.Location = new System.Drawing.Point(1155, 536);
+            this.YAfterTxtBox.Location = new System.Drawing.Point(1155, 515);
             this.YAfterTxtBox.Name = "YAfterTxtBox";
             this.YAfterTxtBox.Size = new System.Drawing.Size(47, 20);
             this.YAfterTxtBox.TabIndex = 53;
@@ -598,7 +465,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // XAfterTxtBox
             // 
             this.XAfterTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.XAfterTxtBox.Location = new System.Drawing.Point(1155, 484);
+            this.XAfterTxtBox.Location = new System.Drawing.Point(1155, 463);
             this.XAfterTxtBox.Name = "XAfterTxtBox";
             this.XAfterTxtBox.Size = new System.Drawing.Size(47, 20);
             this.XAfterTxtBox.TabIndex = 52;
@@ -610,7 +477,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.CropAfterChkBox.AutoSize = true;
             this.CropAfterChkBox.Checked = true;
             this.CropAfterChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CropAfterChkBox.Location = new System.Drawing.Point(1212, 460);
+            this.CropAfterChkBox.Location = new System.Drawing.Point(1212, 439);
             this.CropAfterChkBox.Name = "CropAfterChkBox";
             this.CropAfterChkBox.Size = new System.Drawing.Size(15, 14);
             this.CropAfterChkBox.TabIndex = 51;
@@ -621,7 +488,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label18.Location = new System.Drawing.Point(1131, 456);
+            this.label18.Location = new System.Drawing.Point(1131, 435);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(80, 19);
             this.label18.TabIndex = 50;
@@ -631,9 +498,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.DistZeroBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DistZeroBtn.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.DistZeroBtn.Location = new System.Drawing.Point(1213, 215);
+            this.DistZeroBtn.Location = new System.Drawing.Point(1213, 198);
             this.DistZeroBtn.Name = "DistZeroBtn";
-            this.DistZeroBtn.Size = new System.Drawing.Size(21, 120);
+            this.DistZeroBtn.Size = new System.Drawing.Size(21, 122);
             this.DistZeroBtn.TabIndex = 62;
             this.DistZeroBtn.Text = "zero";
             this.DistZeroBtn.UseVisualStyleBackColor = true;
@@ -642,7 +509,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // SaveAsBtn
             // 
             this.SaveAsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveAsBtn.Location = new System.Drawing.Point(1111, 672);
+            this.SaveAsBtn.Location = new System.Drawing.Point(1111, 665);
             this.SaveAsBtn.Name = "SaveAsBtn";
             this.SaveAsBtn.Size = new System.Drawing.Size(53, 50);
             this.SaveAsBtn.TabIndex = 65;
@@ -653,7 +520,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // LoadFrBtn
             // 
             this.LoadFrBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.LoadFrBtn.Location = new System.Drawing.Point(1181, 672);
+            this.LoadFrBtn.Location = new System.Drawing.Point(1181, 665);
             this.LoadFrBtn.Name = "LoadFrBtn";
             this.LoadFrBtn.Size = new System.Drawing.Size(53, 50);
             this.LoadFrBtn.TabIndex = 66;
@@ -665,7 +532,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.ShowGridСhckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ShowGridСhckBox.AutoSize = true;
-            this.ShowGridСhckBox.Location = new System.Drawing.Point(1113, 611);
+            this.ShowGridСhckBox.Location = new System.Drawing.Point(1115, 604);
             this.ShowGridСhckBox.Name = "ShowGridСhckBox";
             this.ShowGridСhckBox.Size = new System.Drawing.Size(75, 17);
             this.ShowGridСhckBox.TabIndex = 67;
@@ -676,7 +543,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // ETxtBox
             // 
             this.ETxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ETxtBox.Location = new System.Drawing.Point(1113, 315);
+            this.ETxtBox.Location = new System.Drawing.Point(1113, 249);
             this.ETxtBox.Name = "ETxtBox";
             this.ETxtBox.Size = new System.Drawing.Size(55, 20);
             this.ETxtBox.TabIndex = 70;
@@ -685,9 +552,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // EBtnDn
             // 
             this.EBtnDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EBtnDn.Location = new System.Drawing.Point(1174, 316);
+            this.EBtnDn.Location = new System.Drawing.Point(1174, 248);
             this.EBtnDn.Name = "EBtnDn";
-            this.EBtnDn.Size = new System.Drawing.Size(13, 16);
+            this.EBtnDn.Size = new System.Drawing.Size(13, 22);
             this.EBtnDn.TabIndex = 69;
             this.EBtnDn.Text = "v";
             this.EBtnDn.UseVisualStyleBackColor = true;
@@ -696,9 +563,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // EBtnUp
             // 
             this.EBtnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EBtnUp.Location = new System.Drawing.Point(1192, 316);
+            this.EBtnUp.Location = new System.Drawing.Point(1192, 248);
             this.EBtnUp.Name = "EBtnUp";
-            this.EBtnUp.Size = new System.Drawing.Size(13, 16);
+            this.EBtnUp.Size = new System.Drawing.Size(13, 22);
             this.EBtnUp.TabIndex = 68;
             this.EBtnUp.Text = "^";
             this.EBtnUp.UseVisualStyleBackColor = true;
@@ -710,7 +577,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.AutoReloadChkBox.AutoSize = true;
             this.AutoReloadChkBox.Checked = true;
             this.AutoReloadChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.AutoReloadChkBox.Location = new System.Drawing.Point(1115, 588);
+            this.AutoReloadChkBox.Location = new System.Drawing.Point(1115, 581);
             this.AutoReloadChkBox.Name = "AutoReloadChkBox";
             this.AutoReloadChkBox.Size = new System.Drawing.Size(80, 17);
             this.AutoReloadChkBox.TabIndex = 71;
@@ -720,7 +587,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm11TxtBox
             // 
             this.Sm11TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm11TxtBox.Location = new System.Drawing.Point(1110, 363);
+            this.Sm11TxtBox.Location = new System.Drawing.Point(1110, 346);
             this.Sm11TxtBox.Name = "Sm11TxtBox";
             this.Sm11TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm11TxtBox.TabIndex = 73;
@@ -729,7 +596,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm12TxtBox
             // 
             this.Sm12TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm12TxtBox.Location = new System.Drawing.Point(1156, 363);
+            this.Sm12TxtBox.Location = new System.Drawing.Point(1156, 346);
             this.Sm12TxtBox.Name = "Sm12TxtBox";
             this.Sm12TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm12TxtBox.TabIndex = 74;
@@ -738,7 +605,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm13TxtBox
             // 
             this.Sm13TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm13TxtBox.Location = new System.Drawing.Point(1199, 363);
+            this.Sm13TxtBox.Location = new System.Drawing.Point(1199, 346);
             this.Sm13TxtBox.Name = "Sm13TxtBox";
             this.Sm13TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm13TxtBox.TabIndex = 75;
@@ -747,7 +614,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm23TxtBox
             // 
             this.Sm23TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm23TxtBox.Location = new System.Drawing.Point(1199, 389);
+            this.Sm23TxtBox.Location = new System.Drawing.Point(1199, 372);
             this.Sm23TxtBox.Name = "Sm23TxtBox";
             this.Sm23TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm23TxtBox.TabIndex = 78;
@@ -756,7 +623,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm22TxtBox
             // 
             this.Sm22TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm22TxtBox.Location = new System.Drawing.Point(1156, 389);
+            this.Sm22TxtBox.Location = new System.Drawing.Point(1156, 372);
             this.Sm22TxtBox.Name = "Sm22TxtBox";
             this.Sm22TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm22TxtBox.TabIndex = 77;
@@ -765,7 +632,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm21TxtBox
             // 
             this.Sm21TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm21TxtBox.Location = new System.Drawing.Point(1110, 389);
+            this.Sm21TxtBox.Location = new System.Drawing.Point(1110, 372);
             this.Sm21TxtBox.Name = "Sm21TxtBox";
             this.Sm21TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm21TxtBox.TabIndex = 76;
@@ -774,7 +641,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm33TxtBox
             // 
             this.Sm33TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm33TxtBox.Location = new System.Drawing.Point(1199, 415);
+            this.Sm33TxtBox.Location = new System.Drawing.Point(1199, 398);
             this.Sm33TxtBox.Name = "Sm33TxtBox";
             this.Sm33TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm33TxtBox.TabIndex = 81;
@@ -783,7 +650,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm32TxtBox
             // 
             this.Sm32TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm32TxtBox.Location = new System.Drawing.Point(1156, 415);
+            this.Sm32TxtBox.Location = new System.Drawing.Point(1156, 398);
             this.Sm32TxtBox.Name = "Sm32TxtBox";
             this.Sm32TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm32TxtBox.TabIndex = 80;
@@ -792,7 +659,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // Sm31TxtBox
             // 
             this.Sm31TxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Sm31TxtBox.Location = new System.Drawing.Point(1110, 415);
+            this.Sm31TxtBox.Location = new System.Drawing.Point(1110, 398);
             this.Sm31TxtBox.Name = "Sm31TxtBox";
             this.Sm31TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm31TxtBox.TabIndex = 79;
@@ -802,7 +669,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.ZeroCropAfterBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ZeroCropAfterBtn.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.ZeroCropAfterBtn.Location = new System.Drawing.Point(1212, 482);
+            this.ZeroCropAfterBtn.Location = new System.Drawing.Point(1212, 461);
             this.ZeroCropAfterBtn.Name = "ZeroCropAfterBtn";
             this.ZeroCropAfterBtn.Size = new System.Drawing.Size(21, 100);
             this.ZeroCropAfterBtn.TabIndex = 82;
@@ -816,7 +683,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.DistChkBox.AutoSize = true;
             this.DistChkBox.Checked = true;
             this.DistChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DistChkBox.Location = new System.Drawing.Point(1228, 190);
+            this.DistChkBox.Location = new System.Drawing.Point(1228, 173);
             this.DistChkBox.Name = "DistChkBox";
             this.DistChkBox.Size = new System.Drawing.Size(15, 14);
             this.DistChkBox.TabIndex = 85;
@@ -825,7 +692,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnUpDn
             // 
             this.RBtnUpDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUpDn.Location = new System.Drawing.Point(1141, 157);
+            this.RBtnUpDn.Location = new System.Drawing.Point(1217, 133);
             this.RBtnUpDn.Name = "RBtnUpDn";
             this.RBtnUpDn.Size = new System.Drawing.Size(13, 20);
             this.RBtnUpDn.TabIndex = 87;
@@ -836,7 +703,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnUp90
             // 
             this.RBtnUp90.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUp90.Location = new System.Drawing.Point(1125, 157);
+            this.RBtnUp90.Location = new System.Drawing.Point(1201, 133);
             this.RBtnUp90.Name = "RBtnUp90";
             this.RBtnUp90.Size = new System.Drawing.Size(13, 20);
             this.RBtnUp90.TabIndex = 86;
@@ -849,17 +716,65 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label13.Location = new System.Drawing.Point(1109, 339);
+            this.label13.Location = new System.Drawing.Point(1109, 321);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(129, 19);
             this.label13.TabIndex = 84;
             this.label13.Text = "Camera parameters";
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.label5.Location = new System.Drawing.Point(1148, 37);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(49, 19);
+            this.label5.TabIndex = 88;
+            this.label5.Text = "Zoom";
+            // 
+            // PZoomBtn
+            // 
+            this.PZoomBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.PZoomBtn.Location = new System.Drawing.Point(1163, 67);
+            this.PZoomBtn.Name = "PZoomBtn";
+            this.PZoomBtn.Size = new System.Drawing.Size(21, 20);
+            this.PZoomBtn.TabIndex = 90;
+            this.PZoomBtn.Text = "-";
+            this.PZoomBtn.UseVisualStyleBackColor = true;
+            this.PZoomBtn.Click += new System.EventHandler(this.PZoomBtn_Click);
+            // 
+            // MZoomBtn
+            // 
+            this.MZoomBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.MZoomBtn.Location = new System.Drawing.Point(1189, 67);
+            this.MZoomBtn.Name = "MZoomBtn";
+            this.MZoomBtn.Size = new System.Drawing.Size(22, 20);
+            this.MZoomBtn.TabIndex = 89;
+            this.MZoomBtn.Text = "+";
+            this.MZoomBtn.UseVisualStyleBackColor = true;
+            this.MZoomBtn.Click += new System.EventHandler(this.MZoomBtn_Click);
+            // 
+            // ZoomLbl
+            // 
+            this.ZoomLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ZoomLbl.AutoSize = true;
+            this.ZoomLbl.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.ZoomLbl.Location = new System.Drawing.Point(1126, 67);
+            this.ZoomLbl.Name = "ZoomLbl";
+            this.ZoomLbl.Size = new System.Drawing.Size(17, 19);
+            this.ZoomLbl.TabIndex = 91;
+            this.ZoomLbl.Text = "1";
             // 
             // ImgFixingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1243, 869);
+            this.Controls.Add(this.ZoomLbl);
+            this.Controls.Add(this.PZoomBtn);
+            this.Controls.Add(this.MZoomBtn);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.RBtnUpDn);
             this.Controls.Add(this.RBtnUp90);
             this.Controls.Add(this.DistChkBox);
@@ -894,18 +809,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Controls.Add(this.label18);
             this.Controls.Add(this.RezultRTB);
             this.Controls.Add(this.ApplyBtn);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.HeightBeforeTxtBox);
-            this.Controls.Add(this.WidthBeforeTxtBox);
-            this.Controls.Add(this.YBeforeTxtBox);
-            this.Controls.Add(this.XBeforeTxtBox);
-            this.Controls.Add(this.CropBeforeChkBox);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.DistortionMetodLabel);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -969,18 +872,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Label label3;
         private Label label4;
         private Label DistortionMetodLabel;
-        private Label label5;
-        private CheckBox CropBeforeChkBox;
-        private TextBox HeightBeforeTxtBox;
-        private TextBox WidthBeforeTxtBox;
-        private TextBox YBeforeTxtBox;
-        private TextBox XBeforeTxtBox;
-        private Label label6;
-        private Label label7;
-        private Label label8;
-        private Label label10;
-        private Label label11;
-        private Label label9;
         private Button ApplyBtn;
         private RichTextBox RezultRTB;
         private Label label14;
@@ -1015,5 +906,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Button RBtnUpDn;
         private Button RBtnUp90;
         private Label label13;
+        private Label label5;
+        private Button PZoomBtn;
+        private Button MZoomBtn;
+        private Label ZoomLbl;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ImgAssemblingLibOpenCV.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,7 +13,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
     public partial class EditingStitchingPlan : Form
     {
         private AssemblyPlan AssemblyPlan;
-        private AssemblyPlan OldPlan;
         private bool PersentOnOff = true;
         private FileEdit fileEdit = new FileEdit();
         public bool PlanIsUpDate = true;
@@ -61,12 +59,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         public EditingStitchingPlan(AssemblyPlan assemblyPlan)
         {
             InitializeComponent();
-            OldPlan = (AssemblyPlan)assemblyPlan.Clone();
             if (SynchronizationContext.Current != null) _context = SynchronizationContext.Current;
             else _context = new SynchronizationContext();
 
             if (assemblyPlan == null) AssemblyPlan = new AssemblyPlan();
-            else AssemblyPlan = assemblyPlan;
+            AssemblyPlan = assemblyPlan;
             LoadSettings();
 
             WorkingDirectoryTxtBox.AllowDrop = true;
@@ -145,11 +142,59 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             AdditionalFilterChckBox.Checked = AssemblyPlan.AdditionalFilter;
             SaveResultChckBox.Checked = AssemblyPlan.SaveRezults;
             SpeedCountingСhckBox.Checked = AssemblyPlan.SpeedCounting;
+            OpenResultChckBox.Checked = AssemblyPlan.ShowAssemblingFile;
 
             MillimetersInPixelTxtBox.Text = AssemblyPlan.MillimetersInPixel.ToString();
             TimePerFrameTxtBox.Text = AssemblyPlan.TimePerFrame.ToString();
         }
+        private void UpdateAssemblyPlan()
+        {
+            AssemblyPlan.BitMap = BitMapChckBox.Checked;
+            AssemblyPlan.WorkingDirectory = WorkingDirectoryTxtBox.Text;
+            AssemblyPlan.FixImg = FixImgChckBox.Checked;
+            AssemblyPlan.FixingImgDirectory = FixingImgDirectoryTxtBox.Text;
+            AssemblyPlan.ImgFixingPlan = ImgFixingPlanTxtBox.Text;
+            AssemblyPlan.ChekFixImg = ChekFixedImgsChckBox.Checked;
 
+            AssemblyPlan.FindKeyPoints = FindKeyPointsСhckBox.Checked;
+            AssemblyPlan.AdditionalFilter = AdditionalFilterChckBox.Checked;
+
+            AssemblyPlan.DefaultParameters = DefaultParametersCheckBox.Checked;
+            AssemblyPlan.Percent = label6.Visible;
+            if (DefaultParametersCheckBox.Checked)
+            {
+                AssemblyPlan.Period = 1;
+                AssemblyPlan.Delta = 0;
+                AssemblyPlan.From = 0;
+                AssemblyPlan.To = 100;
+            }
+            else
+            {
+                int period = 1, delta = 0, from = 0, to = 100;
+                Int32.TryParse(PeriodTxtBox.Text, out period);
+                Int32.TryParse(DeltaTxtBox.Text, out delta);
+                Int32.TryParse(FromTxtBox.Text, out from);
+                Int32.TryParse(ToTxtBox.Text, out to);
+                AssemblyPlan.Period = period;
+                AssemblyPlan.Delta = delta;
+                AssemblyPlan.From = from;
+                AssemblyPlan.To = to;
+            }
+
+            AssemblyPlan.Stitch = StitchСhckBox.Checked;
+            AssemblyPlan.ChekStitchPlan = ChekStitchPlanСhckBox.Checked;
+            AssemblyPlan.StitchingDirectory = StitchingDirectoryTxtBox.Text;
+
+            AssemblyPlan.SaveRezults = SaveResultChckBox.Checked;
+            AssemblyPlan.SpeedCounting = SpeedCountingСhckBox.Checked;
+            AssemblyPlan.ShowAssemblingFile = OpenResultChckBox.Checked;
+
+            double millimetersInPixel = 0, timePerFrame = 0;
+            double.TryParse(MillimetersInPixelTxtBox.Text, out millimetersInPixel);
+            double.TryParse(TimePerFrameTxtBox.Text, out timePerFrame);
+            AssemblyPlan.MillimetersInPixel = millimetersInPixel;
+            AssemblyPlan.TimePerFrame = timePerFrame;
+        }
         private void AutoChckBox_CheckedChanged(object sender, EventArgs e) => FixStitchingDirectoryTxtBox();
         private void AutoChckBoxInvok()
         {
@@ -204,61 +249,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if (fileEdit.SaveJson(saveFileDialog1.FileName, AssemblyPlan)) InfoLabel.Text = "File saved: " + saveFileDialog1.FileName;
                 else InfoLabel.Text = "Saving Err: " + saveFileDialog1.FileName+"!!!";
             }
-        }
-
-        private void UpdateAssemblyPlan()
-        {
-            //AssemblyPlan.FileNameCheck = CheckFileNamesChckBox.Checked;
-            //AssemblyPlan.FileNameFixing = FixFileNamesChckBox.Checked;
-            //AssemblyPlan.FileNameCheck = CheckFileNamesChckBox.Checked;
-            //AssemblyPlan.DelFileCopy = FindCopyChckBox.Checked;
-
-            AssemblyPlan.BitMap = BitMapChckBox.Checked;
-            AssemblyPlan.WorkingDirectory = WorkingDirectoryTxtBox.Text;
-            AssemblyPlan.FixImg = FixImgChckBox.Checked;
-            AssemblyPlan.FixingImgDirectory = FixingImgDirectoryTxtBox.Text;
-            AssemblyPlan.ImgFixingPlan = ImgFixingPlanTxtBox.Text;
-            AssemblyPlan.ChekFixImg = ChekFixedImgsChckBox.Checked;
-
-            AssemblyPlan.FindKeyPoints = FindKeyPointsСhckBox.Checked;
-            AssemblyPlan.AdditionalFilter = AdditionalFilterChckBox.Checked;
-
-            AssemblyPlan.DefaultParameters = DefaultParametersCheckBox.Checked;
-            AssemblyPlan.Percent = label6.Visible;
-            if (DefaultParametersCheckBox.Checked)
-            {
-                AssemblyPlan.Period = 1;
-                AssemblyPlan.Delta = 0;
-                AssemblyPlan.From = 0;
-                AssemblyPlan.To = 100;
-            }
-            else
-            {
-                int period = 1, delta = 0, from = 0, to = 100;
-                Int32.TryParse(PeriodTxtBox.Text, out period);
-                Int32.TryParse(DeltaTxtBox.Text, out delta);
-                Int32.TryParse(FromTxtBox.Text, out from);
-                Int32.TryParse(ToTxtBox.Text, out to);
-                AssemblyPlan.Period = period;
-                AssemblyPlan.Delta = delta;
-                AssemblyPlan.From = from;
-                AssemblyPlan.To = to;
-            }
-
-            AssemblyPlan.Stitch = StitchСhckBox.Checked;
-            AssemblyPlan.ChekStitchPlan = ChekStitchPlanСhckBox.Checked;
-            AssemblyPlan.StitchingDirectory = StitchingDirectoryTxtBox.Text;
-            
-            AssemblyPlan.SaveRezults = SaveResultChckBox.Checked;
-            AssemblyPlan.SpeedCounting = SpeedCountingСhckBox.Checked;
-            AssemblyPlan.ShowAssemblingFile = OpenResultChckBox.Checked;
-
-            //SpeedCountingСhckBox.Checked = AssemblyPlan.SpeedCounting;
-            double millimetersInPixel = 0, timePerFrame = 0;
-            double.TryParse(MillimetersInPixelTxtBox.Text, out millimetersInPixel);
-            double.TryParse(TimePerFrameTxtBox.Text, out timePerFrame);
-            AssemblyPlan.MillimetersInPixel = millimetersInPixel;
-            AssemblyPlan.TimePerFrame = timePerFrame;
         }
         private void LoadBtn_Click(object sender, EventArgs e)
         {
@@ -402,7 +392,12 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             return new string(charList.ToArray());
         }
 
-        private async void StartBtn_Click(object sender, EventArgs e) => await StartAssembling();
+        //private async void StartBtn_Click(object sender, EventArgs e) => await StartAssembling();
+
+        private async void Test_Click(object sender, EventArgs e)
+        {
+            await StartAssembling();
+        }
         public async Task<bool> StartAssembling(Bitmap[] bitmapArray)
         {
             if (bitmapArray.Length == 0) return SetErr("Err StartAssembling.bitmapArray = 0!!!");
@@ -458,13 +453,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         {
             if (OpenResultChckBox.Checked) SaveResultChckBox.Checked = true;
         }
-
         private void SavingImgWBitmapChckBox_CheckedChanged(object sender, EventArgs e)
         {
             FixingImgDirectoryTxtBox.Enabled = SavingImgWBitmapChckBox.Checked;
             label2.Enabled = SavingImgWBitmapChckBox.Checked;
         }
-
         private void CheckBitMap()
         {
             if(!BitMapChckBox.Checked) SavingImgWBitmapChckBox.Checked = BitMapChckBox.Checked;

@@ -225,7 +225,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 {
                     logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                     if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
-
+                    SaveImgFixingRezultToFile = true;
                     ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, SaveImgFixingRezultToFile, AssemblyPlan.FixingImgDirectory);
                     if (contectIsOn)
                     {

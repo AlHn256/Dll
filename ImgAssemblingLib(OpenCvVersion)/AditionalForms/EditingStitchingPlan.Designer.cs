@@ -66,7 +66,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.AdditionalFilterChckBox = new System.Windows.Forms.CheckBox();
-            this.StartBtn = new System.Windows.Forms.Button();
             this.OpenResultChckBox = new System.Windows.Forms.CheckBox();
             this.BitMapChckBox = new System.Windows.Forms.CheckBox();
             this.InfoLabel = new System.Windows.Forms.Label();
@@ -102,7 +101,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // SaveToBtn
             // 
-            this.SaveToBtn.Location = new System.Drawing.Point(192, 339);
+            this.SaveToBtn.Location = new System.Drawing.Point(12, 339);
             this.SaveToBtn.Name = "SaveToBtn";
             this.SaveToBtn.Size = new System.Drawing.Size(78, 30);
             this.SaveToBtn.TabIndex = 4;
@@ -312,7 +311,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // LoadBtn
             // 
-            this.LoadBtn.Location = new System.Drawing.Point(271, 339);
+            this.LoadBtn.Location = new System.Drawing.Point(91, 339);
             this.LoadBtn.Name = "LoadBtn";
             this.LoadBtn.Size = new System.Drawing.Size(85, 30);
             this.LoadBtn.TabIndex = 48;
@@ -416,16 +415,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.AdditionalFilterChckBox.Text = "Additional Filter";
             this.AdditionalFilterChckBox.UseVisualStyleBackColor = true;
             // 
-            // StartBtn
-            // 
-            this.StartBtn.Location = new System.Drawing.Point(14, 339);
-            this.StartBtn.Name = "StartBtn";
-            this.StartBtn.Size = new System.Drawing.Size(90, 30);
-            this.StartBtn.TabIndex = 60;
-            this.StartBtn.Text = "Start";
-            this.StartBtn.UseVisualStyleBackColor = true;
-            this.StartBtn.Click += new System.EventHandler(this.StartBtn_Click);
-            // 
             // OpenResultChckBox
             // 
             this.OpenResultChckBox.AutoSize = true;
@@ -479,7 +468,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Controls.Add(this.InfoLabel);
             this.Controls.Add(this.BitMapChckBox);
             this.Controls.Add(this.OpenResultChckBox);
-            this.Controls.Add(this.StartBtn);
             this.Controls.Add(this.AdditionalFilterChckBox);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
@@ -567,7 +555,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Label label9;
         private Label label10;
         private CheckBox AdditionalFilterChckBox;
-        private Button StartBtn;
         private CheckBox OpenResultChckBox;
         private CheckBox BitMapChckBox;
         private Label InfoLabel;

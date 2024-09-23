@@ -361,9 +361,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // TestImgFixingBtn
             // 
-            this.TestImgFixingBtn.Location = new System.Drawing.Point(93, 49);
+            this.TestImgFixingBtn.Location = new System.Drawing.Point(87, 49);
             this.TestImgFixingBtn.Name = "TestImgFixingBtn";
-            this.TestImgFixingBtn.Size = new System.Drawing.Size(54, 23);
+            this.TestImgFixingBtn.Size = new System.Drawing.Size(60, 23);
             this.TestImgFixingBtn.TabIndex = 37;
             this.TestImgFixingBtn.Text = "Edit plan";
             this.TestImgFixingBtn.UseVisualStyleBackColor = true;
@@ -373,7 +373,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.StitchingByPlanBtn.Location = new System.Drawing.Point(10, 49);
             this.StitchingByPlanBtn.Name = "StitchingByPlanBtn";
-            this.StitchingByPlanBtn.Size = new System.Drawing.Size(78, 23);
+            this.StitchingByPlanBtn.Size = new System.Drawing.Size(71, 23);
             this.StitchingByPlanBtn.TabIndex = 38;
             this.StitchingByPlanBtn.Text = "Stitch";
             this.StitchingByPlanBtn.UseVisualStyleBackColor = true;
@@ -392,7 +392,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // GetSpeedBtn
             // 
             this.GetSpeedBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.GetSpeedBtn.Location = new System.Drawing.Point(1494, 49);
+            this.GetSpeedBtn.Location = new System.Drawing.Point(1456, 49);
             this.GetSpeedBtn.Name = "GetSpeedBtn";
             this.GetSpeedBtn.Size = new System.Drawing.Size(67, 23);
             this.GetSpeedBtn.TabIndex = 40;
@@ -403,9 +403,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RndBtn
             // 
             this.RndBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RndBtn.Location = new System.Drawing.Point(1457, 49);
+            this.RndBtn.Location = new System.Drawing.Point(1525, 49);
             this.RndBtn.Name = "RndBtn";
-            this.RndBtn.Size = new System.Drawing.Size(32, 23);
+            this.RndBtn.Size = new System.Drawing.Size(38, 23);
             this.RndBtn.TabIndex = 41;
             this.RndBtn.Text = "Rnd";
             this.RndBtn.UseVisualStyleBackColor = true;

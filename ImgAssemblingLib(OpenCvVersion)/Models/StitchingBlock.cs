@@ -260,7 +260,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 else ErrLine +=" "+ errText;
             }
         }
-
         public List<AreaForDel> FindeBlockForDelet()
         {
             List<AreaForDel> areasForDelet = new List<AreaForDel>();
@@ -272,7 +271,11 @@ namespace ImgAssemblingLibOpenCV.Models
             areasForDelet = GetAreasForDel(Area,maxErrLvl);
             return JoinAreas(areasForDelet, SelectedFiles.Count);
         }
-
+        public void DeletAreas(List<StitchingBlock.AreaForDel> areasForDelet)
+        {
+            if (areasForDelet.Count == 0 || SelectedFiles == null || SelectedFiles.Count == 0) return;
+            for (int i = areasForDelet.Count - 1; i > -1; i--) SelectedFiles.RemoveRange(areasForDelet[i].From, areasForDelet[i].To - areasForDelet[i].From);
+        }
         private int[] FindErrs()
         {
             int[] Errors = new int[SelectedFiles.Count];
@@ -288,13 +291,11 @@ namespace ImgAssemblingLibOpenCV.Models
                     tmpList.Add(Tmp);
                     continue;
                 }
-
                 if (SelectedFiles[i].Direction != Direction && SelectedFiles[i].ErrCode != EnumErrCode.Copy)
                 {
                     Errors[i]++;
                     Tmp = new tmp(i, "Direction");
                 }
-
                 if (prevCopy && SelectedFiles[i].ErrCode == EnumErrCode.Copy)
                 {
                     Errors[i]++;
@@ -308,7 +309,6 @@ namespace ImgAssemblingLibOpenCV.Models
                     Errors[i]++;
                     Tmp.Add("IsErr");
                 }
-
                 //if (SelectedFiles[i].AverageShift < 10 && SelectedFiles[i].ErrCode != EnumErrCode.Copy)
                 //{
                 //    Errors[i]++;
@@ -1136,7 +1136,6 @@ namespace ImgAssemblingLibOpenCV.Models
         {
             shift = Math.Abs(shift);
             Mat rezult = new Mat();
-
             if (Img1.Width == 0 || Img1.Height == 0 || Img2.Width == 0 || Img2.Height == 0)
             {
                 if (Img1.Width == 0) SetErr("Err Img1.Width == 0 !!!");
@@ -1309,12 +1308,6 @@ namespace ImgAssemblingLibOpenCV.Models
             else PlanName = fileEdit.GetDefoltDirectory() + "Plan" + fileList.Length + ".spn";
 
             return PlanName;
-        }
-
-        public void DeletAreas(List<StitchingBlock.AreaForDel> areasForDelet)
-        {
-            if (areasForDelet.Count == 0 || SelectedFiles == null || SelectedFiles.Count == 0) return;
-            for (int i = areasForDelet.Count - 1; i > -1; i--)SelectedFiles.RemoveRange(areasForDelet[i].From, areasForDelet[i].To - areasForDelet[i].From);
         }
     }
 }

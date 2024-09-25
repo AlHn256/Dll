@@ -27,35 +27,35 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             return false;
         }
 
-        private bool ClearErr()
-        {
-            ErrText = string.Empty;
-            ErrList.Clear();
-            return false;
-        }
-        public EditingStitchingPlan(string assemblingFile)
-        {
-            InitializeComponent();
-            if (string.IsNullOrEmpty(assemblingFile))
-            {
-                SetErr("Err EditingStitchingPlan.AssemblingFile IsNullOrEmpty!!!");
-                return;
-            }
+        //private bool ClearErr()
+        //{
+        //    ErrText = string.Empty;
+        //    ErrList.Clear();
+        //    return false;
+        //}
+        //public EditingStitchingPlan(string assemblingFile)
+        //{
+        //    InitializeComponent();
+        //    if (string.IsNullOrEmpty(assemblingFile))
+        //    {
+        //        SetErr("Err EditingStitchingPlan.AssemblingFile IsNullOrEmpty!!!");
+        //        return;
+        //    }
             
-            if(!File.Exists(assemblingFile))
-            {
-                SetErr("Err EditingStitchingPlan.AssemblingFile: "+ assemblingFile + " not founded!!!");
-                return;
-            }
-            LoadAssemblyPlan(assemblingFile);
+        //    if(!File.Exists(assemblingFile))
+        //    {
+        //        SetErr("Err EditingStitchingPlan.AssemblingFile: "+ assemblingFile + " not founded!!!");
+        //        return;
+        //    }
+        //    LoadAssemblyPlan(assemblingFile);
 
-            if(AssemblyPlan==null)
-            {
-                SetErr("Err EditingStitchingPlan.AssemblyPlan don't loaded!!!");
-                return;
-            }
-            OpenResultChckBox.Checked = (AssemblyPlan.SaveRezults && AssemblyPlan.ShowAssemblingFile);
-        }
+        //    if(AssemblyPlan==null)
+        //    {
+        //        SetErr("Err EditingStitchingPlan.AssemblyPlan don't loaded!!!");
+        //        return;
+        //    }
+        //    OpenResultChckBox.Checked = (AssemblyPlan.SaveRezults && AssemblyPlan.ShowAssemblingFile);
+        //}
         public EditingStitchingPlan(AssemblyPlan assemblyPlan)
         {
             InitializeComponent();
@@ -73,6 +73,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             ImgFixingPlanTxtBox.AllowDrop = true;
             ImgFixingPlanTxtBox.DragDrop += ImgFixingPlanTxtBox_DragDrop;
             ImgFixingPlanTxtBox.DragEnter += ImgFixingPlanTxtBox_DragEnter;
+
+            ToolTip toolTip1 = new ToolTip();
+            toolTip1.SetToolTip(SavingImgWBitmapChckBox, "Принудительная запись исправленных изображений в файлы");
         }
         public AssemblyPlan GetAssemblingPlan() => AssemblyPlan;
         void WindowsForm_DragEnter(object sender, DragEventArgs e)
@@ -101,6 +104,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void LoadSettings()
         {
             BitMapChckBox.Checked = AssemblyPlan.BitMap;
+            if (BitMapChckBox.Checked)  SavingImgWBitmapChckBox.Checked = AssemblyPlan.SaveImgFixingRezultToFile;
             CheckBitMap();
 
             WorkingDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory;
@@ -150,6 +154,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void UpdateAssemblyPlan()
         {
             AssemblyPlan.BitMap = BitMapChckBox.Checked;
+            if(BitMapChckBox.Checked) AssemblyPlan.SaveImgFixingRezultToFile = SavingImgWBitmapChckBox.Checked;
             AssemblyPlan.WorkingDirectory = WorkingDirectoryTxtBox.Text;
             AssemblyPlan.FixImg = FixImgChckBox.Checked;
             AssemblyPlan.FixingImgDirectory = FixingImgDirectoryTxtBox.Text;
@@ -394,10 +399,10 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
         //private async void StartBtn_Click(object sender, EventArgs e) => await StartAssembling();
 
-        private async void Test_Click(object sender, EventArgs e)
-        {
-            await StartAssembling();
-        }
+        //private async void Test_Click(object sender, EventArgs e)
+        //{
+        //    await StartAssembling();
+        //}
         public async Task<bool> StartAssembling(Bitmap[] bitmapArray)
         {
             if (bitmapArray.Length == 0) return SetErr("Err StartAssembling.bitmapArray = 0!!!");
@@ -405,46 +410,45 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (await assembling.StartAssembling()) return true; // Запуск сборки изображения
             else return SetErr(assembling.ErrText);
         }
-        private async Task<bool> StartAssembling()
-        {
-            if (AssemblyPlan == null)AssemblyPlan = new AssemblyPlan();
-            UpdateAssemblyPlan(); // Подготовка плана сборки
-            InfoLabel.Text = "Start Assembling";
+        //private async Task<bool> StartAssembling()
+        //{
+        //    if (AssemblyPlan == null)AssemblyPlan = new AssemblyPlan();
+        //    UpdateAssemblyPlan(); // Подготовка плана сборки
+        //    InfoLabel.Text = "Start Assembling";
             
-            Assembling assembling;
-            if (BitMapChckBox.Checked) // Вариант сборки с помощью массива битмапов
-            {
-                string ImgFixingPlan = string.IsNullOrEmpty(ImgFixingPlanTxtBox.Text) ? string.Empty : ImgFixingPlanTxtBox.Text; // Файл с параментрами корректировки изображений
-                string WorkingDirectory = string.IsNullOrEmpty(WorkingDirectoryTxtBox.Text) ? string.Empty : WorkingDirectoryTxtBox.Text; // Папка изображений для испраления
-                                                                                                                                          //string WorkingDirectory = "E:\All\Side1\Left"; // Папка изображений для испраления
-                if (!fileEdit.ChkDir(WorkingDirectory)) return false;
-                //Для имитации загружаем файлы из папки и создаем массив битмапов
-                FileInfo[] fileList = fileEdit.SearchFiles(WorkingDirectory);
-                if (fileList.Length == 0) return false;
-                Bitmap[] dataArray = fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
-                assembling = new Assembling(AssemblyPlan, dataArray, _context);
-                assembling.SaveImgFixingRezultToFile = SavingImgWBitmapChckBox.Checked;
-            } // Вариант сборки через файлы или ссылки на них
-            else assembling = new Assembling(AssemblyPlan, _context);
+        //    Assembling assembling;
+        //    if (BitMapChckBox.Checked) // Вариант сборки с помощью массива битмапов
+        //    {
+        //        string ImgFixingPlan = string.IsNullOrEmpty(ImgFixingPlanTxtBox.Text) ? string.Empty : ImgFixingPlanTxtBox.Text; // Файл с параментрами корректировки изображений
+        //        string WorkingDirectory = string.IsNullOrEmpty(WorkingDirectoryTxtBox.Text) ? string.Empty : WorkingDirectoryTxtBox.Text; // Папка изображений для испраления
+        //                                                                                                                                  //string WorkingDirectory = "E:\All\Side1\Left"; // Папка изображений для испраления
+        //        if (!fileEdit.ChkDir(WorkingDirectory)) return false;
+        //        //Для имитации загружаем файлы из папки и создаем массив битмапов
+        //        FileInfo[] fileList = fileEdit.SearchFiles(WorkingDirectory);
+        //        if (fileList.Length == 0) return false;
+        //        Bitmap[] dataArray = fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
+        //        assembling = new Assembling(AssemblyPlan, dataArray, _context);
+        //        assembling.SaveImgFixingRezultToFile = SavingImgWBitmapChckBox.Checked;
+        //    } // Вариант сборки через файлы или ссылки на них
+        //    else assembling = new Assembling(AssemblyPlan, _context);
             
-            assembling.RTBAddInfo += rtbText_UpDateInfo;
-            if (await assembling.StartAssembling())// Запуск сборки изображения
-            {
-                InfoLabel.Text = "Assembling is finished!";
-                if (OpenResultChckBox.Checked)
-                {
-                    string SavedFileName = assembling.GetSavedFileName();
-                    if (!string.IsNullOrEmpty(SavedFileName)) fileEdit.OpenFileDir(SavedFileName);
-                }
-                return true;
-            }
-            else
-            {
-                InfoLabel.Text = assembling.ErrText;
-                return false;
-            }
-        }
-        private void rtbText_UpDateInfo(string text) => InfoLabel.Text = text;
+        //    assembling.RTBAddInfo += rtbText_UpDateInfo;
+        //    if (await assembling.StartAssembling())// Запуск сборки изображения
+        //    {
+        //        InfoLabel.Text = "Assembling is finished!";
+        //        if (OpenResultChckBox.Checked)
+        //        {
+        //            string SavedFileName = assembling.GetSavedFileName();
+        //            if (!string.IsNullOrEmpty(SavedFileName)) fileEdit.OpenFileDir(SavedFileName);
+        //        }
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        InfoLabel.Text = assembling.ErrText;
+        //        return false;
+        //    }
+        //}
         private void SaveResultChckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (!SaveResultChckBox.Checked) OpenResultChckBox.Checked = false;
@@ -465,18 +469,27 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             PeriodTxtBox.Enabled = !BitMapChckBox.Checked;
             FromTxtBox.Enabled = !BitMapChckBox.Checked;
             ToTxtBox.Enabled = !BitMapChckBox.Checked;
+           
             FixingImgDirectoryTxtBox.Enabled = !BitMapChckBox.Checked;
             label2.Enabled = !BitMapChckBox.Checked;
             label5.Enabled = !BitMapChckBox.Checked;
             label6.Enabled = !BitMapChckBox.Checked;
             label7.Enabled = !BitMapChckBox.Checked;
+
             FrLb.Enabled = !BitMapChckBox.Checked;
             ToLb.Enabled = !BitMapChckBox.Checked;
             DefaultParametersCheckBox.Enabled = !BitMapChckBox.Checked;
             ChekStitchPlanСhckBox.Checked = !BitMapChckBox.Checked;
             ChekStitchPlanСhckBox.Enabled = !BitMapChckBox.Checked;
+
+            DeltaTxtBox.Enabled = true;
+            label8.Enabled = true;
         }
         private void BitMapChckBox_CheckedChanged(object sender, EventArgs e) => CheckBitMap();
+        private void EditingStitchingPlan_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (PlanIsUpDate) UpdateAssemblyPlan();
+        }
         private void ExitBtn_Click(object sender, EventArgs e)
         {
             PlanIsUpDate = false;
@@ -485,13 +498,10 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void label5_Click(object sender, EventArgs e) => PersentInvok();
         private void label6_Click(object sender, EventArgs e) => PersentInvok();
         private void EditingStitchingPlan_MouseClick(object sender, MouseEventArgs e)
-        { 
-            if (e.X > 305 && e.X < 333 && e.Y > 173 && e.Y < 233)
-            PersentInvok(); 
-        }
-        private void EditingStitchingPlan_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(PlanIsUpDate) UpdateAssemblyPlan();
+            if (e.X > 305 && e.X < 333 && e.Y > 173 && e.Y < 233)
+                PersentInvok();
         }
+
     }
 }

@@ -76,7 +76,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.ExitBtn.Location = new System.Drawing.Point(441, 339);
             this.ExitBtn.Name = "ExitBtn";
-            this.ExitBtn.Size = new System.Drawing.Size(73, 30);
+            this.ExitBtn.Size = new System.Drawing.Size(75, 30);
             this.ExitBtn.TabIndex = 0;
             this.ExitBtn.Text = "Exit";
             this.ExitBtn.UseVisualStyleBackColor = true;
@@ -101,9 +101,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // SaveToBtn
             // 
-            this.SaveToBtn.Location = new System.Drawing.Point(12, 339);
+            this.SaveToBtn.Location = new System.Drawing.Point(279, 339);
             this.SaveToBtn.Name = "SaveToBtn";
-            this.SaveToBtn.Size = new System.Drawing.Size(78, 30);
+            this.SaveToBtn.Size = new System.Drawing.Size(75, 30);
             this.SaveToBtn.TabIndex = 4;
             this.SaveToBtn.Text = "Save to";
             this.SaveToBtn.UseVisualStyleBackColor = true;
@@ -311,9 +311,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // LoadBtn
             // 
-            this.LoadBtn.Location = new System.Drawing.Point(91, 339);
+            this.LoadBtn.Location = new System.Drawing.Point(360, 339);
             this.LoadBtn.Name = "LoadBtn";
-            this.LoadBtn.Size = new System.Drawing.Size(85, 30);
+            this.LoadBtn.Size = new System.Drawing.Size(75, 30);
             this.LoadBtn.TabIndex = 48;
             this.LoadBtn.Text = "Load";
             this.LoadBtn.UseVisualStyleBackColor = true;

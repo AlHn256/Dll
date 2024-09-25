@@ -773,7 +773,6 @@ namespace ImgAssemblingLibOpenCV.Models
             }
         }
         
-        int X = 0;
         internal Mat Stitch(object param, int Delta = 0)// Сборка кадров в один
         {
             StopProcess = false;
@@ -789,6 +788,12 @@ namespace ImgAssemblingLibOpenCV.Models
             if (Direction == EnumDirection.Right || Direction == EnumDirection.Down) InvertDirection(); // Если направление движения правое то делаем инверсию SelectedFiles
 
             SynchronizationContext context = (SynchronizationContext)param;
+            int newDelta = CheckBorders(Delta);
+            if(newDelta!= Delta)
+            {
+                SetErr($"\nDelta пришлось поменять с {Delta} на {newDelta}");
+                Delta = newDelta;
+            }
             // Сборка картинки по частям
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
@@ -797,7 +802,6 @@ namespace ImgAssemblingLibOpenCV.Models
                     SetErr("Сборка кадров приостановлена пользователем!");
                     return rezult;
                 }
-                X = i;
                 if (SelectedFiles[i].IsErr) continue;
                 if (context != null) context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
                 if (context != null) context.Send(OnTextChanged, "Frame Union " + i * 100 / SelectedFiles.Count + " %");
@@ -875,7 +879,7 @@ namespace ImgAssemblingLibOpenCV.Models
                     SetErr("Итоговая картинка не собрана. Id кадра с ошибкой " + SelectedFiles[i].Id + " i - "+i+" !!!");
                     break;
                 }
-                if(i==461)
+                if(i==3)
                 {
 
                 }
@@ -885,6 +889,41 @@ namespace ImgAssemblingLibOpenCV.Models
             if (context != null) context.Send(OnTextChanged, "100 %");
             AddErrStitchingInfo();
             return rezult;
+        }
+
+        private int CheckBorders(int Delta)
+        {
+            Mat imgFile = SelectedFiles[0].Mat;
+            if(imgFile == null && !string.IsNullOrEmpty(SelectedFiles[0].FullName)) imgFile = new Mat(SelectedFiles[0].FullName);
+            
+            if(imgFile == null) return Delta;
+            if(imgFile.Width == 0) return Delta;
+
+            int newDelta = Delta;
+            int w2 = imgFile.Width / 2;
+            if (Direction == EnumDirection.Left)
+            {
+                List<int> intsD2 = new List<int>();
+                List<int> intsD3 = new List<int>();
+                foreach (var elem in SelectedFiles)
+                {
+                    int d2 = w2 - (int)elem.AverageShift + Delta;
+                    intsD2.Add(d2);
+                    intsD3.Add(d2 + (int)elem.AverageShift - 1);
+                }
+
+                int minD2 = intsD2.Min();
+                int maxD2 = intsD2.Max();
+                int minD3 = intsD3.Min();
+                int maxD3 = intsD3.Max();
+                if (minD2 < 0)newDelta = -minD2+5;
+            }
+
+
+            //int d2 = w2 - shift + Delta;
+            //int d3 = d2 + shift - 1;
+            //if (d2 > 0 && d2 < Img2.Width - 1 && d3 > 0 && d3 < Img2.Width - 1)
+            return newDelta;
         }
 
         private void InvertDirection()
@@ -1129,7 +1168,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 foreach (var info in ErrList) StitchingInfo += info + "\n";
             }
         }
-        //private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0) => JoinImg(new Mat(file1), file2, shift, enumFramePosition, Delta);
+
         private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)=>JoinImg(new Mat(file1), new Mat(file2), shift, enumFramePosition, Delta);
         private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)=>JoinImg(Img1, new Mat(file2), shift, enumFramePosition, Delta);
         private Mat JoinImg(Mat Img1, Mat Img2, int shift, EnumFramePosition FramePosition, int Delta = 0)
@@ -1218,13 +1257,6 @@ namespace ImgAssemblingLibOpenCV.Models
                         Rect rect2 = new Rect(d2, 0, shift - 1, Img2.Height - 1);
                         Mat dstroi2 = new Mat(Img2, rect2);
 
-                        if (X > 134)
-                        {
-                            Img1.SaveImage("1.bmp");
-                            Img2.SaveImage("2.bmp");
-                            dstroi2.SaveImage("3.bmp");
-                        }
-
                         if (Img1.Height!= dstroi2.Height )
                         {
                             rect2 = new Rect(d2, 0, shift, Img2.Height);
@@ -1238,7 +1270,8 @@ namespace ImgAssemblingLibOpenCV.Models
                 else if (FramePosition == EnumFramePosition.Last)
                 {
                     int d1 = w2 - shift + Delta - 1;
-                    int d2 = Img2.Width - Delta - w2 + shift - 1;
+                    //int d2 = Img2.Width - Delta - w2 + shift - 1;
+                    int d2 = shift - Delta - 1;
                     if (d1 > 0 && d1 < Img2.Width - 1 && d2 > 0 && d2 < Img2.Width - 1)
                     {
                         Rect rect2 = new Rect(d1, 0, d2, Img2.Height - 1);

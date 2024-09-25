@@ -30,36 +30,42 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         public static bool StopProcess = false;
         public string ErrText { get; set; } = string.Empty;
 
+        // Конструктор для стандартной работы с окном и файлами
         public ImgFixingForm(string directory)
         {
             InitializeComponent();
-
             InputDirTxtBox.Text = directory;
             Load += OnLoad;
         }
-        public ImgFixingForm(string imgFixingPlan, string directory, bool fileLoad = false)
+
+        // Конструктор для исправления кадров без отрисовки окна
+        public ImgFixingForm(string imgFixingPlan, string directory)
         {
             InitializeComponent();
             if (!string.IsNullOrEmpty(imgFixingPlan)) imgFixingFile = imgFixingPlan;
-            TryReadSettings(fileLoad);
+            TryReadSettings();
             InputDirTxtBox.Text = directory;
         }
-        public ImgFixingForm(string imgFixingPlan, bool test = false)
-        {
-            InitializeComponent();
-            if (!string.IsNullOrEmpty(imgFixingPlan)) imgFixingFile = imgFixingPlan;
-            TryReadSettings(false);
-        }
+        private bool SaveRezultToFile;
+        private string SavingRezultDir;
+        // Конструктор для работы с Bitmapами
         public ImgFixingForm(string imgFixingPlan, bool saveRezultToFile = false, string fixingImgDirectory = "")
         {
             InitializeComponent();
             if (!string.IsNullOrEmpty(imgFixingPlan))
             {
                 imgFixingFile = imgFixingPlan;
-                TryReadSettings(false);
-                //SaveRezultToFile = saveRezultToFile;
-                //SavingRezultDir = fixingImgDirectory;
+                TryReadSettings();
+                SaveRezultToFile = saveRezultToFile;
+                SavingRezultDir = fixingImgDirectory;
             }
+        }
+        // Тестовая версия конструктора
+        public ImgFixingForm(string imgFixingPlan, bool test = false)
+        {
+            InitializeComponent();
+            if (!string.IsNullOrEmpty(imgFixingPlan)) imgFixingFile = imgFixingPlan;
+            TryReadSettings();
         }
         public void OnProgressChanged(object i)
         {
@@ -256,20 +262,30 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 return null;
             }
 
+            bool sinchoniztioIsOn = param == null ? false: true;
             SynchronizationContext context = (SynchronizationContext)param;
             ShowGridСhckBox.Checked = false;
-
+            
             List<Bitmap> bitMapList = new List<Bitmap>();
             for (int i = 0; i < dataArray.Length; i++)
             {
-                bitMapList.Add(EditImg(dataArray[i]));
-                context.Send(OnProgressChanged, i * 100 / dataArray.Length);
-                context.Send(OnTextChanged, "Imges Fixing " + i * 100 / dataArray.Length + " %");
+
+                Bitmap img = EditImg(dataArray[i]);
+                bitMapList.Add(img);
+                string file = i<10? fileEdit.DirFile(SavingRezultDir,"0"+ i + ".bmp") : fileEdit.DirFile(SavingRezultDir, i+".bmp" );
+                if (SaveRezultToFile) img.Save(file);
+        
+                if (sinchoniztioIsOn)
+                {
+                    context.Send(OnProgressChanged, i * 100 / dataArray.Length);
+                    context.Send(OnTextChanged, "Imges Fixing " + i * 100 / dataArray.Length + " %");
+                }
             }
-
-            context.Send(OnProgressChanged, 100);
-            context.Send(OnTextChanged, "Imges Fixing 100 %");
-
+            if (sinchoniztioIsOn)
+            {
+                context.Send(OnProgressChanged, 100);
+                context.Send(OnTextChanged, "Imges Fixing 100 %");
+            }
             return bitMapList.ToArray();
         }
         public bool CheckFixingImg(string imgFixingDir = "")
@@ -472,7 +488,10 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
-            rotation90 = 0;
+
+            //Zoom = 1;
+            //ZoomLbl.Text = "1";
+            //rotation90 = 0;
 
             A = 0;
             B = 0;
@@ -486,8 +505,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             DTxtBox.Text = "0";
             ETxtBox.Text = "0";
 
-            Zoom = 1;
-            ZoomLbl.Text = "1";
             SetSm13Sm23();
 
             Sm11TxtBox.Text = "1500"; Sm12TxtBox.Text = "0";
@@ -497,7 +514,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             AutoReloadChkBox.Checked = AutoReloadSave;
             ZeroCropAfter(true);
         }
-
         private void SetSm13Sm23()
         {
             string file = string.Empty;
@@ -511,8 +527,17 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             else
             {
                 Mat mat = new Mat(file);
-                Sm13TxtBox.Text = (Zoom * mat.Width / 2).ToString();
-                Sm23TxtBox.Text = (Zoom * mat.Height / 2).ToString();
+
+                if(rotation90 == 0 || rotation90 == 2)
+                {
+                    Sm13TxtBox.Text = (Zoom * mat.Width / 2).ToString();
+                    Sm23TxtBox.Text = (Zoom * mat.Height / 2).ToString();
+                }
+                else
+                {
+                    Sm13TxtBox.Text = (Zoom * mat.Height / 2).ToString();
+                    Sm23TxtBox.Text = (Zoom * mat.Width / 2).ToString();
+                }
             }
         }
         private void ZeroCropAfterBtn_Click(object sender, EventArgs e) => ZeroCropAfter(true);
@@ -551,12 +576,12 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     imgFixingFile = openFileDialog.FileName;
-                    TryReadSettings(false);
+                    TryReadSettings();
                     OpenCvReloadImg();
                 }
             }
         }
-        public bool TryReadSettings(bool fileLoad = false)
+        public bool TryReadSettings()
         {
             if (File.Exists(imgFixingFile))
             {
@@ -590,8 +615,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             DistChkBox.Checked = imgFixingSettings.Distortion;
             DistorSettings distorSettings = imgFixingSettings.DistorSettings;
 
+            if (imgFixingSettings.Zoom < 1) imgFixingSettings.Zoom = 1;
             Zoom = imgFixingSettings.Zoom;
-            ZoomLbl.Text = Zoom.ToString();
+            ZoomLbl.Text = imgFixingSettings.Zoom.ToString();
             rotation90 = imgFixingSettings.Rotation90;
 
             ATxtBox.Text = distorSettings.A.ToString();
@@ -686,8 +712,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             fs.Close();
             return matriz;
         }
-        private void RBtnUpDn_Click(object sender, EventArgs e){Rotation90(false);ZeroCropAfter(true);}
-        private void RBtnUp90_Click(object sender, EventArgs e) {Rotation90(true);ZeroCropAfter(true);}
+        private void RBtnUpDn_Click(object sender, EventArgs e){Rotation90(false);ZeroCropAfter(true); SetSm13Sm23();}
+        private void RBtnUp90_Click(object sender, EventArgs e) {Rotation90(true);ZeroCropAfter(true); SetSm13Sm23();}
         private void RBtnUp001_Click(object sender, EventArgs e) => Rotation(100);
         private void RBtnDn001_Click(object sender, EventArgs e) => Rotation(-100);
         private void RBtnUp01_Click(object sender, EventArgs e) => Rotation(10);
@@ -760,7 +786,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 img = blackImg;
             }
 
-            if (rotation90 == 1) Cv2.Rotate(img, img, RotateFlags.Rotate90Clockwise);
+            if (rotation90 == 0);
+            else if (rotation90 == 1) Cv2.Rotate(img, img, RotateFlags.Rotate90Clockwise);
             else if (rotation90 == 2) Cv2.Rotate(img, img, RotateFlags.Rotate180);
             else if (rotation90 == 3) Cv2.Rotate(img, img, RotateFlags.Rotate90Counterclockwise);
 

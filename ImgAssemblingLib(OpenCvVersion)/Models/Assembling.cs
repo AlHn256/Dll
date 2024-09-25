@@ -30,7 +30,6 @@ namespace ImgAssemblingLibOpenCV.Models
         public string StitchingInfo { get; set; }
         public bool StopExecution { get; set; } = false;
         public bool CalculationSpeedDespiteErrors { get; set; } = false;
-        public bool SaveImgFixingRezultToFile { get; set; } = false;
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
         public EnumErrCode ErrCode { get; set; }
@@ -225,8 +224,8 @@ namespace ImgAssemblingLibOpenCV.Models
                 {
                     logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                     if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
-                    SaveImgFixingRezultToFile = true;
-                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, SaveImgFixingRezultToFile, AssemblyPlan.FixingImgDirectory);
+                    
+                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.SaveImgFixingRezultToFile, AssemblyPlan.FixingImgDirectory);
                     if (contectIsOn)
                     {
                         imgFixingForm.ProcessChanged += worker_ProcessChang;
@@ -257,7 +256,7 @@ namespace ImgAssemblingLibOpenCV.Models
                     if (string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory)) ImgFixingDir = AssemblyPlan.WorkingDirectory + "AutoOut";
                     else ImgFixingDir = AssemblyPlan.FixingImgDirectory;
 
-                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory, false);
+                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
                     if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = imgFixingForm.GetImgFixingPlan();
                     if (contectIsOn) _context.Send(OnRTBAddInfo, " Checking old files ");
                     logger.Info("Checking old files");
@@ -370,7 +369,6 @@ namespace ImgAssemblingLibOpenCV.Models
 
             return !IsErr;
         }
-
         public double GetSpeed() => AssemblyPlan.Speed;
         private void SendTime(string text, TimeSpan ts)
         {
@@ -446,6 +444,7 @@ namespace ImgAssemblingLibOpenCV.Models
 
                 if(_context!=null) _context.Send(OnImgUpdate, RezultImg);
                 if (RezultImg.Width == 0 && RezultImg.Height == 0) return SetErr(stitchingBlock.GetErrText());
+                if(stitchingBlock.IsErr && _context != null) _context.Send(OnRTBAddInfo, stitchingBlock.ErrText);
                 return true;
             }
             else return SetErr("Err StitchingBlock = null !!!");

@@ -7,6 +7,7 @@ namespace ImgAssemblingLibOpenCV.Models
     public class AssemblyPlan : ICloneable
     {
         public bool BitMap { get; set; } = false; // Работаем не через файлы, а через массивы Bitmapов
+        public bool SaveImgFixingRezultToFile { get; set; } = false; // Принудительное сохранение исправленных кадров в фалы при работе с Bitmapами
         public string WorkingDirectory { get; set; } = string.Empty;
         public bool FileNameCheck { get; set; } = false; // Проверка и исправление имен файлов
         public string FileNameCheckRezult { get; set; } = "Не выполнено!";

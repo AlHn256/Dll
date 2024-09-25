@@ -622,12 +622,12 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             assemblyPlan.BitMap = true;
             assemblyPlan.Stitch = true;
             assemblyPlan.FixImg = false;
-            RTB.Text = "Join Imgs\n";
+            assemblyPlan.SaveImgFixingRezultToFile = true;
 
+            RTB.Text = "Join Imgs\n";
             
             Assembling.BitmapData = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
             Assembling.ChangeAssemblyPlan(assemblyPlan);
-            Assembling.SaveImgFixingRezultToFile = true;
 
             //Bitmap[] dataArray = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
             //Assembling assembling;
@@ -738,14 +738,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 string dir = Path.GetDirectoryName(FileDirTxtBox.Text);
                 if (fileEdit.CheckFileName(dir)) fileEdit.FixFileName(dir);
             }
-        }
-
-        private void imgFixingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImgFixingForm imgFixingForm = new ImgFixingForm(Path.GetDirectoryName(FileDirTxtBox.Text));
-            imgFixingForm.ShowDialog();
-            string ImgFixingPlan = imgFixingForm.GetImgFixingPlan();
-            if (!string.IsNullOrEmpty(ImgFixingPlan)) assemblyPlan.ImgFixingPlan = ImgFixingPlan;
         }
         private void TestImgFixingBtn_Click(object sender, EventArgs e)
         {
@@ -860,7 +852,15 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 label6.Visible = assemblyPlan.Percent;
             }
         }
-
+        private void ImgFix()
+        {
+            ImgFixingForm imgFixingForm = new ImgFixingForm(Path.GetDirectoryName(FileDirTxtBox.Text));
+            imgFixingForm.ShowDialog();
+            string ImgFixingPlan = imgFixingForm.GetImgFixingPlan();
+            if (!string.IsNullOrEmpty(ImgFixingPlan)) assemblyPlan.ImgFixingPlan = ImgFixingPlan;
+        }
+        private void button1_Click(object sender, EventArgs e) => ImgFix();
+        private void imgFixingToolStripMenuItem_Click(object sender, EventArgs e) => ImgFix();
         private void UseBitmapChckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (assemblyPlan != null) assemblyPlan.BitMap = UseBitmapChckBox.Checked;
@@ -909,18 +909,19 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
             Assembling.ChangeAssemblyPlan(assemblyPlan);
 
-            if (await Assembling.StartAssembling())
-            {
-                RTB.Text += "Assembling is finished!";
-                logger.Info("Assembling is finished!");
-                return true;
-            }
-            else
+            FinalResult ruzult = await Assembling.TryAssemble();
+            if (ruzult.IsErr)
             {
                 RTB.Text += Assembling.ErrText;
                 logger.Info(Assembling.ErrText);
-                return false;
             }
+            else
+            {
+                RTB.Text += "Assembling is finished!";
+                logger.Info("Assembling is finished!");
+            }
+
+            return !ruzult.IsErr;
         }
         private async void GetSpeedBtn_Click(object sender, EventArgs e)
         {

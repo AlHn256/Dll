@@ -49,7 +49,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imgFixingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileNameFixingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFileCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteResultesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deletePlanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,6 +66,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.RndBtn = new System.Windows.Forms.Button();
             this.OpenDirDtn = new System.Windows.Forms.Button();
             this.UseBitmapChckBox = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_Display)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -184,9 +184,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // SaveBtn
             // 
-            this.SaveBtn.Location = new System.Drawing.Point(153, 49);
+            this.SaveBtn.Location = new System.Drawing.Point(219, 49);
             this.SaveBtn.Name = "SaveBtn";
-            this.SaveBtn.Size = new System.Drawing.Size(64, 23);
+            this.SaveBtn.Size = new System.Drawing.Size(45, 23);
             this.SaveBtn.TabIndex = 24;
             this.SaveBtn.Text = "Save Rezult";
             this.SaveBtn.UseVisualStyleBackColor = true;
@@ -226,11 +226,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // SaveThisImgBtn
             // 
-            this.SaveThisImgBtn.Location = new System.Drawing.Point(222, 49);
+            this.SaveThisImgBtn.Location = new System.Drawing.Point(264, 49);
             this.SaveThisImgBtn.Name = "SaveThisImgBtn";
-            this.SaveThisImgBtn.Size = new System.Drawing.Size(73, 23);
+            this.SaveThisImgBtn.Size = new System.Drawing.Size(32, 23);
             this.SaveThisImgBtn.TabIndex = 29;
-            this.SaveThisImgBtn.Text = "Save this Img";
+            this.SaveThisImgBtn.Text = "this";
             this.SaveThisImgBtn.UseVisualStyleBackColor = true;
             this.SaveThisImgBtn.Click += new System.EventHandler(this.SaveThisImgBtn_Click);
             // 
@@ -249,7 +249,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.imgFixingToolStripMenuItem,
-            this.fileNameFixingToolStripMenuItem,
             this.deleteFileCopyToolStripMenuItem,
             this.deleteResultesToolStripMenuItem,
             this.deletePlanToolStripMenuItem,
@@ -261,41 +260,35 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // imgFixingToolStripMenuItem
             // 
             this.imgFixingToolStripMenuItem.Name = "imgFixingToolStripMenuItem";
-            this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.imgFixingToolStripMenuItem.Text = "Img Fixing";
             this.imgFixingToolStripMenuItem.Click += new System.EventHandler(this.imgFixingToolStripMenuItem_Click);
-            // 
-            // fileNameFixingToolStripMenuItem
-            // 
-            this.fileNameFixingToolStripMenuItem.Name = "fileNameFixingToolStripMenuItem";
-            this.fileNameFixingToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.fileNameFixingToolStripMenuItem.Text = "File Name Fixing";
             // 
             // deleteFileCopyToolStripMenuItem
             // 
             this.deleteFileCopyToolStripMenuItem.Name = "deleteFileCopyToolStripMenuItem";
-            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.deleteFileCopyToolStripMenuItem.Text = "Delete FileCopy";
             this.deleteFileCopyToolStripMenuItem.Click += new System.EventHandler(this.deleteFileCopyToolStripMenuItem_Click);
             // 
             // deleteResultesToolStripMenuItem
             // 
             this.deleteResultesToolStripMenuItem.Name = "deleteResultesToolStripMenuItem";
-            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.deleteResultesToolStripMenuItem.Text = "Delete Resultes";
             this.deleteResultesToolStripMenuItem.Click += new System.EventHandler(this.deleteResultesToolStripMenuItem_Click);
             // 
             // deletePlanToolStripMenuItem
             // 
             this.deletePlanToolStripMenuItem.Name = "deletePlanToolStripMenuItem";
-            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.deletePlanToolStripMenuItem.Text = "Delete Plan";
             this.deletePlanToolStripMenuItem.Click += new System.EventHandler(this.deletePlanToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -361,7 +354,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // TestImgFixingBtn
             // 
-            this.TestImgFixingBtn.Location = new System.Drawing.Point(87, 49);
+            this.TestImgFixingBtn.Location = new System.Drawing.Point(71, 49);
             this.TestImgFixingBtn.Name = "TestImgFixingBtn";
             this.TestImgFixingBtn.Size = new System.Drawing.Size(60, 23);
             this.TestImgFixingBtn.TabIndex = 37;
@@ -371,11 +364,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // StitchingByPlanBtn
             // 
-            this.StitchingByPlanBtn.Location = new System.Drawing.Point(10, 49);
+            this.StitchingByPlanBtn.Location = new System.Drawing.Point(131, 49);
             this.StitchingByPlanBtn.Name = "StitchingByPlanBtn";
-            this.StitchingByPlanBtn.Size = new System.Drawing.Size(71, 23);
+            this.StitchingByPlanBtn.Size = new System.Drawing.Size(88, 23);
             this.StitchingByPlanBtn.TabIndex = 38;
-            this.StitchingByPlanBtn.Text = "Stitch";
+            this.StitchingByPlanBtn.Text = "Start";
             this.StitchingByPlanBtn.UseVisualStyleBackColor = true;
             this.StitchingByPlanBtn.Click += new System.EventHandler(this.StartAssembling);
             // 
@@ -432,12 +425,23 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.UseBitmapChckBox.UseVisualStyleBackColor = true;
             this.UseBitmapChckBox.CheckedChanged += new System.EventHandler(this.UseBitmapChckBox_CheckedChanged);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(9, 49);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(57, 23);
+            this.button1.TabIndex = 45;
+            this.button1.Text = "Img fix";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1734, 802);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.UseBitmapChckBox);
             this.Controls.Add(this.OpenDirDtn);
             this.Controls.Add(this.RndBtn);
@@ -512,7 +516,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private ToolStripMenuItem imgFixingToolStripMenuItem;
         private ToolStripMenuItem deleteFileCopyToolStripMenuItem;
         private Button TestImgFixingBtn;
-        private ToolStripMenuItem fileNameFixingToolStripMenuItem;
         private Button StitchingByPlanBtn;
         private Label Period;
         private Button GetSpeedBtn;
@@ -520,5 +523,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Button Zoom1Btn;
         private Button OpenDirDtn;
         private CheckBox UseBitmapChckBox;
+        private Button button1;
     }
 }

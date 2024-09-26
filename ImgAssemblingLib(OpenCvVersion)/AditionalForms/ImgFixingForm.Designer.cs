@@ -94,6 +94,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.PZoomBtn = new System.Windows.Forms.Button();
             this.MZoomBtn = new System.Windows.Forms.Button();
             this.ZoomLbl = new System.Windows.Forms.Label();
+            this.BlackWhiteChkBox = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -296,7 +298,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnDn001
             // 
             this.RBtnDn001.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnDn001.Location = new System.Drawing.Point(1177, 133);
+            this.RBtnDn001.Location = new System.Drawing.Point(1177, 141);
             this.RBtnDn001.Name = "RBtnDn001";
             this.RBtnDn001.Size = new System.Drawing.Size(13, 20);
             this.RBtnDn001.TabIndex = 24;
@@ -307,7 +309,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnUp001
             // 
             this.RBtnUp001.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUp001.Location = new System.Drawing.Point(1162, 133);
+            this.RBtnUp001.Location = new System.Drawing.Point(1162, 141);
             this.RBtnUp001.Name = "RBtnUp001";
             this.RBtnUp001.Size = new System.Drawing.Size(13, 20);
             this.RBtnUp001.TabIndex = 23;
@@ -318,7 +320,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnDn01
             // 
             this.RBtnDn01.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnDn01.Location = new System.Drawing.Point(1136, 133);
+            this.RBtnDn01.Location = new System.Drawing.Point(1136, 141);
             this.RBtnDn01.Name = "RBtnDn01";
             this.RBtnDn01.Size = new System.Drawing.Size(13, 20);
             this.RBtnDn01.TabIndex = 27;
@@ -329,7 +331,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnUp01
             // 
             this.RBtnUp01.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUp01.Location = new System.Drawing.Point(1121, 133);
+            this.RBtnUp01.Location = new System.Drawing.Point(1121, 141);
             this.RBtnUp01.Name = "RBtnUp01";
             this.RBtnUp01.Size = new System.Drawing.Size(13, 20);
             this.RBtnUp01.TabIndex = 26;
@@ -342,7 +344,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(1141, 107);
+            this.label3.Location = new System.Drawing.Point(1141, 115);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 19);
             this.label3.TabIndex = 28;
@@ -396,44 +398,44 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label14.Location = new System.Drawing.Point(1120, 542);
+            this.label14.Location = new System.Drawing.Point(1124, 542);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(27, 19);
             this.label14.TabIndex = 59;
-            this.label14.Text = "dY";
+            this.label14.Text = "Dn";
             // 
             // label15
             // 
             this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label15.Location = new System.Drawing.Point(1120, 490);
+            this.label15.Location = new System.Drawing.Point(1124, 490);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(27, 19);
+            this.label15.Size = new System.Drawing.Size(23, 19);
             this.label15.TabIndex = 58;
-            this.label15.Text = "dX";
+            this.label15.Text = "Rt";
             // 
             // label16
             // 
             this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label16.Location = new System.Drawing.Point(1129, 516);
+            this.label16.Location = new System.Drawing.Point(1124, 516);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(18, 19);
+            this.label16.Size = new System.Drawing.Size(28, 19);
             this.label16.TabIndex = 57;
-            this.label16.Text = "Y";
+            this.label16.Text = "Up";
             // 
             // label17
             // 
             this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label17.Location = new System.Drawing.Point(1129, 463);
+            this.label17.Location = new System.Drawing.Point(1124, 463);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(18, 19);
+            this.label17.Size = new System.Drawing.Size(21, 19);
             this.label17.TabIndex = 56;
-            this.label17.Text = "X";
+            this.label17.Text = "Lf";
             // 
             // dYAfterTxtBox
             // 
@@ -692,7 +694,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnUpDn
             // 
             this.RBtnUpDn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUpDn.Location = new System.Drawing.Point(1217, 133);
+            this.RBtnUpDn.Location = new System.Drawing.Point(1217, 141);
             this.RBtnUpDn.Name = "RBtnUpDn";
             this.RBtnUpDn.Size = new System.Drawing.Size(13, 20);
             this.RBtnUpDn.TabIndex = 87;
@@ -703,7 +705,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RBtnUp90
             // 
             this.RBtnUp90.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RBtnUp90.Location = new System.Drawing.Point(1201, 133);
+            this.RBtnUp90.Location = new System.Drawing.Point(1201, 141);
             this.RBtnUp90.Name = "RBtnUp90";
             this.RBtnUp90.Size = new System.Drawing.Size(13, 20);
             this.RBtnUp90.TabIndex = 86;
@@ -727,7 +729,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label5.Location = new System.Drawing.Point(1148, 37);
+            this.label5.Location = new System.Drawing.Point(1148, 61);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(49, 19);
             this.label5.TabIndex = 88;
@@ -736,7 +738,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // PZoomBtn
             // 
             this.PZoomBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.PZoomBtn.Location = new System.Drawing.Point(1163, 67);
+            this.PZoomBtn.Location = new System.Drawing.Point(1163, 83);
             this.PZoomBtn.Name = "PZoomBtn";
             this.PZoomBtn.Size = new System.Drawing.Size(21, 20);
             this.PZoomBtn.TabIndex = 90;
@@ -747,7 +749,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // MZoomBtn
             // 
             this.MZoomBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.MZoomBtn.Location = new System.Drawing.Point(1189, 67);
+            this.MZoomBtn.Location = new System.Drawing.Point(1189, 83);
             this.MZoomBtn.Name = "MZoomBtn";
             this.MZoomBtn.Size = new System.Drawing.Size(22, 20);
             this.MZoomBtn.TabIndex = 89;
@@ -760,17 +762,43 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.ZoomLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ZoomLbl.AutoSize = true;
             this.ZoomLbl.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.ZoomLbl.Location = new System.Drawing.Point(1126, 67);
+            this.ZoomLbl.Location = new System.Drawing.Point(1126, 83);
             this.ZoomLbl.Name = "ZoomLbl";
             this.ZoomLbl.Size = new System.Drawing.Size(17, 19);
             this.ZoomLbl.TabIndex = 91;
             this.ZoomLbl.Text = "1";
+            // 
+            // BlackWhiteChkBox
+            // 
+            this.BlackWhiteChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BlackWhiteChkBox.AutoSize = true;
+            this.BlackWhiteChkBox.Checked = true;
+            this.BlackWhiteChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.BlackWhiteChkBox.Location = new System.Drawing.Point(1218, 36);
+            this.BlackWhiteChkBox.Name = "BlackWhiteChkBox";
+            this.BlackWhiteChkBox.Size = new System.Drawing.Size(15, 14);
+            this.BlackWhiteChkBox.TabIndex = 93;
+            this.BlackWhiteChkBox.UseVisualStyleBackColor = true;
+            this.BlackWhiteChkBox.CheckedChanged += new System.EventHandler(this.BlackWhiteChkBox_CheckedChanged);
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.label6.Location = new System.Drawing.Point(1113, 32);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(98, 19);
+            this.label6.TabIndex = 92;
+            this.label6.Text = "Black \\ White";
             // 
             // ImgFixingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1243, 869);
+            this.Controls.Add(this.BlackWhiteChkBox);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.ZoomLbl);
             this.Controls.Add(this.PZoomBtn);
             this.Controls.Add(this.MZoomBtn);
@@ -910,5 +938,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Button PZoomBtn;
         private Button MZoomBtn;
         private Label ZoomLbl;
+        private CheckBox BlackWhiteChkBox;
+        private Label label6;
     }
 }

@@ -126,7 +126,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Sm31TxtBox.Enabled = false;
             Sm32TxtBox.Enabled = false;
             Sm33TxtBox.Enabled = false;
-            //ATxtBox.Enabled = false;
             BBtnDn.Enabled = false;
             BBtnUp.Enabled = false;
             BTxtBox.Enabled = false;
@@ -136,7 +135,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             DBtnDn.Enabled = false;
             DBtnUp.Enabled = false;
             DTxtBox.Enabled = false;
-            //ETxtBox.Enabled = false;
         }
         private void UnBlock()
         {
@@ -149,7 +147,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Sm31TxtBox.Enabled = true;
             Sm32TxtBox.Enabled = true;
             Sm33TxtBox.Enabled = true;
-            //ATxtBox.Enabled = false;
             BBtnDn.Enabled = true;
             BBtnUp.Enabled = true;
             BTxtBox.Enabled = true;
@@ -159,7 +156,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             DBtnDn.Enabled = true;
             DBtnUp.Enabled = true;
             DTxtBox.Enabled = true;
-            //ETxtBox.Enabled = false;
         }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -252,7 +248,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
             context.Send(OnProgressChanged, 100);
             context.Send(OnTextChanged, "Imges Fixing 100 %");
-            return true;
+            return IsErr;
         }
         public Bitmap[] FixImges(object param, Bitmap[] dataArray)
         {
@@ -308,15 +304,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void PZoomBtn_Click(object sender, EventArgs e) => ChangZoom(true);
         private void ChangZoom(bool increase)
         {
-            if (increase)
-            {
-                if (Zoom < 1.04) Zoom = 1.05;
-                else Zoom += 0.01;
-            }
+            if (increase)Zoom += 0.01;
             else
             {
                 Zoom -= 0.01;
-                if (Zoom < 1.05) Zoom = 1;
+                if (Zoom < 1) Zoom = 1;
             }
             ZoomLbl.Text = Zoom.ToString();
             ZeroCropAfter(false);
@@ -724,6 +716,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (RezultRTB.Text.IndexOf("unblok") != -1|| RezultRTB.Text.IndexOf("Unblok") != -1) UnBlock();
         }
 
+        private void BlackWhiteChkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+        }
+
         private void Rotation90(bool direction)
         {
             if (direction) rotation90++;
@@ -775,16 +772,18 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         }
         private Mat EditImg(Mat img)
         {
-            if (Zoom != 0)
+            if (Zoom > 1)
             {
-                Mat blackImg = new Mat("Black.jpg");
                 int Width = img.Width, Height = img.Height, x1 = (int)(Width * (Zoom - 1) / 2), y1 = (int)(Height * (Zoom - 1) / 2); 
-                Cv2.Resize(blackImg, blackImg, new OpenCvSharp.Size(Width * Zoom, Height * Zoom));
+                Mat blackImg = new Mat((int)(Height * Zoom), (int)(Width * Zoom), MatType.CV_8UC3, new Scalar(0, 0, 0));
+
                 Mat roi = blackImg[y1, y1 + Height, x1, x1 + Width];
                 Cv2.Resize(img, img, new OpenCvSharp.Size(roi.Width, roi.Height));
                 Cv2.CopyTo(img, roi);
                 img = blackImg;
             }
+
+            if(BlackWhiteChkBox.Checked) Cv2.CvtColor(img, img, ColorConversionCodes.BGR2GRAY);
 
             if (rotation90 == 0);
             else if (rotation90 == 1) Cv2.Rotate(img, img, RotateFlags.Rotate90Clockwise);

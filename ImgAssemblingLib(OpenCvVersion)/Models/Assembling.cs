@@ -282,10 +282,15 @@ namespace ImgAssemblingLibOpenCV.Models
 
                         logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                         if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
-                        await Task.Run(() => { imgFixingForm.FixImges(_context, ImgFixingDir); });
 
-                        if (imgFixingForm.IsErr) { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
-                        else { SendErr(imgFixingForm.ErrText); AssemblyPlan.FixImgRezult =  imgFixingForm.ErrText; }
+                        await Task.Run(() => 
+                        {
+                            if (imgFixingForm.FixImges(_context, ImgFixingDir)) { SendErr(imgFixingForm.ErrText); AssemblyPlan.FixImgRezult = imgFixingForm.ErrText; }
+                            else { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
+                        });
+
+                        //imgFixingForm2.IsErr) { SendErr(imgFixingForm2.ErrText); AssemblyPlan.FixImgRezult = imgFixingForm2.ErrText; }
+                        //else { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
                     }
                 }
             }

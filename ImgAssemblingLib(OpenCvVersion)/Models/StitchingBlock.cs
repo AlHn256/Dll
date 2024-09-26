@@ -254,7 +254,7 @@ namespace ImgAssemblingLibOpenCV.Models
             {
                 if(i!=-1)I = i;
                 Err ++;
-                if (ErrText == null) ErrText = new List<string> { errText};
+                if (ErrText == null) ErrText = new List<string> {errText};
                 else ErrText.Add(errText);
                 if (string.IsNullOrEmpty(ErrLine)) ErrLine = errText;
                 else ErrLine +=" "+ errText;
@@ -969,7 +969,6 @@ namespace ImgAssemblingLibOpenCV.Models
                             tempSf = new SelectedFiles(SelectedFiles[z]);
                             tempSf.Mat = SelectedFiles[z].Mat;
                             tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
-                            //tempSf.StitchingFile = SelectedFiles[z].FullName;
                             tempSf.VectorList = SelectedFiles[z].VectorList;
                             tempSf.Direction = SelectedFiles[z].Direction;
                             tempSf.Hint = SelectedFiles[z].Hint;

@@ -141,7 +141,6 @@ namespace ImgAssemblingLibOpenCV.Models
 
             }
         }
-
         public async Task<bool> StartAssembling()
         {
             bool contectIsOn = _context == null ? false : true;
@@ -446,8 +445,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 RezultImg = new Mat();
                 //await Task.Run(() => { RezultImg = stitchingBlock.Stitch(_context, AssemblyPlan.From, AssemblyPlan.To, AssemblyPlan.Delta); });
                 await Task.Run(() => { RezultImg = stitchingBlock.Stitch(_context, AssemblyPlan.Delta); });
-
-                if(_context!=null) _context.Send(OnImgUpdate, RezultImg);
+                if (_context!=null) _context.Send(OnImgUpdate, RezultImg);
                 if (RezultImg.Width == 0 && RezultImg.Height == 0) return SetErr(stitchingBlock.GetErrText());
                 if(stitchingBlock.IsErr && _context != null) _context.Send(OnRTBAddInfo, stitchingBlock.ErrText);
                 return true;

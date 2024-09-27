@@ -772,8 +772,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.BlackWhiteChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BlackWhiteChkBox.AutoSize = true;
-            this.BlackWhiteChkBox.Checked = true;
-            this.BlackWhiteChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.BlackWhiteChkBox.Location = new System.Drawing.Point(1218, 36);
             this.BlackWhiteChkBox.Name = "BlackWhiteChkBox";
             this.BlackWhiteChkBox.Size = new System.Drawing.Size(15, 14);

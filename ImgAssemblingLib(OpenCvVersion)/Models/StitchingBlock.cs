@@ -348,7 +348,6 @@ namespace ImgAssemblingLibOpenCV.Models
             return areasForDelet;
         }
         private List<AreaForDel> JoinAreas(List<AreaForDel> areasForDelet, int ArrLeng)
-
         {
             if (areasForDelet.Count < 2 || ArrLeng==0) return areasForDelet;
             int minimalGap = ArrLeng / 100 >15 ? 15: ArrLeng / 100;
@@ -879,10 +878,6 @@ namespace ImgAssemblingLibOpenCV.Models
                     SetErr("Итоговая картинка не собрана. Id кадра с ошибкой " + SelectedFiles[i].Id + " i - "+i+" !!!");
                     break;
                 }
-                if(i==3)
-                {
-
-                }
             }
 
             if (context != null) context.Send(OnProgressChanged, 100);
@@ -918,11 +913,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 int maxD3 = intsD3.Max();
                 if (minD2 < 0)newDelta = -minD2+5;
             }
-
-
-            //int d2 = w2 - shift + Delta;
-            //int d3 = d2 + shift - 1;
-            //if (d2 > 0 && d2 < Img2.Width - 1 && d3 > 0 && d3 < Img2.Width - 1)
             return newDelta;
         }
 

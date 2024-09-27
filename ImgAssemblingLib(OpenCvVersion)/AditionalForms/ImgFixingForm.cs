@@ -258,18 +258,27 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 return null;
             }
 
-            bool sinchoniztioIsOn = param == null ? false: true;
+            bool sinchoniztioIsOn = param == null ? false : true;
             SynchronizationContext context = (SynchronizationContext)param;
             ShowGridСhckBox.Checked = false;
-            
+            bool fileSaving = false;
+            if (SaveRezultToFile)
+            {
+                if (fileEdit.ChkDir(SavingRezultDir)) fileSaving = true;
+                else SetErr($"ERR FixImges.!Directory.Exists({SavingRezultDir}) !!!");
+            } 
+
             List<Bitmap> bitMapList = new List<Bitmap>();
             for (int i = 0; i < dataArray.Length; i++)
             {
-
                 Bitmap img = EditImg(dataArray[i]);
                 bitMapList.Add(img);
-                string file = i<10? fileEdit.DirFile(SavingRezultDir,"0"+ i + ".bmp") : fileEdit.DirFile(SavingRezultDir, i+".bmp" );
-                if (SaveRezultToFile) img.Save(file);
+                
+                if (SaveRezultToFile)
+                {
+                    string file = i < 10 ? fileEdit.DirFile(SavingRezultDir, "0" + i + ".bmp") : fileEdit.DirFile(SavingRezultDir, i + ".bmp");
+                    img.Save(file);
+                }
         
                 if (sinchoniztioIsOn)
                 {
@@ -481,10 +490,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
 
-            //Zoom = 1;
-            //ZoomLbl.Text = "1";
-            //rotation90 = 0;
-
             A = 0;
             B = 0;
             C = 0;
@@ -611,6 +616,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Zoom = imgFixingSettings.Zoom;
             ZoomLbl.Text = imgFixingSettings.Zoom.ToString();
             rotation90 = imgFixingSettings.Rotation90;
+            BlackWhiteChkBox.Checked = imgFixingSettings.BlackWhiteMode;
 
             ATxtBox.Text = distorSettings.A.ToString();
             BTxtBox.Text = distorSettings.B.ToString();
@@ -672,8 +678,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 File = InputFileTxtBox.Text,
                 Rotation90 = rotation90,
                 Zoom = Zoom,
-                //Rotation = RotationChkBox.Checked,
-                //CropBeforeChkBox = CropBeforeChkBox.Checked,
+                BlackWhiteMode = BlackWhiteChkBox.Checked,
 
                 Distortion = DistChkBox.Checked,
                 DistorSettings = distorSettings,

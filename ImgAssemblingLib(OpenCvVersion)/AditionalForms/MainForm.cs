@@ -722,7 +722,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             StitchingBlock stitchingBlock = new StitchingBlock(FileDirTxtBox.Text, false);
             if (stitchingBlock.DeletPlan()) RTB.Text = "Plan Deleted!\n";
         }
-
         private async void deleteFileCopyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(FileDirTxtBox.Text)) { RTB.Text = "Err File1TxtBox.Text IsNullOrEmpty!!!"; return; }
@@ -730,7 +729,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             else RTB.Text = fileEdit.ErrText;
             fileEdit.ClearInformation();
         }
-
         private void FileNameFixingToolStripMenuItemClick(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(FileDirTxtBox.Text)) RTB.Text = "Err File1TxtBox.Text IsNullOrEmpty!!!";

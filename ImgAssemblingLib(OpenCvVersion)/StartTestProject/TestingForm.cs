@@ -133,12 +133,13 @@ namespace StartTestProject
         // Пример с установкой другого плана корректировки изображения
         private async void Exampl3Btn_Click(object sender, EventArgs e)
         {
+            RezultLb.Text = string.Empty;
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
             // Заменяем план корректировки изображений
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.oip"; 
-            Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4",27);
-            
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip";
+            Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
+            //Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\16RC");
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
             if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
         }
@@ -146,13 +147,14 @@ namespace StartTestProject
         // Пример настройки смещения полосы сборки относительно центра катинки (иногда помогает избавиться от повторяющихся объектов на заднем фоне вроде столбов)
         private async void Exampl4Btn_Click(object sender, EventArgs e)
         {
+            RezultLb.Text = string.Empty;
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
             // Заменяем план корректировки изображений
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.oip"; 
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip";
+            Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 29);
             // Смещяем полсу
             assemblyPlan.Delta = -120;
-            Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
             if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
         }
@@ -160,16 +162,17 @@ namespace StartTestProject
         // Пример только с подсчетом скорости (без сборки изображения)
         private async void Exampl5Btn_Click(object sender, EventArgs e)
         {
+            RezultLb.Text = string.Empty;
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.oip";
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip";
             assemblyPlan.Stitch = false;
             assemblyPlan.SaveRezults = true;
             assemblyPlan.ShowAssemblingFile = true;
             assemblyPlan.MillimetersInPixel = 5.5; // Количество мм в одном пикселе
-            assemblyPlan.TimePerFrame  = 40; // Милисекунд в одном кадре
+            assemblyPlan.TimePerFrame  = 40; // Миллисекунд в одном кадре
 
-            Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4").Skip(10).Take(5).ToArray();
+            Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4").Skip(10).Take(10).ToArray();
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
             FinalResult finalResult = await assembling.TryAssemble();
             if(finalResult.IsErr) RezultLb.Text = finalResult.ErrText; 
@@ -180,18 +183,19 @@ namespace StartTestProject
         // Пример заполнения параметров без загрузки файла сбоки
         private async void Exampl6Btn_Click(object sender, EventArgs e)
         {
+            RezultLb.Text = string.Empty;
             AssemblyPlan assemblyPlan = new AssemblyPlan()
             {
                 BitMap = true, // Включаем работу с массивом битмапов вместо файлов
                 DelFileCopy = false, // Отключение удаления копий изображений
-                ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\4.oip",
+                ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip",
                 Delta = -120, // Смещение полосы склейки
                 SaveRezults = true,
                 ShowAssemblingFile = true,
                 SpeedCounting = true, // Включение подсчета скорости
                 MillimetersInPixel = 5.5, // Количество мм в одном пикселе
                 TimePerFrame = 40, // Милисекунд в одном кадре
-                SelectSearchArea =true, // Для большей точности можно задать область поиска ключевых точек
+                SelectSearchArea = true, // Для большей точности можно задать область поиска ключевых точек
                 MaxHeight = 1630,
                 MinHeight = 1533,
                 MaxWight = 766,
@@ -201,14 +205,15 @@ namespace StartTestProject
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
             FinalResult finalResult = await assembling.TryAssemble();
-            if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText; // Запускаем сборку
-            var sdf = assembling.GetSpeed();
-            RezultLb.Text = "Speed "+ assembling.GetSpeed() + "Km\\H";
+            //if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText; // Запускаем сборку
+            //var sdf = assembling.GetSpeed();
+            RezultLb.Text = "Speed "+ finalResult.Speed + "Km\\H";
         }
 
         // Пример коррекции изображений без сборки
         private async void FixingImgsUsingDataArrayBtn_Click(object sender, EventArgs e)
         {
+            RezultLb.Text = string.Empty;
             //Для имитации загружаем файлы из папки и создаем массив битмапов
             Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\16RC");
             ImgFixingForm imgFixingForm = new ImgFixingForm("16RC.oip", false); // Загружаем файл с параментрами корректировки изображений
@@ -237,9 +242,11 @@ namespace StartTestProject
             return fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
         }
 
+        // Пример c прогрессбаром
         private async void Exampl8Btn_Click(object sender, EventArgs e)=>await StartAssembling();
         private async Task<bool> StartAssembling()
         {
+            RezultLb.Text = string.Empty;
             progressBar.Visible = true;
             progressBarLabel.Visible = true;
             progressBarLabel.BringToFront();
@@ -247,7 +254,6 @@ namespace StartTestProject
             try
             {
                 AssemblyPlan assemblyPlan;
-
                 fileEdit.LoadeJson(assemblingFile, out assemblyPlan); // Загружаем план сборки
                 if (assemblyPlan == null)
                 {
@@ -259,7 +265,6 @@ namespace StartTestProject
 
                 // Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3179_3_2");
                 Assembling assembling = new Assembling(assemblyPlan, dataArray, _context); // Запускаем сборку
-
                 assembling.ProcessChanged += worker_ProcessChang;
                 assembling.TextChanged += worker_TextChang;
 

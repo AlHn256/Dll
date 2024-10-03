@@ -42,11 +42,12 @@
             this.progressBarLabel = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.CpuLb = new System.Windows.Forms.Label();
+            this.KeypointsAreaBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // MainFormBtn
             // 
-            this.MainFormBtn.Location = new System.Drawing.Point(48, 375);
+            this.MainFormBtn.Location = new System.Drawing.Point(48, 387);
             this.MainFormBtn.Name = "MainFormBtn";
             this.MainFormBtn.Size = new System.Drawing.Size(527, 23);
             this.MainFormBtn.TabIndex = 0;
@@ -56,7 +57,7 @@
             // 
             // EditingStitchingPlanBtn
             // 
-            this.EditingStitchingPlanBtn.Location = new System.Drawing.Point(48, 404);
+            this.EditingStitchingPlanBtn.Location = new System.Drawing.Point(48, 416);
             this.EditingStitchingPlanBtn.Name = "EditingStitchingPlanBtn";
             this.EditingStitchingPlanBtn.Size = new System.Drawing.Size(527, 23);
             this.EditingStitchingPlanBtn.TabIndex = 1;
@@ -118,7 +119,7 @@
             // 
             this.RezultLb.AutoSize = true;
             this.RezultLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.RezultLb.Location = new System.Drawing.Point(51, 301);
+            this.RezultLb.Location = new System.Drawing.Point(51, 362);
             this.RezultLb.Name = "RezultLb";
             this.RezultLb.Size = new System.Drawing.Size(0, 13);
             this.RezultLb.TabIndex = 8;
@@ -145,7 +146,7 @@
             // 
             // Exampl8Btn
             // 
-            this.Exampl8Btn.Location = new System.Drawing.Point(48, 235);
+            this.Exampl8Btn.Location = new System.Drawing.Point(48, 264);
             this.Exampl8Btn.Name = "Exampl8Btn";
             this.Exampl8Btn.Size = new System.Drawing.Size(527, 23);
             this.Exampl8Btn.TabIndex = 11;
@@ -159,7 +160,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarLabel.AutoSize = true;
             this.progressBarLabel.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.progressBarLabel.Location = new System.Drawing.Point(260, 274);
+            this.progressBarLabel.Location = new System.Drawing.Point(260, 303);
             this.progressBarLabel.Name = "progressBarLabel";
             this.progressBarLabel.Size = new System.Drawing.Size(39, 15);
             this.progressBarLabel.TabIndex = 30;
@@ -169,7 +170,7 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(48, 271);
+            this.progressBar.Location = new System.Drawing.Point(48, 300);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(527, 20);
             this.progressBar.TabIndex = 29;
@@ -178,16 +179,27 @@
             // 
             this.CpuLb.AutoSize = true;
             this.CpuLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.CpuLb.Location = new System.Drawing.Point(400, 301);
+            this.CpuLb.Location = new System.Drawing.Point(400, 362);
             this.CpuLb.Name = "CpuLb";
             this.CpuLb.Size = new System.Drawing.Size(0, 15);
             this.CpuLb.TabIndex = 31;
+            // 
+            // KeypointsAreaBtn
+            // 
+            this.KeypointsAreaBtn.Location = new System.Drawing.Point(48, 235);
+            this.KeypointsAreaBtn.Name = "KeypointsAreaBtn";
+            this.KeypointsAreaBtn.Size = new System.Drawing.Size(527, 23);
+            this.KeypointsAreaBtn.TabIndex = 32;
+            this.KeypointsAreaBtn.Text = "Пример с устновкой области поиска ключевых точек";
+            this.KeypointsAreaBtn.UseVisualStyleBackColor = true;
+            this.KeypointsAreaBtn.Click += new System.EventHandler(this.KeypointsAreaBtn_Click);
             // 
             // TestingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 451);
+            this.Controls.Add(this.KeypointsAreaBtn);
             this.Controls.Add(this.CpuLb);
             this.Controls.Add(this.progressBarLabel);
             this.Controls.Add(this.progressBar);
@@ -227,6 +239,7 @@
         private System.Windows.Forms.Label progressBarLabel;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label CpuLb;
+        private System.Windows.Forms.Button KeypointsAreaBtn;
     }
 }
 

@@ -14,6 +14,7 @@ using System.Windows.Forms;
 
 namespace ImgAssemblingLibOpenCV.AditionalForms
 {
+    //unblok
     public partial class ImgFixingForm : Form
     {
         private int rotation90 = 0;
@@ -66,6 +67,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             InitializeComponent();
             if (!string.IsNullOrEmpty(imgFixingPlan)) imgFixingFile = imgFixingPlan;
             TryReadSettings();
+        }
+        private bool SetErr(string errText)
+        {
+            IsErr = true;
+            ErrText = errText;
+            RezultRTB.Text = errText;
+            return false;
         }
         public void OnProgressChanged(object i)
         {
@@ -327,6 +335,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void InputDirTxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(InputDirTxtBox.Text)) return;
+            if (!Directory.Exists(InputDirTxtBox.Text)) return;
             var files = fileEdit.SearchFiles(InputDirTxtBox.Text);
             if (files[0] != null)
             {
@@ -578,7 +587,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 }
             }
         }
-        public bool TryReadSettings()
+        public void TryReadSettings()
         {
             if (File.Exists(imgFixingFile))
             {
@@ -592,32 +601,27 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                         if (jsonString != null)
                         {
                             ImgFixingSettings imgFixingSettings = JsonConvert.DeserializeObject<ImgFixingSettings>(jsonString);
-                            return SetImgFixingSettings(imgFixingSettings);
+                            if(imgFixingSettings.DistorSettings == null) SetImgFixingSettingsWD(imgFixingSettings); // для старых версий загрузка плана без настроек дисторсии
+                            else SetImgFixingSettings(imgFixingSettings);
                         }
                     }
                 }
                 catch (IOException e)
                 {
-                    return SetErr("The file could not be read: " + e.Message + "!!!\n");
+                    SetErr("The file could not be read: " + e.Message + "!!!\n");
                 }
             }
-            else return SetErr("Err TryReadSettings.файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
-            return false;
+            else SetErr("Err TryReadSettings.файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
         }
-        private bool SetImgFixingSettings(ImgFixingSettings imgFixingSettings)
+        private void SetImgFixingSettings(ImgFixingSettings imgFixingSettings)
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
 
+            SetImgFixingSettingsWD(imgFixingSettings);
             DistChkBox.Checked = imgFixingSettings.Distortion;
+
             DistorSettings distorSettings = imgFixingSettings.DistorSettings;
-
-            if (imgFixingSettings.Zoom < 1) imgFixingSettings.Zoom = 1;
-            Zoom = imgFixingSettings.Zoom;
-            ZoomLbl.Text = imgFixingSettings.Zoom.ToString();
-            rotation90 = imgFixingSettings.Rotation90;
-            BlackWhiteChkBox.Checked = imgFixingSettings.BlackWhiteMode;
-
             ATxtBox.Text = distorSettings.A.ToString();
             BTxtBox.Text = distorSettings.B.ToString();
             CTxtBox.Text = distorSettings.C.ToString();
@@ -633,14 +637,26 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Sm32TxtBox.Text = distorSettings.Sm32.ToString();
             Sm33TxtBox.Text = distorSettings.Sm33.ToString();
 
+            AutoReloadChkBox.Checked = AutoReloadSave;
+        }
+        private void SetImgFixingSettingsWD(ImgFixingSettings imgFixingSettings) // для старых версий загрузка плана без настроек дисторсии
+        {
+            bool AutoReloadSave = AutoReloadChkBox.Checked;
+            AutoReloadChkBox.Checked = false;
+
+            DistChkBox.Checked = false;
+
+            if (imgFixingSettings.Zoom < 1) imgFixingSettings.Zoom = 1;
+            Zoom = imgFixingSettings.Zoom;
+            ZoomLbl.Text = imgFixingSettings.Zoom.ToString();
+            rotation90 = imgFixingSettings.Rotation90;
+            BlackWhiteChkBox.Checked = imgFixingSettings.BlackWhiteMode;
             CropAfterChkBox.Checked = imgFixingSettings.CropAfterChkBox;
             XAfterTxtBox.Text = imgFixingSettings.XAfter.ToString();
             YAfterTxtBox.Text = imgFixingSettings.YAfter.ToString();
             dXAfterTxtBox.Text = imgFixingSettings.DXAfter.ToString();
             dYAfterTxtBox.Text = imgFixingSettings.DYAfter.ToString();
-
             AutoReloadChkBox.Checked = AutoReloadSave;
-            return true;
         }
         private ImgFixingSettings GetImgFixingSettings()
         {
@@ -690,25 +706,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 DYAfter = dY
             };
         }
-
-        public static byte[] BitmapToByte(string path, Image img, int quality)
-        {
-            var JpegCodecInfo = ImageCodecInfo.GetImageEncoders().Where(x => x.FormatDescription == "JPEG").First();
-            ImageCodecInfo jpegCodec = JpegCodecInfo;
-            EncoderParameters encoderParams = new EncoderParameters(1);
-            EncoderParameter qualityParam = new EncoderParameter(Encoder.Quality, quality);
-            encoderParams.Param[0] = qualityParam;
-            MemoryStream mss = new MemoryStream();
-            FileStream fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
-
-            img.Save(mss, jpegCodec, encoderParams);
-            byte[] matriz = mss.ToArray();
-            fs.Write(matriz, 0, matriz.Length);
-
-            mss.Close();
-            fs.Close();
-            return matriz;
-        }
         private void RBtnUpDn_Click(object sender, EventArgs e){Rotation90(false);ZeroCropAfter(true); SetSm13Sm23();}
         private void RBtnUp90_Click(object sender, EventArgs e) {Rotation90(true);ZeroCropAfter(true); SetSm13Sm23();}
         private void RBtnUp001_Click(object sender, EventArgs e) => Rotation(100);
@@ -718,14 +715,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
         private void RezultRTB_TextChanged(object sender, EventArgs e)
         {
-            if (RezultRTB.Text.IndexOf("unblok") != -1|| RezultRTB.Text.IndexOf("Unblok") != -1) UnBlock();
+            if (RezultRTB.Text.IndexOf("unblok") != -1 || RezultRTB.Text.IndexOf("Unblok") != -1 || 
+                RezultRTB.Text.IndexOf("гтидщл") != -1 || RezultRTB.Text.IndexOf("Гтидщл") != -1) UnBlock();
         }
-
         private void BlackWhiteChkBox_CheckedChanged(object sender, EventArgs e)
         {
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
-
         private void Rotation90(bool direction)
         {
             if (direction) rotation90++;
@@ -760,7 +756,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
             return EditImg(Cv2.ImRead(file));
         }
-
         private Bitmap EditImg(Bitmap bitmap)
         {
             if (bitmap == null)
@@ -858,12 +853,5 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             else return BitmapConverter.ToBitmap(mat);
         }
         public string GetImgFixingPlan() => imgFixingFile;
-        private bool SetErr(string errText)
-        {
-            IsErr = true;
-            ErrText = errText;
-            RezultRTB.Text = ErrText;
-            return false;
-        }
     }
 }

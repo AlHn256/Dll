@@ -24,13 +24,9 @@ namespace ImgAssemblingLibOpenCV.Models
         public string TextMessag { get; set; } = string.Empty;
         private static string[] FileFilter {  get; set; }
 
-        public FileEdit()
-        {
-        }
-        public FileEdit(string[] fileFilter ) {
-            FileFilter = fileFilter;
-        }
-
+        public FileEdit(){}
+        public FileEdit(string[] fileFilter ) => FileFilter = fileFilter;
+        
         private bool SetErr(string err)
         {
             IsErr = true;
@@ -355,6 +351,28 @@ namespace ImgAssemblingLibOpenCV.Models
             return fileList;
         }
         public string GetDefoltDirectory() => AppDomain.CurrentDomain.BaseDirectory;
+
+        public bool DelAll() => DelAll(GetDefoltDirectory());
+        public bool DelAll(string stitchingDirectory)
+        {
+            if (string.IsNullOrEmpty(stitchingDirectory)) return SetErr("Err string.IsNullOrEmpty(stitchingDirectory)!!!");
+
+            DirectoryInfo di = new DirectoryInfo(stitchingDirectory);
+            foreach (FileInfo file in di.GetFiles())file.Delete();
+            foreach (DirectoryInfo dir in di.GetDirectories())dir.Delete(true);
+            Directory.Delete(stitchingDirectory);
+            if (Directory.Exists(stitchingDirectory)) return false;
+            else return true;
+        }
+        public void DeleteResultes(string filter = "")
+        {
+            FileInfo[] fileList = SearchFiles();
+            if (!string.IsNullOrEmpty(filter)) fileList = fileList.Where(x => x.FullName.Contains(filter)).ToArray();
+            DelAllFileFromList(fileList);
+            TextMessag = fileList.Count() + " файлов удалено!\n";
+            foreach (var file in fileList) TextMessag += file.Name + " - \n";
+            SaveId = 0;
+        }
         public bool DelAllFileFromDir() => DelAllFileFromDir(GetDefoltDirectory());
         public bool DelAllFileFromDir(string rezultDir)
         {
@@ -498,15 +516,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 SaveId++;
             }
             return FileSaveString;
-        }
-        public void deleteResultes(string filter = "")
-        {
-            FileInfo[] fileList = SearchFiles();
-            if (!string.IsNullOrEmpty(filter)) fileList = fileList.Where(x => x.FullName.Contains(filter)).ToArray();
-            DelAllFileFromList(fileList);
-            TextMessag = fileList.Count() + " файлов удалено!\n";
-            foreach (var file in fileList) TextMessag += file.Name + " - \n";
-            SaveId = 0;
         }
         public bool CheckFileName(string dir) => true;
         public bool FixFileName(string dir) => true;

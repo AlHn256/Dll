@@ -17,10 +17,9 @@ namespace StartTestProject
         private FileEdit fileEdit = new FileEdit(new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" });
         private string consol = string.Empty;
         private object _context;
-        BackgroundWorker worker;
-
-        PerformanceCounter cpuCounter;
-        PerformanceCounter ramCounter;
+        private BackgroundWorker worker;
+        private PerformanceCounter cpuCounter;
+        private PerformanceCounter ramCounter;
         public TestingForm()
         {
             InitializeComponent();
@@ -28,7 +27,6 @@ namespace StartTestProject
             progressBarLabel.Visible = false;
             if (SynchronizationContext.Current != null) _context = SynchronizationContext.Current;
             else _context = new SynchronizationContext();
-
 
             cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             ramCounter = new PerformanceCounter("Memory", "Available MBytes");
@@ -46,6 +44,20 @@ namespace StartTestProject
             //RezultLb.Text = "CPU "+ getCurrentCpuUsage()+ " RAM " + getAvailableRAM();
             worker.RunWorkerAsync();
         }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            consol += keyData;
+            if (consol.Length > 5)
+            {
+                consol = consol.Substring(consol.Length - 5);
+                if (consol.IndexOf("IMG") != -1){ ShowImgFixingForm(); consol = string.Empty; }
+                if (consol.IndexOf("MAIN") != -1){ ShowMainForm(); consol = string.Empty; }
+                if (consol.IndexOf("EDIT") != -1){ShowEditingStitchingForm(); consol = string.Empty; }
+                if (consol.IndexOf("AUTO") != -1){ OpenAutoTest(); consol = string.Empty; }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+        private void OpenAutoTest()=>new AutoTest().ShowDialog();
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)=>CpuLb.Text = "CPU " + e.ProgressPercentage + "% RAM " + getAvailableRAM();
         public string getAvailableRAM()=> ramCounter.NextValue() + "MB";
         void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -56,7 +68,6 @@ namespace StartTestProject
                 worker.ReportProgress((int)cpuCounter.NextValue());
             }
         }
-
         private void ShowMainForm()
         {
             MainForm imgFixingForm = new MainForm();
@@ -71,25 +82,6 @@ namespace StartTestProject
         {
             ImgFixingForm imgFixingForm = new ImgFixingForm("D:\\Work\\Exampels\\15");
             imgFixingForm.ShowDialog();
-        }
-
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            consol += keyData;
-            if (consol.Length > 5)
-            {
-                consol = consol.Substring(consol.Length - 5);
-                if (consol.IndexOf("IMG") != -1 || consol.IndexOf("MAIN") != -1 || consol.IndexOf("EDIT") != -1)
-                {
-                    if (consol.IndexOf("IMG") != -1) ShowImgFixingForm();
-                    if (consol.IndexOf("MAIN") != -1) ShowMainForm();
-                    if (consol.IndexOf("EDIT") != -1) ShowEditingStitchingForm();
-
-                    consol = string.Empty;
-                }
-            }
-
-            return base.ProcessCmdKey(ref msg, keyData);
         }
         private void MainFormBtn_Click(object sender, EventArgs e)=>ShowMainForm();
         private void EditingStitchingPlanBtn_Click(object sender, EventArgs e)=>ShowEditingStitchingForm();
@@ -241,7 +233,22 @@ namespace StartTestProject
             if (fileList.Length == 0) return new Bitmap[] { };
             return fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
         }
+        private async void KeypointsAreaBtn_Click(object sender, EventArgs e)
+        {
+            RezultLb.Text = string.Empty;
+            AssemblyPlan assemblyPlan;
+            fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip";
+            Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
 
+            assemblyPlan.SelectSearchArea = true; // Для большей точности можно задать область поиска ключевых точек
+            assemblyPlan.MaxHeight = 1630;
+            assemblyPlan.MinHeight = 1533;
+            assemblyPlan.MaxWight = 766;
+            assemblyPlan.MinWight = 11;
+            Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
+            if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+        }
         // Пример c прогрессбаром
         private async void Exampl8Btn_Click(object sender, EventArgs e)=>await StartAssembling();
         private async Task<bool> StartAssembling()
@@ -278,7 +285,6 @@ namespace StartTestProject
             }
             return true;
         }
-
         private void worker_ProcessChang(int progress)
         {
             if (progress < 0) progressBar.Value = 0;

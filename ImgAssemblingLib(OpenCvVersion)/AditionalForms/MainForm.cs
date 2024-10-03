@@ -716,7 +716,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) => this.Close();
-        private void deleteResultesToolStripMenuItem_Click(object sender, EventArgs e) => fileEdit.deleteResultes("Result");
+        private void deleteResultesToolStripMenuItem_Click(object sender, EventArgs e) => fileEdit.DeleteResultes("Result");
         private void deletePlanToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StitchingBlock stitchingBlock = new StitchingBlock(FileDirTxtBox.Text, false);

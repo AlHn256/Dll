@@ -15,29 +15,33 @@ namespace ImgAssemblingLibOpenCV.Models
 {
     public class Assembling
     {
+        private SynchronizationContext _context;
+        private FileEdit fileEdit = new FileEdit();
         public Bitmap[] BitmapData { get; set; }
         private AssemblyPlan AssemblyPlan { get; set; }
-        private FileEdit fileEdit = new FileEdit();
         private string SavedFileName { get; set; } = string.Empty;
         private Mat RezultImg { get; set; }
-        private SynchronizationContext _context;
         private StitchingBlock stitchingBlock { get; set; }
         public event Action<int> ProcessChanged;
         public event Action<string> TextChanged;
         public event Action<string> RTBUpDateInfo;
         public event Action<string> RTBAddInfo;
         public event Action<Mat> UpdateImg;
-        public string StitchingInfo { get; set; }
-        public bool StopExecution { get; set; } = false;
         public bool CalculationSpeedDespiteErrors { get; set; } = false;
         public bool IsErr { get; set; } = false;
+        public bool IsCriticalErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
         public EnumErrCode ErrCode { get; set; }
         public List<string> ErrList { get; set; } = new List<string>();
 
-        private void worker_ProcessChang(int progress) => _context.Send(OnProgressChanged, progress);
-        private void worker_TextChang(string text) => _context.Send(OnTextChanged, text);
-
+        private void worker_ProcessChang(int progress)
+        {
+            if(_context!=null)_context.Send(OnProgressChanged, progress);
+        }
+        private void worker_TextChang(string text)
+        {
+            if (_context != null) _context.Send(OnTextChanged, text);
+        }
         public void OnImgUpdate(object img)
         {
             if (UpdateImg != null) UpdateImg((Mat)img);
@@ -65,14 +69,6 @@ namespace ImgAssemblingLibOpenCV.Models
             _context = (SynchronizationContext)param;
             logger = LogManager.GetCurrentClassLogger();
         }
-
-        public Assembling(AssemblyPlan assemblyPlan, object param)
-        {
-            AssemblyPlan = assemblyPlan;
-            _context = (SynchronizationContext)param;
-            logger = LogManager.GetCurrentClassLogger();
-        }
-        
         public Assembling(AssemblyPlan assemblyPlan, Bitmap[] bitmapData, object param)
         {
             BitmapData = bitmapData;
@@ -80,41 +76,41 @@ namespace ImgAssemblingLibOpenCV.Models
             _context = (SynchronizationContext)param;
             logger = LogManager.GetCurrentClassLogger();
         }
-
         public void ChangeAssemblyPlan(AssemblyPlan assemblyPlan) => AssemblyPlan = assemblyPlan;
-        public Mat GetRezultImg()
-        {
-            if (RezultImg == null)
-            {
-                SetErr("Err RezultImg == null!!!");
-                return new Mat();
-            }
-            else return RezultImg;
-        }
-
+        public Mat GetRezultImg() => RezultImg;
         public string GetSavedFileName() => SavedFileName;
         public void SetRezultImg(Mat rezultImg) => RezultImg = rezultImg;
         private bool SetErr(string err)
         {
+            IsErr = true;
             ErrText = err;
+            ErrList.Add(err);
             return false;
         }
-
+        private bool SetCriticalErr(string err)
+        {
+            IsErr = true;
+            IsCriticalErr = true;
+            ErrText = err;
+            ErrList.Add(err);
+            return false;
+        }
         public bool CheckPlane()
         {
-            if (AssemblyPlan == null) return SetErr("Err Assembling.AssemblyPlan = null!!!");
+            if (AssemblyPlan == null) return SetCriticalErr("Err Assembling.AssemblyPlan = null!!!");
             if (AssemblyPlan.BitMap)
             {
-                if (BitmapData==null || BitmapData.Length == 0) return SetErr("Err Assembling.BitmapData = null || = 0!!!");
+                if (BitmapData==null || BitmapData.Length == 0) return SetCriticalErr("Err Assembling.BitmapData = null || = 0!!!");
             }
-            else
-            {
-                if (string.IsNullOrEmpty(AssemblyPlan.WorkingDirectory)) return SetErr("Err " + AssemblyPlan.WorkingDirectory + " IsNullOrEmpty!!!");
-            }
-            
-            return true;
-        }
+            else if (string.IsNullOrEmpty(AssemblyPlan.WorkingDirectory)) return SetCriticalErr("Err " + AssemblyPlan.WorkingDirectory + " IsNullOrEmpty!!!");
 
+            if (AssemblyPlan.FixImg)
+            {
+                if(string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) return SetCriticalErr("Err AssemblyPlan.ImgFixingPlan Is NullOrEmpty!!!");
+                if(!System.IO.File.Exists(AssemblyPlan.ImgFixingPlan)) return SetCriticalErr($"Err {AssemblyPlan.ImgFixingPlan} !Exists !!!");
+            }
+           return true;
+        }
         public async Task<FinalResult> TryAssemble()
         {
             try
@@ -125,20 +121,18 @@ namespace ImgAssemblingLibOpenCV.Models
                     Speed = AssemblyPlan.Speed,
                     MatRezult = RezultImg,
                     BitRezult = RezultImg == null ? null : BitmapConverter.ToBitmap(RezultImg),
-                    AssemblyReport = GetReport()
+                    IsErr = IsErr,
+                    ErrText = ErrText,
+                    ErrList = ErrList
                 };
             }
             catch (Exception ex)
             {
                 return new FinalResult() {
                     IsErr = IsErr,
-                    ErrText = ErrText + "\nEx.Message " + ex.Message,
+                    ErrText = ErrText + "Ex.Message " + ex.Message,
                     ErrList = ErrList
                 };
-            }
-            finally
-            {
-
             }
         }
         public async Task<bool> StartAssembling()
@@ -151,9 +145,11 @@ namespace ImgAssemblingLibOpenCV.Models
             stopwatch.Start();
             TimeSpan ts = stopwatch.Elapsed;
             TimeSpan tSum = TimeSpan.Zero;
+
+            // Проверка плана сборки на ошибки
+            if (!CheckPlane()) return SetCriticalErr("Err CheckPlane not pass!!!");
             
-            bool workingWBitmap = (AssemblyPlan.BitMap && BitmapData != null && BitmapData.Length != 0) ? true : false;
-            if (workingWBitmap)
+            if (AssemblyPlan.BitMap)
             {
                 logger.Info("Working with Bitmap. BitmapData - " + BitmapData.Length);
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Bitmap. BitmapData - " + BitmapData.Length+"\n");
@@ -166,9 +162,7 @@ namespace ImgAssemblingLibOpenCV.Models
             logger.Info("Delta = " + AssemblyPlan.Delta);
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Delta = " + AssemblyPlan.Delta);
 
-            if (!CheckPlane()) return false;
-
-            if (!workingWBitmap)
+            if (!AssemblyPlan.BitMap)
             {
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   Start File Name Checking ");
                 logger.Info("   Start File Name Checking");
@@ -205,7 +199,7 @@ namespace ImgAssemblingLibOpenCV.Models
                         logger.Info(fileEdit.TextMessag);
                         AssemblyPlan.DelFileCopyRezult = fileEdit.TextMessag;
                     }
-                    else { SendErr(fileEdit.ErrText + "\n"); AssemblyPlan.DelFileCopyRezult = fileEdit.ErrText; }
+                    else {SendErr(fileEdit.ErrText + "\n"); AssemblyPlan.DelFileCopyRezult = fileEdit.ErrText; }
                     fileEdit.ClearInformation();
                 }
                 else { SendSkipped(); AssemblyPlan.DelFileCopyRezult = "Этап пропущен!!!"; }
@@ -219,7 +213,7 @@ namespace ImgAssemblingLibOpenCV.Models
             logger.Info("Img Fixing"); // Исправление кадров по загруженной инструкции
             if (AssemblyPlan.FixImg)
             {
-                if (workingWBitmap)
+                if (AssemblyPlan.BitMap)
                 {
                     logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                     if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
@@ -287,9 +281,6 @@ namespace ImgAssemblingLibOpenCV.Models
                             if (imgFixingForm.FixImges(_context, ImgFixingDir)) { SendErr(imgFixingForm.ErrText); AssemblyPlan.FixImgRezult = imgFixingForm.ErrText; }
                             else { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
                         });
-
-                        //imgFixingForm2.IsErr) { SendErr(imgFixingForm2.ErrText); AssemblyPlan.FixImgRezult = imgFixingForm2.ErrText; }
-                        //else { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
                     }
                 }
             }
@@ -300,8 +291,8 @@ namespace ImgAssemblingLibOpenCV.Models
             stopwatch.Restart();
 
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Find Key Points ");
-            logger.Info("Find Key Points"); // Поиск ключевых точек
-            if (AssemblyPlan.FindKeyPoints)
+            logger.Info("Find Key Points");
+            if (AssemblyPlan.FindKeyPoints) // Поиск ключевых точек
             {
                 if (await FindKeyPoints()) { SendFinished(); AssemblyPlan.FindKeyPointsRezult = "Выполнено."; }
                 else { SendErr(ErrText); AssemblyPlan.FindKeyPointsRezult = ErrText; }
@@ -316,17 +307,15 @@ namespace ImgAssemblingLibOpenCV.Models
             logger.Info("Get Speed");
             if (AssemblyPlan.SpeedCounting) // Подсчет скорости
             {
-                // SpeedСounter speedСounter = new(stitchingBlock.GetSelectedFiles(), AssemblyPlan);
                 SpeedСounter speedСounter = new SpeedСounter(stitchingBlock.GetSelectedFiles(), AssemblyPlan.MillimetersInPixel, AssemblyPlan.TimePerFrame);
                 AssemblyPlan.Speed = speedСounter.GetSpeedByPoints(CalculationSpeedDespiteErrors);
-                // AssemblyPlan.Speed = speedСounter.GetSpeedByPoints(true);
                 var avSpeedList = speedСounter.GetSpeedListByPoints(10);
                 double avSp = 0;
                 if (avSpeedList.Count > 1)avSp = avSpeedList.Sum(x => x.Sp) / avSpeedList.Count();
                 if (contectIsOn)
                 {
                     if (AssemblyPlan.Speed != -1) _context.Send(OnRTBAddInfo, "   Скорость ~ " + AssemblyPlan.Speed.ToString() + " Км/ч\n");
-                    else { SendErr("Скорость неопределена!!!"); AssemblyPlan.SpeedCountingRezults = ErrText; }
+                    else  { SendErr("Скорость неопределена!!!"); AssemblyPlan.SpeedCountingRezults = ErrText; }
                 }
             }
             else { SendSkipped(); AssemblyPlan.SpeedCountingRezults = "Этап пропущен!!!"; }
@@ -348,10 +337,10 @@ namespace ImgAssemblingLibOpenCV.Models
             SendTime("  Time ", ts);
             stopwatch.Stop();
 
-            // Сохранение итогового изображения
+            
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Saving Rezult ");
             logger.Info("Saving Rezult ");
-            if (AssemblyPlan.SaveRezults)
+            if (AssemblyPlan.SaveRezults) // Сохранение итогового изображения
             {
                 fileEdit.ClearInformation();
                 SavedFileName = fileEdit.SaveImg(RezultImg);
@@ -369,8 +358,6 @@ namespace ImgAssemblingLibOpenCV.Models
             SendTime("  Time ", ts);
             SendTime("  AllTime ", tSum);
             stopwatch.Stop();
-            
-
             return !IsErr;
         }
         public double GetSpeed() => AssemblyPlan.Speed;
@@ -399,7 +386,7 @@ namespace ImgAssemblingLibOpenCV.Models
         }
         private void SendErr(string err)
         {
-            SetErr("Err "+err+"!!!\n");
+            SetErr(err);
             if (_context != null) _context.Send(OnRTBAddInfo, ErrText);
             logger.Error(ErrText);
         }
@@ -424,18 +411,7 @@ namespace ImgAssemblingLibOpenCV.Models
             }
 
             var areasForDelet = stitchingBlock.FindeBlockForDelet();
-            if (areasForDelet.Count > 0)
-            {
-                stitchingBlock.DeletAreas(areasForDelet);
-            }
-            //stitchingBlock.CheckErr();
-            //if (stitchingBlock.IsErr)
-            //{
-            //    SetErr(stitchingBlock.ErrText);
-            //    var sdf = stitchingBlock.GetErrText();
-            //    bool fixinErr = stitchingBlock.CheckAndFixErr(_context);
-            //    if (!fixinErr) return SetErr(stitchingBlock.ErrText);
-            //}
+            if (areasForDelet.Count > 0)stitchingBlock.DeletAreas(areasForDelet);
             return true;
         }
         private async Task<bool> StitchImgs()
@@ -452,11 +428,18 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             else return SetErr("Err StitchingBlock = null !!!");
         }
-        private string GetReport()
+        public void ClearAll()
         {
-            string Report = string.Empty;
-
-            return Report;
+            BitmapData = null;
+            AssemblyPlan = null;
+            SavedFileName = string.Empty;
+            RezultImg = null;
+            IsErr = false;
+            IsCriticalErr = false;
+            ErrText = string.Empty;
+            EnumErrCode ErrCode = EnumErrCode.NoErr;
+            ErrList.Clear();
+            stitchingBlock = null;
         }
     }
 }

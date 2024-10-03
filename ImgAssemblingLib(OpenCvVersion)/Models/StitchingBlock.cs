@@ -210,7 +210,6 @@ namespace ImgAssemblingLibOpenCV.Models
                         firstSelectedFiles.VectorList = VectorList;
                         firstSelectedFiles.AverageXShift = vectorInfo.AverageXShift;
                         firstSelectedFiles.AverageYShift = vectorInfo.AverageYShift;
-                        // firstSelectedFiles.AverageShift = Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? Math.Round(vectorInfo.AverageXShift) : Math.Round(vectorInfo.AverageYShift);
                         firstSelectedFiles.AverageShift = Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? vectorInfo.AverageXShift : vectorInfo.AverageYShift;
                         firstSelectedFiles.Direction = vectorInfo.Direction;
                         if (copy != -1)  copy = -1;
@@ -669,6 +668,7 @@ namespace ImgAssemblingLibOpenCV.Models
             return NOfZeroCrossing;
         }
 
+        // проверка на замедление \ остановку поезда
         private int CheckForDecelerationAndStop(List<SelectedFiles> SelectedFilesTempList)
         {
             int conter = 0;
@@ -787,12 +787,15 @@ namespace ImgAssemblingLibOpenCV.Models
             if (Direction == EnumDirection.Right || Direction == EnumDirection.Down) InvertDirection(); // Если направление движения правое то делаем инверсию SelectedFiles
 
             SynchronizationContext context = (SynchronizationContext)param;
-            int newDelta = CheckBorders(Delta);
-            if(newDelta!= Delta)
-            {
-                SetErr($"\nDelta пришлось поменять с {Delta} на {newDelta}");
-                Delta = newDelta;
-            }
+
+            // Проверка границ
+            //int newDelta = CheckBorders(Delta);
+            //if (newDelta != Delta)
+            //{
+            //    SetErr($"\nDelta пришлось поменять с {Delta} на {newDelta}");
+            //    Delta = newDelta;
+            //}
+
             // Сборка картинки по частям
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
@@ -886,8 +889,9 @@ namespace ImgAssemblingLibOpenCV.Models
             return rezult;
         }
 
-        private int CheckBorders(int Delta)
+        private int CheckBorders(int Delta, bool recurs = true)
         {
+            int DeltaSave = Delta;
             Mat imgFile = SelectedFiles[0].Mat;
             if(imgFile == null && !string.IsNullOrEmpty(SelectedFiles[0].FullName)) imgFile = new Mat(SelectedFiles[0].FullName);
             
@@ -896,22 +900,59 @@ namespace ImgAssemblingLibOpenCV.Models
 
             int newDelta = Delta;
             int w2 = imgFile.Width / 2;
+            int lastElem = 0;
             if (Direction == EnumDirection.Left)
             {
                 List<int> intsD2 = new List<int>();
-                List<int> intsD3 = new List<int>();
-                foreach (var elem in SelectedFiles)
+                for(int i =0; i< SelectedFiles.Count; i++)
                 {
-                    int d2 = w2 - (int)elem.AverageShift + Delta;
+                    if(i == SelectedFiles.Count-1)
+                    {
+                        lastElem = w2 - (int)SelectedFiles[i].AverageShift + Delta - 1;   
+                        //int d1 = w2 - shift + Delta - 1;
+                        //int d2 = shift - Delta - 1;
+                    }
+                    else
+                    {
+                    int d2 = w2 - (int)SelectedFiles[i].AverageShift + Delta;
                     intsD2.Add(d2);
-                    intsD3.Add(d2 + (int)elem.AverageShift - 1);
+                    }
                 }
+
+                //foreach (var elem in SelectedFiles)
+                //{
+                //    int d2 = w2 - (int)elem.AverageShift + Delta;
+                //    intsD2.Add(d2);
+                //    intsD3.Add(d2 + (int)elem.AverageShift - 1);
+                //    int lastElem = (int)elem.AverageShift - Delta - 1;
+                //}
 
                 int minD2 = intsD2.Min();
                 int maxD2 = intsD2.Max();
-                int minD3 = intsD3.Min();
-                int maxD3 = intsD3.Max();
-                if (minD2 < 0)newDelta = -minD2+5;
+
+                if (minD2 < 0 || lastElem < 0 || lastElem > w2)
+                {
+                    if (minD2 < 0) newDelta = -minD2 + 5;
+                    //lastElem = w2 - (int)SelectedFiles[i].AverageShift + Delta - 1;   
+                    if (lastElem < 0)
+                    {
+                        newDelta = -lastElem + 5;
+                       // newDelta = lastElem = w2 - (int)SelectedFiles[SelectedFiles.Count - 1].AverageShift + Delta - 1;
+                    }                    
+                    if (lastElem > w2)
+                    {
+                        newDelta = - lastElem + 5;
+                        
+                        // newDelta = lastElem = w2 - (int)SelectedFiles[SelectedFiles.Count - 1].AverageShift + Delta - 1;
+                    }
+
+                    if (recurs)
+                    {
+                        int delta2 =  CheckBorders(newDelta, false);
+                        if (newDelta != delta2) newDelta = DeltaSave;
+                    }
+                }
+                //if (maxD2 > w2) newDelta = - minD2+5;
             }
             return newDelta;
         }
@@ -1216,7 +1257,11 @@ namespace ImgAssemblingLibOpenCV.Models
                         Mat dstroi2 = new Mat(Img2, rect2);
                         Cv2.VConcat(Img1, dstroi2, rezult);
                     }
-                    else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
+                    else
+                    {
+                        SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
+                        return Img1;
+                    }
                 }
             }
             else if (Direction == EnumDirection.Left)
@@ -1246,7 +1291,7 @@ namespace ImgAssemblingLibOpenCV.Models
                         Rect rect2 = new Rect(d2, 0, shift - 1, Img2.Height - 1);
                         Mat dstroi2 = new Mat(Img2, rect2);
 
-                        if (Img1.Height!= dstroi2.Height )
+                        if (Img1.Height != dstroi2.Height)
                         {
                             rect2 = new Rect(d2, 0, shift, Img2.Height);
                             dstroi2 = new Mat(Img2, rect2);
@@ -1254,12 +1299,15 @@ namespace ImgAssemblingLibOpenCV.Models
 
                         Cv2.HConcat(Img1, dstroi2, rezult);
                     }
-                    else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
+                    else
+                    {
+                        SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
+                        return Img1;
+                    }
                 }
                 else if (FramePosition == EnumFramePosition.Last)
                 {
                     int d1 = w2 - shift + Delta - 1;
-                    //int d2 = Img2.Width - Delta - w2 + shift - 1;
                     int d2 = shift - Delta - 1;
                     if (d1 > 0 && d1 < Img2.Width - 1 && d2 > 0 && d2 < Img2.Width - 1)
                     {
@@ -1267,7 +1315,11 @@ namespace ImgAssemblingLibOpenCV.Models
                         Mat dstroi2 = new Mat(Img2, rect2);
                         Cv2.HConcat(Img1, dstroi2, rezult);
                     }
-                    else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
+                    else
+                    {
+                        SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
+                        return Img1;
+                    }
                 }
             }
             return rezult;

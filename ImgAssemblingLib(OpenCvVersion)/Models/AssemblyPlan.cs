@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ImgAssemblingLibOpenCV.Models
 {
-    public class AssemblyPlan : ICloneable
+    public class AssemblyPlan  
     {
         public bool BitMap { get; set; } = false; // Работаем не через файлы, а через массивы Bitmapов
         public bool SaveImgFixingRezultToFile { get; set; } = false; // Принудительное сохранение исправленных кадров в фалы при работе с Bitmapами
@@ -26,14 +26,14 @@ namespace ImgAssemblingLibOpenCV.Models
         public string FixImgRezult { get; set; } = "Не выполнено!";
 
         public bool FindKeyPoints { get; set; } = true; // Поиск ключевых точек
-        public bool ChekStitchPlan { get; set; } = true;
+        public bool ChekStitchPlan { get; set; } = true; // Проверка на наличие существующего плана сборки
         public bool DefaultParameters { get; set; } = false;
-        public string StitchingDirectory { get; set; } = string.Empty;
-        public int Period { get; set; } = 1;
-        public bool Percent { get; set; } = true;
-        public int From { get; set; } = 0;
-        public int To { get; set; } = 100;
-        public int Delta { get; set; } = 20;
+        public string StitchingDirectory { get; set; } = string.Empty; // Папка из которой запускается итоговая сборка изображения
+        public int Period { get; set; } = 1; 
+        public int From { get; set; } = 0; // Период от и 
+        public int To { get; set; } = 100; // до
+        public bool Percent { get; set; } = true; // в процентах или номерах файлов
+        public int Delta { get; set; } = 20; // смещение линии сборки от центра картинки
         public bool SelectSearchArea { get; set; } = false;
         public float MinHeight { get; set; } = 0;
         public float MaxHeight { get; set; } = 0;
@@ -57,33 +57,19 @@ namespace ImgAssemblingLibOpenCV.Models
         public bool ShowAssemblingFile { get; set; } = false; // Показать сохраненный файл ( работает только при включенном SaveRezults) 
 
         public bool AdditionalFilter { get; set; } = false; // Включение/отключение дополнительный фильтр ключевых точек
-
-        public bool IsErr {  get; set; } = false;
-        public string ErrText { get; set; } = string.Empty;
-        public List<string> ErrList { get; set; } = new List<string>();
-        public bool CheckPlan()
+        public void ResetRezults()
         {
-            if (string.IsNullOrEmpty(WorkingDirectory))SetErr("Err AssemblyPlan.FirstDirectory.IsNullOrEmpty!!!");
-            if(!Directory.Exists(WorkingDirectory)) SetErr("Err WorkingDirectory не существует!!!");
-            if (Stitch && !Directory.Exists(StitchingDirectory)) SetErr("Err StitchingDirectory не существует!!!");
-            if (FixImg && !Directory.Exists(FixingImgDirectory)) SetErr("Err FixingImgDirectory не существует!!!");
-            if(Percent)
-            {
-                if (From < 0 || From > To || From > 100 || To < 0 || To > 100)
-                {
-                    From = 0;
-                    To = 100;
-                    SetErr("Err From\\To corrected!!!");
-                }
-            }
-            return false;
+            FileNameCheckRezult = "Не выполнено!";
+            FileNameFixingRezult = "Не выполнено!";
+            DelFileCopyRezult = "Не выполнено!";
+            ChekFixImgRezult = "Не выполнено!";
+            FixImgRezult = "Не выполнено!";
+            ChekStitchPlanRezult = "Не выполнено!";
+            FindKeyPointsRezult = "Не выполнено!";
+            SpeedCountingRezults = "Не выполнено!";
+            Speed = -1;
+            StitchRezult = "Не выполнено!";
+            RezultOfSavingRezults = "Не выполнено!";
         }
-        private bool SetErr(string err)
-        {
-            ErrText = err;
-            return false;
-        }
-
-        public object Clone() => MemberwiseClone();
     }
 }

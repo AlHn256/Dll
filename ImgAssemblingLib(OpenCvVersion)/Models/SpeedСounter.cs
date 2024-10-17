@@ -80,6 +80,8 @@ namespace ImgAssemblingLibOpenCV.Models
         private int MaxPointChainWithoutErrors { get; set; } = 0; // Максимальная цепочка точек без ошибок
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
+        public List<string> ErrList { get; set; } = new List<string>();
+
         public SpeedСounter(List<SelectedFiles> selectedFiles)
         {
             if (selectedFiles == null)
@@ -111,12 +113,11 @@ namespace ImgAssemblingLibOpenCV.Models
             MSekPerFrame = timePerFrame;
         }
 
-
-
         private bool SetErr(string err)
         {
-            ErrText = err;
             IsErr = true;
+            ErrText = err;
+            ErrList.Add(err);
             return false;
         }
         public double GetSpeedExperiment(int fr, int to)

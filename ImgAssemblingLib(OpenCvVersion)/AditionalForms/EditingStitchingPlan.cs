@@ -144,9 +144,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             
             PersentInvok();
             AdditionalFilterChckBox.Checked = AssemblyPlan.AdditionalFilter;
-            SaveResultChckBox.Checked = AssemblyPlan.SaveRezults;
+            SaveResultChckBox.Checked = AssemblyPlan.SaveRezult;
             SpeedCountingСhckBox.Checked = AssemblyPlan.SpeedCounting;
-            OpenResultChckBox.Checked = AssemblyPlan.ShowAssemblingFile;
+            OpenResultChckBox.Checked = AssemblyPlan.ShowRezult;
 
             MillimetersInPixelTxtBox.Text = AssemblyPlan.MillimetersInPixel.ToString();
             TimePerFrameTxtBox.Text = AssemblyPlan.TimePerFrame.ToString();
@@ -190,9 +190,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             AssemblyPlan.ChekStitchPlan = ChekStitchPlanСhckBox.Checked;
             AssemblyPlan.StitchingDirectory = StitchingDirectoryTxtBox.Text;
 
-            AssemblyPlan.SaveRezults = SaveResultChckBox.Checked;
+            AssemblyPlan.SaveRezult = SaveResultChckBox.Checked;
             AssemblyPlan.SpeedCounting = SpeedCountingСhckBox.Checked;
-            AssemblyPlan.ShowAssemblingFile = OpenResultChckBox.Checked;
+            AssemblyPlan.ShowRezult = OpenResultChckBox.Checked;
 
             double millimetersInPixel = 0, timePerFrame = 0;
             double.TryParse(MillimetersInPixelTxtBox.Text, out millimetersInPixel);

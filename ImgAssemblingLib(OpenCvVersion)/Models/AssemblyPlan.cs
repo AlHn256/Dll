@@ -51,10 +51,10 @@ namespace ImgAssemblingLibOpenCV.Models
         public bool Stitch { get; set; } = true;  // Склейка изображений
         public string StitchRezult { get; set; } = "Не выполнено!";
 
-        public bool SaveRezults { get; set; } = false; // Автосохранение результирующего изображения
+        public bool SaveRezult { get; set; } = false; // Автосохранение результирующего изображения
         public string RezultOfSavingRezults { get; set; } = "Не выполнено!";
         public const string defaultAssemblingFile = "NewAssemblyPlan.asp";
-        public bool ShowAssemblingFile { get; set; } = false; // Показать сохраненный файл ( работает только при включенном SaveRezults) 
+        public bool ShowRezult { get; set; } = false; // Показать сохраненный файл ( работает только при включенном SaveRezults) 
 
         public bool AdditionalFilter { get; set; } = false; // Включение/отключение дополнительный фильтр ключевых точек
         public void ResetRezults()

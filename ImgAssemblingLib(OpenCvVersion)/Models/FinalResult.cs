@@ -12,6 +12,7 @@ namespace ImgAssemblingLibOpenCV.Models
         public Mat MatRezult { get; set; }
         public Bitmap BitRezult { get; set; }
         public string AssemblyReport { get; set; } = string.Empty;
+        public string RezulFileLink { get; set; } = string.Empty;
         public bool IsErr { get; set; } = false;
         public bool IsCriticalErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
@@ -24,6 +25,7 @@ namespace ImgAssemblingLibOpenCV.Models
         {
             IsErr = true;
             ErrText = err;
+            ErrList.Add(err);
             return false;
         }
         public bool SetCriticalErr(string err)
@@ -31,6 +33,7 @@ namespace ImgAssemblingLibOpenCV.Models
             IsErr = true;
             IsCriticalErr = true;
             ErrText = err;
+            ErrList.Add(err);
             return false;
         }
         public void Clear()

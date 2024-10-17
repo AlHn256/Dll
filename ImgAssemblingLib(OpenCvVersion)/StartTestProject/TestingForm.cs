@@ -86,11 +86,13 @@ namespace StartTestProject
         private void MainFormBtn_Click(object sender, EventArgs e)=>ShowMainForm();
         private void EditingStitchingPlanBtn_Click(object sender, EventArgs e)=>ShowEditingStitchingForm();
         //private string assemblingFile = "D:\\Work\\C#\\Dll\\ImgAssemblingLib\\StartTestProject\\bin\\Debug\\3179.asp";
-        private string assemblingFile = "16RC.asp";
+        private string assemblingFile = "TestingPlans\\16RC.asp";
 
         // Пример сборки изображения с использованием только файла плана сборки
         private async void Exampl1Btn_Click(object sender, EventArgs e)
         {
+            RezultLb.Text = string.Empty;
+
             AssemblyPlan assemblyPlan; 
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan); // Загружаем план сборки
             if (assemblyPlan == null)
@@ -100,40 +102,41 @@ namespace StartTestProject
             }
             // Для имитации загружаем файлы из папки и создаем массив битмапов
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3179_3_0", 40);
-
             // Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3179_3_2");
-            Assembling assembling = new Assembling(assemblyPlan, dataArray, null); // Запускаем сборку
-            //if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+            Assembling assembling = new Assembling(assemblyPlan, dataArray, null); 
 
-            FinalResult finalResult = await assembling.TryAssemble();
-            if (finalResult.IsErr)RezultLb.Text = finalResult.ErrText;
+            // Запускаем сборку
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
         }
         
         // Пример без исправления изображений
         private async void Exampl2Btn_Click(object sender, EventArgs e)
         {
+            RezultLb.Text = string.Empty;
+
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
             assemblyPlan.FixImg = false; // Отключаем исправление изображений
             // Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\3162_25_3AutoOut", 40);
             //Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\20Up");
             Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\15AutoOut");
-            Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
-            if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
         }
 
         // Пример с установкой другого плана корректировки изображения
         private async void Exampl3Btn_Click(object sender, EventArgs e)
         {
             RezultLb.Text = string.Empty;
+
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
             // Заменяем план корректировки изображений
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip";
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\TestingPlans\\4.oip";
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
             //Bitmap[] dataArray = LoadeBitmap("D:\\Work\\Exampels\\16RC");
-            Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
-            if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
         }
 
         // Пример настройки смещения полосы сборки относительно центра катинки (иногда помогает избавиться от повторяющихся объектов на заднем фоне вроде столбов)
@@ -144,11 +147,10 @@ namespace StartTestProject
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
             // Заменяем план корректировки изображений
             assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip";
+            assemblyPlan.Delta = -120;// Смещяем полсу
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 29);
-            // Смещяем полсу
-            assemblyPlan.Delta = -120;
-            Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
-            if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
         }
 
         // Пример только с подсчетом скорости (без сборки изображения)
@@ -157,19 +159,14 @@ namespace StartTestProject
             RezultLb.Text = string.Empty;
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip";
-            assemblyPlan.Stitch = false;
-            assemblyPlan.SaveRezults = true;
-            assemblyPlan.ShowAssemblingFile = true;
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\TestingPlans\\4.oip";
+            assemblyPlan.SaveRezult = false;
+            assemblyPlan.ShowRezult = false;
             assemblyPlan.MillimetersInPixel = 5.5; // Количество мм в одном пикселе
             assemblyPlan.TimePerFrame  = 40; // Миллисекунд в одном кадре
-
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4").Skip(10).Take(10).ToArray();
-            Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
-            FinalResult finalResult = await assembling.TryAssemble();
-            if(finalResult.IsErr) RezultLb.Text = finalResult.ErrText; 
-            else RezultLb.Text = "Speed "+ String.Format("{0:0.##}", finalResult.Speed)+" Km\\H";
-            //if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
         }
 
         // Пример заполнения параметров без загрузки файла сбоки
@@ -182,24 +179,21 @@ namespace StartTestProject
                 DelFileCopy = false, // Отключение удаления копий изображений
                 ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip",
                 Delta = -120, // Смещение полосы склейки
-                SaveRezults = true,
-                ShowAssemblingFile = true,
+                SaveRezult = true,
+                ShowRezult = true,
                 SpeedCounting = true, // Включение подсчета скорости
                 MillimetersInPixel = 5.5, // Количество мм в одном пикселе
                 TimePerFrame = 40, // Милисекунд в одном кадре
                 SelectSearchArea = true, // Для большей точности можно задать область поиска ключевых точек
-                MaxHeight = 1630,
+                MaxHeight = 1630, // Настройка области поиска ключевых точек
                 MinHeight = 1533,
                 MaxWight = 766,
                 MinWight = 112
             };
             
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
-            Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
-            FinalResult finalResult = await assembling.TryAssemble();
-            //if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText; // Запускаем сборку
-            //var sdf = assembling.GetSpeed();
-            RezultLb.Text = "Speed "+ finalResult.Speed + "Km\\H";
+
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
         }
 
         // Пример коррекции изображений без сборки
@@ -224,21 +218,12 @@ namespace StartTestProject
             dataArray[22].Save("test2022.jpg");
             fileEdit.OpenFileDir("test2022.jpg");
         }
-        private Bitmap[] LoadeBitmap(string file, int N = 0)
-        {
-            FileInfo[] fileList;
-            if (N>0) fileList = fileEdit.SearchFiles(file).Take(N).ToArray();
-            else fileList = fileEdit.SearchFiles(file);
-
-            if (fileList.Length == 0) return new Bitmap[] { };
-            return fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
-        }
         private async void KeypointsAreaBtn_Click(object sender, EventArgs e)
         {
             RezultLb.Text = string.Empty;
             AssemblyPlan assemblyPlan;
             fileEdit.LoadeJson(assemblingFile, out assemblyPlan);
-            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\4.oip";
+            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\TestingPlans\\4.oip";
             Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
 
             assemblyPlan.SelectSearchArea = true; // Для большей точности можно задать область поиска ключевых точек
@@ -285,6 +270,18 @@ namespace StartTestProject
             }
             return true;
         }
+        private void ShowResult(FinalResult finalResult)
+        {
+            if (finalResult.IsErr)
+            {
+                string Err = string.Empty;
+                if(finalResult.ErrList!= null && finalResult.ErrList.Count > 0) 
+                    foreach (var err in finalResult.ErrList) Err += err + "\n";
+                else Err= finalResult.ErrText;
+                RezultLb.Text = Err;
+            }
+            else RezultLb.Text = RezultLb.Text = "Speed " + String.Format("{0:0.##}", finalResult.Speed) + " Km\\H";
+        }
         private void worker_ProcessChang(int progress)
         {
             if (progress < 0) progressBar.Value = 0;
@@ -292,5 +289,14 @@ namespace StartTestProject
             else progressBar.Value = progress;
         }
         private void worker_TextChang(string text) => progressBarLabel.Text = text;
+        private Bitmap[] LoadeBitmap(string file, int N = 0)
+        {
+            FileInfo[] fileList;
+            if (N > 0) fileList = fileEdit.SearchFiles(file).Take(N).ToArray();
+            else fileList = fileEdit.SearchFiles(file);
+
+            if (fileList.Length == 0) return new Bitmap[] { };
+            return fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
+        }
     }
 }

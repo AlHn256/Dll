@@ -149,7 +149,7 @@ namespace ImgAssemblingLibOpenCV.Models
 
         public void OnChangedImg(object i)
         {
-            if (ChangImg != null) ChangImg((Mat)i);
+            if (ChangImg != null)ChangImg((Mat)i);
         }
 
         public void OnProgressChanged(object i)
@@ -174,48 +174,46 @@ namespace ImgAssemblingLibOpenCV.Models
 
             for (int i = 0; i < SelectedFiles.Count; i++)
             {
-                
                 if (StopProcess)
                 {
-                    if(contextIsOn) context.Send(OnTextChanged, "Stop Process");
+                    if (contextIsOn) context.Send(OnTextChanged, "Stop Process");
                     SetErr("Поиск ключевых точек приостановлен пользователем!");
                     return;
                 }
 
-                if (i != 0)
+                if (i == 0) continue;
+                if (copy == -1) firstSelectedFiles = SelectedFiles[i - 1];
+                secondSelectedFiles = SelectedFiles[i];
+
+                firstSelectedFiles.StitchingFile = secondSelectedFiles.FullName;
+                if (WorkingWBitmap) firstSelectedFiles.Hint = "Stitching Imgs " + firstSelectedFiles.Id + " - " + secondSelectedFiles.Id;
+                else firstSelectedFiles.Hint = "Stitching Imgs " + Path.GetFileNameWithoutExtension(firstSelectedFiles.FullName) + " - " + Path.GetFileName(secondSelectedFiles.FullName);
+
+                IsErr = false;
+                // Получаем список векторов по ключевым точкам
+                List<Vector> VectorList = WorkingWBitmap ? GetVectorList(SelectedFiles[i - 1].Mat, SelectedFiles[i].Mat) : GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
+
+                if (IsErr || VectorList.Count == 0)
                 {
-                    if (copy == -1)firstSelectedFiles = SelectedFiles[i - 1];
-
-                    secondSelectedFiles = SelectedFiles[i];
-                    firstSelectedFiles.StitchingFile = secondSelectedFiles.FullName;
-                    if(WorkingWBitmap) firstSelectedFiles.Hint = "Stitching Imgs " + firstSelectedFiles.Id + " - " + secondSelectedFiles.Id;
-                    else firstSelectedFiles.Hint = "Stitching Imgs " + Path.GetFileNameWithoutExtension(firstSelectedFiles.FullName) + " - " + Path.GetFileName(secondSelectedFiles.FullName);
-
-                    IsErr = false;
-                    // Получаем список векторов по ключевым точкам
-                    List<Vector> VectorList = WorkingWBitmap ? GetVectorList(SelectedFiles[i - 1].Mat, SelectedFiles[i].Mat) : GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
-
-                    if (IsErr || VectorList.Count == 0)
-                    {
-                        copy = i - 1;
-                        secondSelectedFiles.IsErr = true;
-                        secondSelectedFiles.ErrCode = ErrCode;
-                        if (ErrCode == EnumErrCode.Copy)secondSelectedFiles.ErrText = "COPY " + firstSelectedFiles.FullName + " - " + secondSelectedFiles.FullName;
-                        else if (!string.IsNullOrEmpty(ErrText)) secondSelectedFiles.ErrText = ErrText;
-                        else secondSelectedFiles.ErrText = "Err Подходящие точки не найдены!!!";
-                    }
-                    else
-                    {
-                        VectorInfo vectorInfo = GetAverages(VectorList);
-                        firstSelectedFiles.VectorList = VectorList;
-                        firstSelectedFiles.AverageXShift = vectorInfo.AverageXShift;
-                        firstSelectedFiles.AverageYShift = vectorInfo.AverageYShift;
-                        firstSelectedFiles.AverageShift = Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? vectorInfo.AverageXShift : vectorInfo.AverageYShift;
-                        firstSelectedFiles.Direction = vectorInfo.Direction;
-                        if (copy != -1)  copy = -1;
-                        directionsList.Add(vectorInfo.Direction);
-                    }
+                    copy = i - 1;
+                    secondSelectedFiles.IsErr = true;
+                    secondSelectedFiles.ErrCode = ErrCode;
+                    if (ErrCode == EnumErrCode.Copy) secondSelectedFiles.ErrText = "COPY " + firstSelectedFiles.FullName + " - " + secondSelectedFiles.FullName;
+                    else if (!string.IsNullOrEmpty(ErrText)) secondSelectedFiles.ErrText = ErrText;
+                    else secondSelectedFiles.ErrText = "Err Подходящие точки не найдены!!!";
                 }
+                else
+                {
+                    VectorInfo vectorInfo = GetAverages(VectorList);
+                    firstSelectedFiles.VectorList = VectorList;
+                    firstSelectedFiles.AverageXShift = vectorInfo.AverageXShift;
+                    firstSelectedFiles.AverageYShift = vectorInfo.AverageYShift;
+                    firstSelectedFiles.AverageShift = Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? vectorInfo.AverageXShift : vectorInfo.AverageYShift;
+                    firstSelectedFiles.Direction = vectorInfo.Direction;
+                    if (copy != -1) copy = -1;
+                    directionsList.Add(vectorInfo.Direction);
+                }
+
                 if (contextIsOn)
                 {
                     context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
@@ -275,13 +273,12 @@ namespace ImgAssemblingLibOpenCV.Models
             if (areasForDelet.Count == 0 || SelectedFiles == null || SelectedFiles.Count == 0) return;
             for (int i = areasForDelet.Count - 1; i > -1; i--) SelectedFiles.RemoveRange(areasForDelet[i].From, areasForDelet[i].To - areasForDelet[i].From);
         }
-        private int[] FindErrs()
+        private int[] FindErrs(bool copyСounting = false )
         {
             int[] Errors = new int[SelectedFiles.Count];
             bool prevCopy = false;
             //double N = 0;
             List<tmp> tmpList = new List<tmp>();
-
             for (int i = 0; i < SelectedFiles.Count; i++)
             {
                 tmp Tmp = new tmp(i);
@@ -295,7 +292,7 @@ namespace ImgAssemblingLibOpenCV.Models
                     Errors[i]++;
                     Tmp = new tmp(i, "Direction");
                 }
-                if (prevCopy && SelectedFiles[i].ErrCode == EnumErrCode.Copy)
+                if (prevCopy && SelectedFiles[i].ErrCode == EnumErrCode.Copy && copyСounting)
                 {
                     Errors[i]++;
                     Tmp.Add("DoublCopy");
@@ -402,7 +399,6 @@ namespace ImgAssemblingLibOpenCV.Models
 
         public List<Vector> GetVectorList(Mat matSrc, Mat matTo, bool makeFotoRezult = false)
         {
-
             List<Vector> goodPointList = new List<Vector>();
             List<DMatch> goodMatches = new List<DMatch>();
 
@@ -419,7 +415,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 using (var bfMatcher = new BFMatcher())
                 {
                     var matches = bfMatcher.KnnMatch(matSrcRet, matToRet, k: 2);
-
                     if (matches.Length == 0)
                     {
                         SetErr("Err StitchImgsByPointsImgs.Length = 0 !!!", EnumErrCode.Err);
@@ -440,7 +435,6 @@ namespace ImgAssemblingLibOpenCV.Models
                     return goodPointList;
                 }
 
-                //foreach (var elem in goodPointList) elem.GetDirection();
                 if (makeFotoRezult)// Если нужно создаем изображение с найденными точками
                 {
                     VectorInfo vectorInfo = GetAverages(goodPointList);
@@ -799,6 +793,11 @@ namespace ImgAssemblingLibOpenCV.Models
             // Сборка картинки по частям
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
+                if(i == SelectedFiles.Count - 2)
+                {
+
+                }
+
                 if (StopProcess)
                 {
                     SetErr("Сборка кадров приостановлена пользователем!");
@@ -1019,7 +1018,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 }
             }
 
-            // ??ToDo Вырезать все ошибочные элементы в начале и конце
             SelectedFiles = TempSelectedFiles;
         }
         
@@ -1249,7 +1247,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 else if (FramePosition == EnumFramePosition.Last)
                 {
                     int d1 = h2 - shift + Delta;
-                    int d2 = Img2.Height - h2 + shift - Delta - 1;
+                    int d2 = h2 + shift - Delta - 1;
 
                     if (d1 > 0 && d1 < Img2.Height - 1 && d2 > 0 && d2 < Img2.Height - 1)
                     {
@@ -1308,7 +1306,8 @@ namespace ImgAssemblingLibOpenCV.Models
                 else if (FramePosition == EnumFramePosition.Last)
                 {
                     int d1 = w2 - shift + Delta - 1;
-                    int d2 = shift - Delta - 1;
+                    int d2 = w2 + shift - Delta - 1;
+
                     if (d1 > 0 && d1 < Img2.Width - 1 && d2 > 0 && d2 < Img2.Width - 1)
                     {
                         Rect rect2 = new Rect(d1, 0, d2, Img2.Height - 1);

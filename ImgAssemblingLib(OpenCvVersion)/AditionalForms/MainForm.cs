@@ -37,11 +37,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             InitializeComponent();
             this.Load += Loading;
         }
-        public MainForm(AssemblyPlan assemblyPlan)
-        {
-            InitializeComponent();
-            this.assemblyPlan = assemblyPlan;
-        }
+        //public MainForm(AssemblyPlan assemblyPlan)
+        //{
+        //    InitializeComponent();
+        //    this.assemblyPlan = assemblyPlan;
+        //}
         private void Loading(object sender, EventArgs e)
         {
             logger.Info("Programm starting");
@@ -193,7 +193,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             GetImgFiles(files);
             ShowLoadeImgs();
         }
-
         protected void GetImgFiles(string[] files)
         {
             bool IsFirst = true;
@@ -255,7 +254,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 else assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
             }
         }
-
         private bool LoadFileList(string serchingDir)
         {
             if (!string.IsNullOrEmpty(serchingDir))

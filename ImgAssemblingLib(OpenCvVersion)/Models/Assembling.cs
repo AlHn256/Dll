@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using WinFormsApp1.Enum;
@@ -102,14 +102,32 @@ namespace ImgAssemblingLibOpenCV.Models
             {
                 if (BitmapData==null || BitmapData.Length == 0) return SetCriticalErr("Err Assembling.BitmapData = null || = 0!!!");
             }
-            else if (string.IsNullOrEmpty(AssemblyPlan.WorkingDirectory)) return SetCriticalErr("Err " + AssemblyPlan.WorkingDirectory + " IsNullOrEmpty!!!");
+            else if (string.IsNullOrEmpty(AssemblyPlan.WorkingDirectory)) return SetCriticalErr("Err AssemblyPlan.WorkingDirectory Is Null Or Empty!!!");
 
             if (AssemblyPlan.FixImg)
             {
-                if(string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) return SetCriticalErr("Err AssemblyPlan.ImgFixingPlan Is NullOrEmpty!!!");
-                if(!System.IO.File.Exists(AssemblyPlan.ImgFixingPlan)) return SetCriticalErr($"Err {AssemblyPlan.ImgFixingPlan} !Exists !!!");
+                if(string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) return SetCriticalErr("Err AssemblyPlan.ImgFixingPlan Is Null Or Empty!!!");
+                if(!File.Exists(AssemblyPlan.ImgFixingPlan)) return SetCriticalErr($"Err {AssemblyPlan.ImgFixingPlan} !Exists !!!");
             }
-           return true;
+
+            if (AssemblyPlan.ShowRezult == true && AssemblyPlan.SaveRezult == false)
+            {
+                AssemblyPlan.SaveRezult = true;
+                SetErr($"Err CheckPlane.ShowRezult can't be without SaveRezult.\n SaveRezult is On!");
+            }
+
+            if ( AssemblyPlan.SaveRezult == true && AssemblyPlan.Stitch == false)
+            {
+                AssemblyPlan.Stitch = true;
+                SetErr($"Err CheckPlane.SaveRezult can't be without Stitch.\n Stitch  is On!");
+            }
+
+            if (AssemblyPlan.SpeedCounting == true && AssemblyPlan.Stitch == false)
+            {
+                AssemblyPlan.Stitch = true;
+                SetErr($"Err CheckPlane.SpeedCounting can't be without Stitch.\n Stitch  is On!");
+            }
+            return true;
         }
         public async Task<FinalResult> TryAssemble()
         {
@@ -122,14 +140,17 @@ namespace ImgAssemblingLibOpenCV.Models
                     MatRezult = RezultImg,
                     BitRezult = RezultImg == null ? null : BitmapConverter.ToBitmap(RezultImg),
                     IsErr = IsErr,
+                    IsCriticalErr = IsCriticalErr,
                     ErrText = ErrText,
                     ErrList = ErrList
                 };
             }
             catch (Exception ex)
             {
+                SetCriticalErr(ex.Message);
                 return new FinalResult() {
                     IsErr = IsErr,
+                    IsCriticalErr = IsCriticalErr,
                     ErrText = ErrText + "Ex.Message " + ex.Message,
                     ErrList = ErrList
                 };
@@ -309,9 +330,9 @@ namespace ImgAssemblingLibOpenCV.Models
             {
                 SpeedСounter speedСounter = new SpeedСounter(stitchingBlock.GetSelectedFiles(), AssemblyPlan.MillimetersInPixel, AssemblyPlan.TimePerFrame);
                 AssemblyPlan.Speed = speedСounter.GetSpeedByPoints(CalculationSpeedDespiteErrors);
-                var avSpeedList = speedСounter.GetSpeedListByPoints(10);
-                double avSp = 0;
-                if (avSpeedList.Count > 1)avSp = avSpeedList.Sum(x => x.Sp) / avSpeedList.Count();
+                //var avSpeedList = speedСounter.GetSpeedListByPoints(10);
+                //double avSp = 0;
+                //if (avSpeedList.Count > 1)avSp = avSpeedList.Sum(x => x.Sp) / avSpeedList.Count();
                 if (contectIsOn)
                 {
                     if (AssemblyPlan.Speed != -1) _context.Send(OnRTBAddInfo, "   Скорость ~ " + AssemblyPlan.Speed.ToString() + " Км/ч\n");
@@ -340,13 +361,13 @@ namespace ImgAssemblingLibOpenCV.Models
             
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Saving Rezult ");
             logger.Info("Saving Rezult ");
-            if (AssemblyPlan.SaveRezults) // Сохранение итогового изображения
+            if (AssemblyPlan.SaveRezult) // Сохранение итогового изображения
             {
                 fileEdit.ClearInformation();
                 SavedFileName = fileEdit.SaveImg(RezultImg);
                 if (!string.IsNullOrEmpty(SavedFileName)){
                     SendFinished(fileEdit.TextMessag);AssemblyPlan.RezultOfSavingRezults = fileEdit.TextMessag;
-                    if (AssemblyPlan.ShowAssemblingFile)
+                    if (AssemblyPlan.ShowRezult)
                         fileEdit.OpenFileDir(SavedFileName);
                 }
 
@@ -411,7 +432,7 @@ namespace ImgAssemblingLibOpenCV.Models
             }
 
             var areasForDelet = stitchingBlock.FindeBlockForDelet();
-            if (areasForDelet.Count > 0)stitchingBlock.DeletAreas(areasForDelet);
+            if (areasForDelet.Count > 0) stitchingBlock.DeletAreas(areasForDelet);
             return true;
         }
         private async Task<bool> StitchImgs()
@@ -441,5 +462,38 @@ namespace ImgAssemblingLibOpenCV.Models
             ErrList.Clear();
             stitchingBlock = null;
         }
+
+        //public string JpegTest()
+        //{
+
+        //    var stopwatch = new Stopwatch();
+        //    stopwatch.Start();
+
+        //    var fileList = fileEdit.SearchFiles("E:\\ImageArchive\\JPG\\3840x2400");
+        //    List<byte[]> byteList = new List<byte[]>();
+
+        //    for (int i = 0; i < 20; i++)
+        //    {
+        //        foreach (FileInfo file in fileList)
+        //        {
+        //            //Mat ssdf = new Mat(file.FullName);
+        //            byteList.Add(File.ReadAllBytes(file.FullName));
+        //        }
+        //    }
+        //    TimeSpan ts = stopwatch.Elapsed;
+        //    string rezult1 = String.Format($"{ts.Seconds} s {ts.Milliseconds} ms");
+        //    //stopwatch.Stop();
+        //    stopwatch.Restart();
+
+        //    foreach (var elem in byteList)
+        //    {
+        //        Mat imageMat = Mat.FromImageData(elem);
+        //    }
+
+        //    ts = stopwatch.Elapsed;
+        //    string rezult2 = String.Format($"{ts.Seconds} s {ts.Milliseconds} ms");
+        //    stopwatch.Stop();
+        //    return rezult2;
+        //}
     }
 }

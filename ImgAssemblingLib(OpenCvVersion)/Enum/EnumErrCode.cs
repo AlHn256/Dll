@@ -9,7 +9,7 @@
         ParametersDontMatch, // Не совпадают параметры между блоками
         Copy, // Копии кадров
         PointsNotFound, // Не найдены подходящие точки
-        SiftThreshold, // Смещение не превысило порог погрешности
+        ShiftThreshold, // Смещение не превысило порог погрешности
         WrongDirection, // 
         F01PointsExceed, // Превышено количество точек F01
         F05PointsExceed, // Превышено количество точек F05

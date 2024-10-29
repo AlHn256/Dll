@@ -39,7 +39,7 @@
             // PuskBtn
             // 
             this.PuskBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PuskBtn.Location = new System.Drawing.Point(27, 506);
+            this.PuskBtn.Location = new System.Drawing.Point(27, 517);
             this.PuskBtn.Name = "PuskBtn";
             this.PuskBtn.Size = new System.Drawing.Size(75, 37);
             this.PuskBtn.TabIndex = 0;
@@ -50,7 +50,7 @@
             // GeneralProgressBar
             // 
             this.GeneralProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.GeneralProgressBar.Location = new System.Drawing.Point(12, 445);
+            this.GeneralProgressBar.Location = new System.Drawing.Point(12, 456);
             this.GeneralProgressBar.Name = "GeneralProgressBar";
             this.GeneralProgressBar.Size = new System.Drawing.Size(224, 23);
             this.GeneralProgressBar.TabIndex = 1;
@@ -58,7 +58,7 @@
             // CurentProgressBar
             // 
             this.CurentProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.CurentProgressBar.Location = new System.Drawing.Point(12, 474);
+            this.CurentProgressBar.Location = new System.Drawing.Point(12, 485);
             this.CurentProgressBar.Name = "CurentProgressBar";
             this.CurentProgressBar.Size = new System.Drawing.Size(224, 23);
             this.CurentProgressBar.TabIndex = 2;
@@ -68,7 +68,7 @@
             this.CurrentProgressLb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CurrentProgressLb.AutoSize = true;
             this.CurrentProgressLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.CurrentProgressLb.Location = new System.Drawing.Point(40, 477);
+            this.CurrentProgressLb.Location = new System.Drawing.Point(40, 488);
             this.CurrentProgressLb.Name = "CurrentProgressLb";
             this.CurrentProgressLb.Size = new System.Drawing.Size(0, 17);
             this.CurrentProgressLb.TabIndex = 12;
@@ -78,15 +78,16 @@
             this.GeneralProgressLb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.GeneralProgressLb.AutoSize = true;
             this.GeneralProgressLb.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.GeneralProgressLb.Location = new System.Drawing.Point(109, 448);
+            this.GeneralProgressLb.Location = new System.Drawing.Point(109, 459);
             this.GeneralProgressLb.Name = "GeneralProgressLb";
             this.GeneralProgressLb.Size = new System.Drawing.Size(0, 17);
             this.GeneralProgressLb.TabIndex = 13;
             // 
             // notShowRezultChkBox
             // 
+            this.notShowRezultChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.notShowRezultChkBox.AutoSize = true;
-            this.notShowRezultChkBox.Location = new System.Drawing.Point(119, 517);
+            this.notShowRezultChkBox.Location = new System.Drawing.Point(119, 528);
             this.notShowRezultChkBox.Name = "notShowRezultChkBox";
             this.notShowRezultChkBox.Size = new System.Drawing.Size(107, 17);
             this.notShowRezultChkBox.TabIndex = 14;
@@ -97,7 +98,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(249, 555);
+            this.ClientSize = new System.Drawing.Size(249, 566);
             this.Controls.Add(this.notShowRezultChkBox);
             this.Controls.Add(this.CurrentProgressLb);
             this.Controls.Add(this.GeneralProgressLb);

@@ -170,8 +170,8 @@ namespace ImgAssemblingLibOpenCV.Models
             SynchronizationContext context = (SynchronizationContext)param;
             bool contextIsOn = context == null? false:true;
             SelectedFiles firstSelectedFiles = new SelectedFiles(), secondSelectedFiles = new SelectedFiles();
-            int copy = -1;
-
+            int copy = -1, shiftErr = -1, shiftErrNumber = 0, notMatchDirectionsN = 0;
+            bool minShiftDetectionIsON = false;
             for (int i = 0; i < SelectedFiles.Count; i++)
             {
                 if (StopProcess)
@@ -191,14 +191,16 @@ namespace ImgAssemblingLibOpenCV.Models
 
                 IsErr = false;
                 // Получаем список векторов по ключевым точкам
-                List<Vector> VectorList = WorkingWBitmap ? GetVectorList(SelectedFiles[i - 1].Mat, SelectedFiles[i].Mat) : GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
-
+                List<Vector> VectorList = WorkingWBitmap ? GetVectorList(firstSelectedFiles.Mat, secondSelectedFiles.Mat) : GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
                 if (IsErr || VectorList.Count == 0)
                 {
                     copy = i - 1;
                     secondSelectedFiles.IsErr = true;
                     secondSelectedFiles.ErrCode = ErrCode;
-                    if (ErrCode == EnumErrCode.Copy) secondSelectedFiles.ErrText = "COPY " + firstSelectedFiles.FullName + " - " + secondSelectedFiles.FullName;
+                    if (ErrCode == EnumErrCode.Copy)
+                    {
+                        secondSelectedFiles.ErrText = "COPY " + firstSelectedFiles.FullName + " - " + secondSelectedFiles.FullName;
+                    }
                     else if (!string.IsNullOrEmpty(ErrText)) secondSelectedFiles.ErrText = ErrText;
                     else secondSelectedFiles.ErrText = "Err Подходящие точки не найдены!!!";
                 }
@@ -209,12 +211,53 @@ namespace ImgAssemblingLibOpenCV.Models
                     firstSelectedFiles.AverageXShift = vectorInfo.AverageXShift;
                     firstSelectedFiles.AverageYShift = vectorInfo.AverageYShift;
                     firstSelectedFiles.AverageShift = Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? vectorInfo.AverageXShift : vectorInfo.AverageYShift;
+                    if (firstSelectedFiles.AverageShift < minShift && minShiftDetectionIsON)
+                    {
+                        shiftErr = i;
+                        shiftErrNumber++;
+                        secondSelectedFiles.IsErr = true;
+                        secondSelectedFiles.ErrCode = EnumErrCode.ShiftThreshold;
+                        secondSelectedFiles.ErrText = "Err Shift " + firstSelectedFiles.FullName + " - " + secondSelectedFiles.FullName;
+                    }
+                    else
+                    {
+                        shiftErrNumber = 0;
+                        shiftErr = -1;
+                    }
                     firstSelectedFiles.Direction = vectorInfo.Direction;
                     if (copy != -1) copy = -1;
+
+                    if(directionsList.Count>10)
+                    {
+                        var avDirection = GetAverageDirection(directionsList);
+                        if (avDirection != vectorInfo.Direction && copy == -1)
+                        {
+                            secondSelectedFiles.IsErr = true;
+                            secondSelectedFiles.ErrCode = EnumErrCode.WrongDirection;
+                            secondSelectedFiles.ErrText = "Err Wrong Direction " + firstSelectedFiles.FullName + " - " + secondSelectedFiles.FullName;
+                            notMatchDirectionsN++;
+
+                            if(SelectedFiles[i-1].ErrCode == EnumErrCode.WrongDirection || SelectedFiles[i - 2].ErrCode == EnumErrCode.WrongDirection)
+                            {
+                                if (SelectedFiles[i - 2].ErrCode == EnumErrCode.WrongDirection)
+                                {
+                                    SelectedFiles = SelectedFiles.Take(i - 3).ToList();
+                                }
+                                else if (SelectedFiles[i - 1].ErrCode == EnumErrCode.WrongDirection )
+                                {
+                                    SelectedFiles = SelectedFiles.Take(i-2).ToList();
+                                }
+
+                                break;
+                            }
+                        }
+                        else notMatchDirectionsN = 0;
+                    }
                     directionsList.Add(vectorInfo.Direction);
                 }
 
-                if (contextIsOn)
+                context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
+                if (contextIsOn && i%5 == 0)
                 {
                     context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
                     context.Send(OnTextChanged, "Finding Key Points " + i * 100 / SelectedFiles.Count + " %");
@@ -247,7 +290,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 ErrText = new List<string>() {errText};
                 ErrLine = errText;
             }
-            public void Add( string errText, int i =-1)
+            public void Add(string errText, int i =-1)
             {
                 if(i!=-1)I = i;
                 Err ++;
@@ -287,7 +330,7 @@ namespace ImgAssemblingLibOpenCV.Models
                     tmpList.Add(Tmp);
                     continue;
                 }
-                if (SelectedFiles[i].Direction != Direction && SelectedFiles[i].ErrCode != EnumErrCode.Copy)
+                if (SelectedFiles[i].Direction != Direction && SelectedFiles[i].ErrCode != EnumErrCode.Copy && SelectedFiles[i].ErrCode != EnumErrCode.ShiftThreshold)
                 {
                     Errors[i]++;
                     Tmp = new tmp(i, "Direction");
@@ -300,7 +343,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 else if (SelectedFiles[i].ErrCode == EnumErrCode.Copy) prevCopy = true;
                 else prevCopy = false;
 
-                if (SelectedFiles[i].IsErr && SelectedFiles[i].ErrCode != EnumErrCode.Copy)
+                if (SelectedFiles[i].IsErr && SelectedFiles[i].ErrCode != EnumErrCode.Copy && SelectedFiles[i].ErrCode != EnumErrCode.ShiftThreshold)
                 {
                     Errors[i]++;
                     Tmp.Add("IsErr");
@@ -459,82 +502,84 @@ namespace ImgAssemblingLibOpenCV.Models
 
         public List<Vector> GetVectorList(string file1, string file2, bool makeFotoRezult = false)
         {
-            using (Mat matSrc = new Mat(file1))
-            using (Mat matTo = new Mat(file2))
-            {
-                List<Vector> goodPointList = new List<Vector>();
-                List<DMatch> goodMatches = new List<DMatch>();
-                //Mat matSrc = Cv2.ImRead(file1, ImreadModes.Grayscale);
-                //Mat matTo = Cv2.ImRead(file2, ImreadModes.Grayscale);
-                if (matSrc.Width == 0 || matSrc.Height == 0 || matTo.Width == 0 || matTo.Height == 0)
-                {
-                    SetErr("Err GetVectorList.один из фалов " + file1 + " или " + file2 + " не найден!!!\n", EnumErrCode.FileNotFound);
-                    return goodPointList;
-                }
-            if (matSrc.Width != matTo.Width || matSrc.Height != matTo.Height)
-            {
-                SetErr("Err GetVectorList.один из парамеров фалов " + file1 + " или " + file2 + " не совпадает!!!\n", EnumErrCode.Err);
-                return goodPointList;
-            }
-            KeyPoint[] keyPointsSrc, keyPointsTo;
-                using (Mat matSrcRet = new Mat())
-                using (Mat matToRet = new Mat())
-                {
-                    using (var sift = OpenCvSharp.Features2D.SIFT.Create())
-                    {
-                        sift.DetectAndCompute(matSrc, null, out keyPointsSrc, matSrcRet);
-                        sift.DetectAndCompute(matTo, null, out keyPointsTo, matToRet);
-                    }
 
-                    using (var bfMatcher = new BFMatcher())
-                    {
-                        var matches = bfMatcher.KnnMatch(matSrcRet, matToRet, k: 2);
+            return GetVectorList(new Mat(file1), new Mat(file2), makeFotoRezult);
 
-                        if (matches.Length == 0)
-                        {
-                            SetErr("Err StitchImgsByPointsImgs.Length = 0 !!!", EnumErrCode.Err);
-                            return goodPointList;
-                        }
+            //using (Mat matSrc = new Mat(file1))
+            //using (Mat matTo = new Mat(file2))
+            //{
+            //    List<Vector> goodPointList = new List<Vector>();
+            //    List<DMatch> goodMatches = new List<DMatch>();
+            //    //Mat matSrc = Cv2.ImRead(file1, ImreadModes.Grayscale);
+            //    //Mat matTo = Cv2.ImRead(file2, ImreadModes.Grayscale);
+            //    if (matSrc.Width == 0 || matSrc.Height == 0 || matTo.Width == 0 || matTo.Height == 0)
+            //    {
+            //        SetErr("Err GetVectorList.один из фалов " + file1 + " или " + file2 + " не найден!!!\n", EnumErrCode.FileNotFound);
+            //        return goodPointList;
+            //    }
+            //if (matSrc.Width != matTo.Width || matSrc.Height != matTo.Height)
+            //{
+            //    SetErr("Err GetVectorList.один из парамеров фалов " + file1 + " или " + file2 + " не совпадает!!!\n", EnumErrCode.Err);
+            //    return goodPointList;
+            //}
+            //KeyPoint[] keyPointsSrc, keyPointsTo;
+            //    using (Mat matSrcRet = new Mat())
+            //    using (Mat matToRet = new Mat())
+            //    {
+            //        using (var sift = OpenCvSharp.Features2D.SIFT.Create())
+            //        {
+            //            sift.DetectAndCompute(matSrc, null, out keyPointsSrc, matSrcRet);
+            //            sift.DetectAndCompute(matTo, null, out keyPointsTo, matToRet);
+            //        }
 
-                        if (matches[0].Length == 2) goodPointList = GetVectors(matches, keyPointsSrc, keyPointsTo, out goodMatches);
-                        else
-                        {
-                            SetErr("Err StitchImgsByPointsImgs.matches[0].Length != 2 !!!", EnumErrCode.Err);
-                            return goodPointList;
-                        }
-                    }
+            //        using (var bfMatcher = new BFMatcher())
+            //        {
+            //            var matches = bfMatcher.KnnMatch(matSrcRet, matToRet, k: 2);
 
-                    if (goodPointList.Count == 0)
-                    {
-                        if (string.IsNullOrEmpty(ErrText)) SetErr("Err StitchImgsByPointsImgs.ключевые точки не найдены!!!", EnumErrCode.PointsNotFound);
-                        return goodPointList;
-                    }
+            //            if (matches.Length == 0)
+            //            {
+            //                SetErr("Err StitchImgsByPointsImgs.Length = 0 !!!", EnumErrCode.Err);
+            //                return goodPointList;
+            //            }
 
-                    //foreach (var elem in goodPointList) elem.GetDirection();
+            //            if (matches[0].Length == 2) goodPointList = GetVectors(matches, keyPointsSrc, keyPointsTo, out goodMatches);
+            //            else
+            //            {
+            //                SetErr("Err StitchImgsByPointsImgs.matches[0].Length != 2 !!!", EnumErrCode.Err);
+            //                return goodPointList;
+            //            }
+            //        }
 
-                    if (makeFotoRezult)// Если нужно создаем изображение с найденными точками
-                    {
-                        VectorInfo vectorInfo = GetAverages(goodPointList);
-                        goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
+            //        if (goodPointList.Count == 0)
+            //        {
+            //            if (string.IsNullOrEmpty(ErrText)) SetErr("Err StitchImgsByPointsImgs.ключевые точки не найдены!!!", EnumErrCode.PointsNotFound);
+            //            return goodPointList;
+            //        }
 
-                        string text = goodPointList.Count + " points found " +
-                            (Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? Math.Round(vectorInfo.AverageXShift, 2) : Math.Round(vectorInfo.AverageYShift, 2)).ToString() +
-                              " " + vectorInfo.Direction + " Shift \n";
+            //        //foreach (var elem in goodPointList) elem.GetDirection();
 
-                        int i = 0;
-                        foreach (Vector point in goodPointList) text += "P " + i++ + " Sh " + Math.Round(point.Delta, 2) + " " + point.Direction + " Shift " + point.Delta +
-                             " Identity " + Math.Round(point.Identity, 2) + " CoDirection " + Math.Round(point.CoDirection, 2) + " dX " + Math.Round(point.dX, 2) + " dY " + Math.Round(point.Yfr, 2) + "\n";
+            //        if (makeFotoRezult)// Если нужно создаем изображение с найденными точками
+            //        {
+            //            VectorInfo vectorInfo = GetAverages(goodPointList);
+            //            goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
 
-                        OnTextChanged(text);
-                        Mat RezultImg = new Mat();
-                        Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, RezultImg, flags: drawMatchesFlags);
-                        OnChangedImg(RezultImg);
-                    }
-                }
-                return goodPointList;
-            }
+            //            string text = goodPointList.Count + " points found " +
+            //                (Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? Math.Round(vectorInfo.AverageXShift, 2) : Math.Round(vectorInfo.AverageYShift, 2)).ToString() +
+            //                  " " + vectorInfo.Direction + " Shift \n";
+
+            //            int i = 0;
+            //            foreach (Vector point in goodPointList) text += "P " + i++ + " Sh " + Math.Round(point.Delta, 2) + " " + point.Direction + " Shift " + point.Delta +
+            //                 " Identity " + Math.Round(point.Identity, 2) + " CoDirection " + Math.Round(point.CoDirection, 2) + " dX " + Math.Round(point.dX, 2) + " dY " + Math.Round(point.Yfr, 2) + "\n";
+
+            //            OnTextChanged(text);
+            //            Mat RezultImg = new Mat();
+            //            Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, RezultImg, flags: drawMatchesFlags);
+            //            OnChangedImg(RezultImg);
+            //        }
+            //    }
+            //    return goodPointList;
+            //}
         }
-
         public bool CheckAndFixErr(object param)
         {
             SynchronizationContext context = (SynchronizationContext)param;
@@ -1123,9 +1168,10 @@ namespace ImgAssemblingLibOpenCV.Models
             if (goodPointList.Count >= 10)  goodPointList = pointFiltr.PointScreening();
             return goodPointList;
         }
-        private EnumDirection? GetAverageDirection(List<EnumDirection?> directionList)
+        private EnumDirection? GetAverageDirection(List<EnumDirection?> directionList)// Определение направления движения
         {
             if (directionList == null) return null;
+            directionList = directionList.Where(x => x!=null).ToList();
             if (directionList.Count() == 0) return null;
             var existDirections = directionList.Distinct().ToArray();// Получаем все существующие направления движения
             List<DirectionCheck> DirectionCheckList = new List<DirectionCheck>();

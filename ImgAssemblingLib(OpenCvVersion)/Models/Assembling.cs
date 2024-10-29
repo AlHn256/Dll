@@ -316,7 +316,11 @@ namespace ImgAssemblingLibOpenCV.Models
             if (AssemblyPlan.FindKeyPoints) // Поиск ключевых точек
             {
                 if (await FindKeyPoints()) { SendFinished(); AssemblyPlan.FindKeyPointsRezult = "Выполнено."; }
-                else { SendErr(ErrText); AssemblyPlan.FindKeyPointsRezult = ErrText; }
+                else
+                {
+                    SendErr(ErrText); AssemblyPlan.FindKeyPointsRezult = ErrText;
+                    if (IsCriticalErr) return false;
+                }
             }
             else { SendSkipped(); AssemblyPlan.FindKeyPointsRezult = "Этап пропущен!!!"; }
             ts = stopwatch.Elapsed;
@@ -431,8 +435,11 @@ namespace ImgAssemblingLibOpenCV.Models
                 }
             }
 
-            var areasForDelet = stitchingBlock.FindeBlockForDelet();
+            if(stitchingBlock.Direction==null) return SetCriticalErr("CriticalErr Direction not detect !!!");
+
+            var areasForDelet = stitchingBlock.FindeBlockForDelet();// Обнаружение и удаление областей с большим количеством ошибок
             if (areasForDelet.Count > 0) stitchingBlock.DeletAreas(areasForDelet);
+
             return true;
         }
         private async Task<bool> StitchImgs()

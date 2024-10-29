@@ -182,7 +182,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 }
 
                 if (i == 0) continue;
-                if (copy == -1) firstSelectedFiles = SelectedFiles[i - 1];
+                if (copy == -1  && shiftErr == -1) firstSelectedFiles = SelectedFiles[i - 1];
                 secondSelectedFiles = SelectedFiles[i];
 
                 firstSelectedFiles.StitchingFile = secondSelectedFiles.FullName;

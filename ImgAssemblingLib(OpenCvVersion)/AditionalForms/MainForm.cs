@@ -170,7 +170,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         {
             Mat matSrc = new Mat(FileDirTxtBox.Text);
             Mat matTo = new Mat(SecondFile);
-
             picBox_Display.Image = BitmapConverter.ToBitmap(MatchPicBySift(matSrc, matTo));
         }
         private void Test2Btn_Click(object sender, EventArgs e)
@@ -181,30 +180,27 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Int32.TryParse(PeriodTxtBox.Text, out PointNumber);
             picBox_Display.Image = BitmapConverter.ToBitmap(MatchPicBySurf(matSrc, matTo, PointNumber));
         }
-
+        private void FileDirTxtBox_TextChanged(object sender, EventArgs e)
+        {
+            if(FileDirTxtBox.Text != FirstFile)GetImgFiles(new string[1] { FileDirTxtBox.Text });
+        }
         void WindowsForm_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
         }
-        void WindowsForm_DragDrop(object sender, DragEventArgs e)
-        {
-            Assembling.SetRezultImg(null);
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            GetImgFiles(files);
-            ShowLoadeImgs();
-        }
-        protected void GetImgFiles(string[] files)
+        void WindowsForm_DragDrop(object sender, DragEventArgs e)=>GetImgFiles((string[])e.Data.GetData(DataFormats.FileDrop));
+        protected bool GetImgFiles(string[] files)
         {
             bool IsFirst = true;
             string serchingDir = string.Empty;
-            if (files == null || files.Length == 0) return;
+            if (files == null || files.Length == 0) return false;
             if (files.Length == 1 && !string.IsNullOrEmpty(files[0]))
             {
                 serchingDir = files[0];
                 if (!fileEdit.ChkFileDir(serchingDir))
                 {
                     RTB.Text = "Err File\\Dir not found!!!";
-                    return ;
+                    return false;
                 }
 
                 if (fileEdit.IsDirectory(serchingDir))
@@ -212,12 +208,18 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                     FileInfo[] fileInfo = fileEdit.SearchFiles(serchingDir);
                     if (fileInfo.Length > 1)
                     {
+                        FirstFile = fileInfo[0].FullName;
                         FileDirTxtBox.Text = fileInfo[0].FullName;
                         SecondFile = fileInfo[1].FullName;
                     }
                     else if (fileInfo.Length == 1)
                     {
-                        if (IsFirst) FileDirTxtBox.Text = fileInfo[0].FullName;
+                        if (IsFirst)
+                        {
+
+                            FirstFile = fileInfo[0].FullName;
+                            FileDirTxtBox.Text = fileInfo[0].FullName;
+                        }
                         else SecondFile = fileInfo[0].FullName;
                         IsFirst = !IsFirst;
                     }
@@ -225,25 +227,30 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 else
                 {
                     serchingDir = Path.GetDirectoryName(serchingDir);
-                    if (IsFirst) FileDirTxtBox.Text = serchingDir;
+                    if (IsFirst)
+                    {
+
+                        FirstFile = serchingDir;
+                        FileDirTxtBox.Text = serchingDir;
+                    }
                     else SecondFile = serchingDir;
                     IsFirst = !IsFirst;
                 }
             }
+
             if (files.Length > 1)
             {
                 serchingDir = Path.GetDirectoryName(files[0]);
-                FileDirTxtBox.Text = files[0];
                 FirstFile = files[0];
+                FileDirTxtBox.Text = files[0];
                 SecondFile = files[1];
             }
 
             if(!string.IsNullOrEmpty(serchingDir))LoadFileList(serchingDir);
-
-            if (!string.IsNullOrEmpty(FileDirTxtBox.Text))
+            if (!string.IsNullOrEmpty(FirstFile))
             {
-                if (fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
-                else assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
+                if (fileEdit.IsDirectory(FirstFile)) assemblyPlan.WorkingDirectory = FirstFile;
+                else assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FirstFile);
 
                 if (assemblyPlan.FixImg)
                 {
@@ -253,6 +260,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 }
                 else assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
             }
+
+            ShowLoadeImgs();
+            Assembling.SetRezultImg(null);
+
+            return true;
         }
         private bool LoadFileList(string serchingDir)
         {
@@ -402,7 +414,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 }
             }
         }
-
         private void panel1_MouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta > 0) ZoomIn();
@@ -473,8 +484,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 int dX = Math.Abs(Xdn - Xup);
                 int dY = Math.Abs(Ydn - Yup);
                 var Delta = Math.Sqrt(dY * dY + dX * dX);
-
-
 
                 SelectSearchArea = true;
                 //MinHeight = (int)(Ydn/Zoom); MaxHeight = (int)(Yup / Zoom); MinWight = (int)(Xdn / Zoom); MaxWight = (int)(Xup/ Zoom);
@@ -727,14 +736,14 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             else RTB.Text = fileEdit.ErrText;
             fileEdit.ClearInformation();
         }
-        private void FileNameFixingToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(FileDirTxtBox.Text)) RTB.Text = "Err File1TxtBox.Text IsNullOrEmpty!!!";
-            {
-                string dir = Path.GetDirectoryName(FileDirTxtBox.Text);
-                if (fileEdit.CheckFileName(dir)) fileEdit.FixFileName(dir);
-            }
-        }
+        //private void FileNameFixingToolStripMenuItemClick(object sender, EventArgs e)
+        //{
+        //    if (string.IsNullOrEmpty(FileDirTxtBox.Text)) RTB.Text = "Err File1TxtBox.Text IsNullOrEmpty!!!";
+        //    {
+        //        string dir = Path.GetDirectoryName(FileDirTxtBox.Text);
+        //        if (fileEdit.CheckFileName(dir)) fileEdit.FixFileName(dir);
+        //    }
+        //}
         private void TestImgFixingBtn_Click(object sender, EventArgs e)
         {
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
@@ -861,7 +870,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         {
             if (assemblyPlan != null) assemblyPlan.BitMap = UseBitmapChckBox.Checked;
         }
-
         private void UpDatePeriod()
         {
             if (assemblyPlan == null) return;

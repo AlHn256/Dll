@@ -288,7 +288,8 @@ namespace ImgAssemblingLibOpenCV.Models
 
             return fl;
         }
-        private List<double> LineAveraging(List<double> line, int N = 10)
+        //public List<double> LineAveraging(int N = 10) => LineAveraging(SelectedFiles, N);
+        public List<double> LineAveraging(List<double> line, int N = 10)
         {
             if (N > line.Count - 1) N = line.Count - 1;
             if (N < 2) N = 2;

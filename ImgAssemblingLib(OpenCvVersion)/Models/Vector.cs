@@ -33,7 +33,6 @@ namespace ImgAssemblingLibOpenCV.Models
             else Direction = dY > 0 ? EnumDirection.Down : Direction = EnumDirection.Up;
 
             if (Math.Sqrt(dY * dY + dX * dX) < PixelError) isSamePoint = true;
-
             if (Math.Abs(dX) > Math.Abs(dY))
             {
                 CoDirection = dY / dX;
@@ -47,5 +46,22 @@ namespace ImgAssemblingLibOpenCV.Models
 
             Identity = Delta * CoDirection;
         }
+
+        //public Vector(Vector vector) : this(vector.MatchesId, vector.Xfr,vector.Yfr, vector.Xto, vector.Yto)
+        //{
+        //    //MatchesId = vector.MatchesId;
+        //    //Xfr = vector.Xfr;
+        //    //Yfr = vector.Yfr;
+        //    //Xto = vector.Xto;
+        //    //Yto = vector.Yto;
+        //    dX = vector.dX;
+        //    dY = vector.dY;
+        //    Delta = vector.Delta;
+        //    Direction = vector.Direction;
+        //    CoDirection = vector.CoDirection;
+        //    Identity = vector.Identity;
+        //    isSamePoint = vector.isSamePoint;
+        //}
+
     }
 }

@@ -107,42 +107,35 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (BitMapChckBox.Checked)  SavingImgWBitmapChckBox.Checked = AssemblyPlan.SaveImgFixingRezultToFile;
             CheckBitMap();
 
+            DeltaTxtBox.Text = AssemblyPlan.Delta.ToString();
+            PeriodTxtBox.Text = AssemblyPlan.Period.ToString();
+            FromTxtBox.Text = AssemblyPlan.From.ToString();
+            ToTxtBox.Text = AssemblyPlan.To.ToString();
+            if (!AssemblyPlan.Percent || AssemblyPlan.Delta != 0 || AssemblyPlan.Period != 1 || AssemblyPlan.From != 0 || AssemblyPlan.To != 100)
+                AssemblyPlan.DefaultParameters = false;
+            DefaultParametersCheckBox.Checked = AssemblyPlan.DefaultParameters;
+
+            label5.Visible = AssemblyPlan.Percent;
+            label6.Visible = AssemblyPlan.Percent;
+
             WorkingDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory;
             FixImgChckBox.Checked = AssemblyPlan.FixImg;
             FixingImgDirectoryTxtBox.Text = AssemblyPlan.FixingImgDirectory;
 
             ImgFixingPlanTxtBox.Text = AssemblyPlan.ImgFixingPlan;
-            EnableFixImgPanel(FixImgChckBox.Checked);
+            EnableFixImgPanel();
             AutoChckBox.Checked = true;
-            AutoChckBoxInvok();
+
+            if (AutoChckBox.Checked) FixingImgDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory + "AutoOut";
+            else FixingImgDirectoryTxtBox.Text = AssemblyPlan.FixingImgDirectory;
 
             FindKeyPointsСhckBox.Checked = AssemblyPlan.FindKeyPoints;
             StitchСhckBox.Checked = AssemblyPlan.Stitch;
             StitchingDirectoryTxtBox.Text = AssemblyPlan.StitchingDirectory;
             ChekFixedImgsChckBox.Checked = AssemblyPlan.ChekFixImg;
             ChekStitchPlanСhckBox.Checked = AssemblyPlan.ChekStitchPlan;
-            DefaultParametersCheckBox.Checked = AssemblyPlan.DefaultParameters;
-            if(AssemblyPlan.DefaultParameters)
-            {
-                AssemblyPlan.Delta = 0;
-                DeltaTxtBox.Text = "0";
-                PeriodTxtBox.Text = "1";
-                AssemblyPlan.Period = 1;
-                FromTxtBox.Text = "0";
-                AssemblyPlan.From = 0;
-                ToTxtBox.Text = "100";
-                AssemblyPlan.To = 100;
-                PersentOnOff = true;
-            }
-            else
-            {
-                DeltaTxtBox.Text = AssemblyPlan.Delta.ToString();
-                PeriodTxtBox.Text = AssemblyPlan.Period.ToString();
-                FromTxtBox.Text = AssemblyPlan.From.ToString();
-                ToTxtBox.Text = AssemblyPlan.To.ToString();
-            }
-            
-            PersentInvok();
+
+            //PersentInvok();
             AdditionalFilterChckBox.Checked = AssemblyPlan.AdditionalFilter;
             SaveResultChckBox.Checked = AssemblyPlan.SaveRezult;
             SpeedCountingСhckBox.Checked = AssemblyPlan.SpeedCounting;
@@ -201,26 +194,23 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             AssemblyPlan.TimePerFrame = timePerFrame;
         }
         private void AutoChckBox_CheckedChanged(object sender, EventArgs e) => FixStitchingDirectoryTxtBox();
-        private void AutoChckBoxInvok()
-        {
-            if (AutoChckBox.Checked) FixingImgDirectoryTxtBox.Text = AssemblyPlan.WorkingDirectory + "AutoOut";
-            else FixingImgDirectoryTxtBox.Text = AssemblyPlan.FixingImgDirectory;
-        }
         private void FixImgChckBox_CheckedChanged(object sender, EventArgs e)
         {
             AssemblyPlan.FixImg = FixImgChckBox.Checked;
-            EnableFixImgPanel(FixImgChckBox.Checked);
+            EnableFixImgPanel();
             FixStitchingDirectoryTxtBox();
         }
-        private void EnableFixImgPanel(bool Enabled)
+        private void EnableFixImgPanel()
         {
-            ChekFixedImgsChckBox.Enabled = Enabled;
-            AutoChckBox.Enabled = Enabled;
-            FixingImgDirectoryTxtBox.Enabled = Enabled;
-            ImgFixingPlanTxtBox.Enabled = Enabled;
-            OpenImgFixingPlanBtn.Enabled = Enabled;
-            label2.Enabled = Enabled;
-            label3.Enabled = Enabled;
+            ChekFixedImgsChckBox.Enabled = FixImgChckBox.Checked;
+            AutoChckBox.Enabled = FixImgChckBox.Checked;
+            FixingImgDirectoryTxtBox.Enabled = FixImgChckBox.Checked;
+            ImgFixingPlanTxtBox.Enabled = FixImgChckBox.Checked;
+            OpenImgFixingPlanBtn.Enabled = FixImgChckBox.Checked;
+            StitchingDirectoryTxtBox.Enabled = FixImgChckBox.Checked;
+            label2.Enabled = FixImgChckBox.Checked;
+            label3.Enabled = FixImgChckBox.Checked;
+            label4.Enabled = FixImgChckBox.Checked;
         }
 
         private void FixStitchingDirectoryTxtBox()
@@ -341,7 +331,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
         private void PersentInvok()
         {
-            if (DefaultParametersCheckBox.Checked) return;
+            if (BitMapChckBox.Checked) return;
             PersentOnOff = !PersentOnOff;
             if (PersentOnOff)
             {
@@ -352,9 +342,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             {
                 label5.Visible = false;
                 label6.Visible = false;
+                DefaultParametersCheckBox.Checked = false;
             }
         }
-
         private void StitchСhckBox_CheckedChanged(object sender, EventArgs e) => CheckFKPoins();
         private void SpeedCountingСhckBox_CheckedChanged(object sender, EventArgs e) => CheckFKPoins();
 
@@ -464,7 +454,16 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         }
         private void CheckBitMap()
         {
-            if(!BitMapChckBox.Checked) SavingImgWBitmapChckBox.Checked = BitMapChckBox.Checked;
+            if (BitMapChckBox.Checked)
+            {
+                PersentOnOff = false;
+                PersentInvok();
+            }
+            else
+            {
+                SavingImgWBitmapChckBox.Checked = BitMapChckBox.Checked;
+                DefaultParametersCheckBox.Enabled = true;
+            }
             SavingImgWBitmapChckBox.Enabled = BitMapChckBox.Checked;
             PeriodTxtBox.Enabled = !BitMapChckBox.Checked;
             FromTxtBox.Enabled = !BitMapChckBox.Checked;
@@ -478,7 +477,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
             FrLb.Enabled = !BitMapChckBox.Checked;
             ToLb.Enabled = !BitMapChckBox.Checked;
-            DefaultParametersCheckBox.Enabled = !BitMapChckBox.Checked;
+            
             ChekStitchPlanСhckBox.Checked = !BitMapChckBox.Checked;
             ChekStitchPlanСhckBox.Enabled = !BitMapChckBox.Checked;
 

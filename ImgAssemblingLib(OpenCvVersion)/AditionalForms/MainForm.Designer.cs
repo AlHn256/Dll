@@ -128,6 +128,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.FileDirTxtBox.Name = "FileDirTxtBox";
             this.FileDirTxtBox.Size = new System.Drawing.Size(437, 20);
             this.FileDirTxtBox.TabIndex = 8;
+            this.FileDirTxtBox.TextChanged += new System.EventHandler(this.FileDirTxtBox_TextChanged);
             // 
             // label4
             // 

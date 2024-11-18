@@ -41,6 +41,29 @@ namespace ImgAssemblingLibOpenCV.Models
         public event Action<Mat> ChangImg;
         public DrawMatchesFlags drawMatchesFlags { get; set; } = DrawMatchesFlags.NotDrawSinglePoints;
         private FileEdit fileEdit { get; set; } = new FileEdit();
+        private bool SetErr(string err, EnumErrCode enumErrCode = EnumErrCode.NoErr)
+        {
+            ErrCode = enumErrCode;
+            ErrList.Add(err);
+            IsErr = true;
+            ErrText = err;
+            return false;
+        }
+        public string GetErrText()
+        {
+            if (!IsErr) return string.Empty;
+            if (ErrList.Count == 0) return ErrText;
+
+            string errTxt = ErrText;
+            foreach (string elem in ErrList) errTxt += "\n" + elem;
+            return errTxt;
+        }
+        private void EraseError()
+        {
+            IsErr = false;
+            ErrCode = EnumErrCode.NoErr;
+            ErrText = string.Empty;
+        }
         public StitchingBlock(Bitmap[] bitMapArray)
         {
             if (bitMapArray == null || bitMapArray.Length == 0)
@@ -79,6 +102,7 @@ namespace ImgAssemblingLibOpenCV.Models
         { }
         public StitchingBlock(string file, bool additionalFilter,bool percent = true, int from = 0, int to = 100, int period = 1, bool selectSearchArea = false,float minHeight =0,float maxHeight = 0,float minWight=0,float maxWight=0)
         {
+
             if (string.IsNullOrEmpty(file))
             {
                 SetErr("Err StitchingBlock.string.IsNullOrEmpty(File1TxtBox.Text)!!!");
@@ -98,6 +122,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 SetErr("Err StitchingBlock.string.IsNullOrEmpty(MainDir)!!!");
                 return;
             }
+            if (period < 1) period = 1;
             FileInfo[] fileList = fileEdit.SearchFiles(MainDir);
             fileList = fileList.Where(f => f.Name.IndexOf("Result") == -1).ToArray();
             if (fileList.Length == 0)
@@ -162,6 +187,8 @@ namespace ImgAssemblingLibOpenCV.Models
         }
         public List<SelectedFiles> GetSelectedFiles() => SelectedFiles;
 
+        private bool СuttingOnChangDirection { get; set; } = false;
+        private bool ResearchIsOn { get; set; } = true;
         public void FindKeyPoints(object param)
         {
             StopProcess = false;
@@ -227,7 +254,8 @@ namespace ImgAssemblingLibOpenCV.Models
                     firstSelectedFiles.Direction = vectorInfo.Direction;
                     if (copy != -1) copy = -1;
 
-                    if(directionsList.Count>10)
+                    directionsList.Add(vectorInfo.Direction);
+                    if (directionsList.Count>10 && СuttingOnChangDirection) // Проверка на изменение направления движения
                     {
                         var avDirection = GetAverageDirection(directionsList);
                         if (avDirection != vectorInfo.Direction && copy == -1)
@@ -253,7 +281,6 @@ namespace ImgAssemblingLibOpenCV.Models
                         }
                         else notMatchDirectionsN = 0;
                     }
-                    directionsList.Add(vectorInfo.Direction);
                 }
 
                 context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
@@ -270,34 +297,335 @@ namespace ImgAssemblingLibOpenCV.Models
                 context.Send(OnProgressChanged, 100);
                 context.Send(OnTextChanged, "100 %");
             }
+
+            if(ResearchIsOn)StartResearch();
         }
 
-        public class tmp
+        private void StartResearch()
         {
-            public int I { get; set; }
-            public int Err { get; set; }
-            public List<string> ErrText { get; set; }
-            public string ErrLine { get; set; }
+            ResearchLine  researchLine = new ResearchLine(SelectedFiles, Direction);
+            bool research = researchLine.StartResearch();
 
-            public tmp(int i)
+            bool SlowMotion = researchLine.SlowMotion;
+            bool ReverseMotion = researchLine.TrainStop;
+            bool TrainStop = researchLine.ReverseMotion;
+        }
+        public class ResearchPoint
+        {
+            public double AverageShift { get; set; }
+            public double LineAveraging { get; set; } = -1;
+            public double Divergence { get; set; } = -1;
+            public double AreaDivergence { get; set; } = -1;
+            public double AreaDirection { get; set; } = -1;
+            public double CoDirection { get; set; } = -1;
+            public EnumDirection? Direction { get; set; }
+            public bool SlowM { get; set; } = false;
+            public bool Stop { get; set; } = false;
+            public bool Revers { get; set; } = false;
+            public double ReversPercent { get; set; } = -1;
+            public double StopByShift { get; set; } = -1;
+            public string FullName { get; set; }
+            public string StatusInformation { get; set; }
+        }
+        public class ResearchLine
+        {
+            public bool IgnoreCopies { get; set; } = true; // Не учитывать копии кадров
+            public EnumDirection? MainDirection { get; set; }
+            private int minShift { get; set; } = 10; // минимально смещение картинок которое допускается из за погрешности определения ключевых точек
+            private int PercentUnderMinShift { get; set; } = -1;
+            public List<SelectedFiles> SelectedFiles { get; set; }
+            public List<ResearchPoint> ResearchList { get; set; }
+            public bool SlowMotion { get; set; } = false;
+            public bool ReverseMotion { get; set; } = false;
+            public bool TrainStop { get; set; } = false;
+            public bool AreaForReExamination { get; set; } = false;
+            public List<StopPoint> StopPoints { get; set; }
+            public string Messag { get; set; }
+
+            public ResearchLine(List<SelectedFiles> selectedFiles, EnumDirection? mainDirection, int minShift = 10)
             {
-                I = i;
+                MainDirection = mainDirection;
+                this.minShift = minShift;
+                SelectedFiles = selectedFiles;
+                if (selectedFiles == null) return;
+                if (selectedFiles.Count == 0) return;
+                ResearchList = (from x in selectedFiles
+                                select new ResearchPoint()
+                                {FullName= x.FullName, AverageShift = x.AverageShift, Direction = x.Direction }).ToList();}
+            public bool StartResearch()
+            {
+                if (ResearchList == null) return false;
+                if (ResearchList.Count == 0) return false;
+
+                PercentUnderMinShift = CheckForDecelerationAndStop(SelectedFiles);
+
+                //List<double> doublList = ResearchList.Select(x=>x.AverageShift).ToList();
+                SpeedСounter speedСounter = new SpeedСounter(SelectedFiles, 1, 1);
+                var resultList = speedСounter.LineAveraging(ResearchList.Select(x => x.AverageShift).ToList());
+                if (resultList.Count == ResearchList.Count)
+                {
+                    for (int i = 0; i < ResearchList.Count; i++)
+                    {
+                        ResearchList[i].LineAveraging = resultList[i];
+                        ResearchList[i].Divergence =Math.Abs(ResearchList[i].AverageShift - resultList[i]);
+                        if (IgnoreCopies && ResearchList[i].AverageShift == 0) ResearchList[i].AreaDivergence = -1;
+                        else ResearchList[i].AreaDivergence = Math.Abs(ResearchList[i].AverageShift - resultList[i]) / resultList[i];
+                    }
+                }
+                if (MainDirection == null) return false;
+                GetDirectionLines();
+                DetectAreas();
+                return true;
             }
-            public tmp(int i,  string errText)
+
+            private int CheckForDecelerationAndStop(List<SelectedFiles> SelectedFilesTempList) // проверка на замедление \ остановку поезда
             {
-                I= i;
-                Err= 1;
-                ErrText = new List<string>() {errText};
-                ErrLine = errText;
+                int conter = 0;
+                List<int> intList = new List<int>();
+                List<double> AverageShift = new List<double>();
+                List<double> AverageShiftAbs = new List<double>();
+                foreach (var elem in SelectedFilesTempList)
+                {
+                    if (Math.Abs(elem.AverageShift) <= 2 * minShift)
+                    {
+                        intList.Add(elem.Id);
+                        AverageShift.Add(elem.AverageShift);
+                        AverageShiftAbs.Add(Math.Abs(elem.AverageShift));
+                        conter++;
+                    }
+                }
+                int rezult = conter * 100 / SelectedFilesTempList.Count();
+                return rezult;
             }
-            public void Add(string errText, int i =-1)
+            
+            private bool GetDirectionLines()
             {
-                if(i!=-1)I = i;
-                Err ++;
-                if (ErrText == null) ErrText = new List<string> {errText};
-                else ErrText.Add(errText);
-                if (string.IsNullOrEmpty(ErrLine)) ErrLine = errText;
-                else ErrLine +=" "+ errText;
+                int N = 10;
+                if (ResearchList == null) return false;
+                if (ResearchList.Count == 0) return false;
+                //if (N > ResearchList.Count - 1) N = ResearchList.Count - 1;
+                //if (N < 2) N = 2;
+                //bool isEven = (N % 2) == 0 ? true : false;
+               // List<double> result = new List<double>();
+                Queue<EnumDirection?> queue = new Queue<EnumDirection?>();
+                int n = -1,i=0;
+                bool deque = false;
+
+                while (true)
+                {
+                    //if (++n > ResearchList.Count - 1)
+                    //{
+                    //    break;
+                    //}
+                    //if (IgnoreCopies && ResearchList[n].AverageShift == 0) continue;
+                    if (++n < ResearchList.Count && ResearchList[n].Direction!= null && ResearchList[n].Direction!= EnumDirection.Undefined) 
+                        queue.Enqueue(ResearchList[n].Direction);
+                    else if(n >= ResearchList.Count)queue.Dequeue();
+                    
+                    if (queue.Count > N )queue.Dequeue(); 
+                    if (queue.Count == 0 || i >= ResearchList.Count)break;
+                    if (queue.Count >= N / 2)
+                    {
+                        if (IgnoreCopies && ResearchList[i].AverageShift == 0)
+                        {
+                            ResearchList[i].CoDirection = -1;
+                            ResearchList[i].AreaDirection = -1;
+                        }
+                        else
+                        {
+                            ResearchList[i].CoDirection = CountCoDirection(queue);
+                            ResearchList[i].AreaDirection = CountAreaDirection(queue);
+                        }
+                        i++;
+                    }
+                }
+                return true;
+            }
+            public class StopPoint
+            {
+                public string FullName { get; set; }
+                public double averagDirection { get; set; }
+            }
+            private bool DetectAreas()
+            {
+                if(ResearchList.Count == 0) return false;
+
+                for (int i = 0; i< ResearchList.Count; i++)
+                {
+                    if(IgnoreCopies && ResearchList[i].AverageShift == 0)
+                    {
+                        ResearchList[i].Revers=false;
+                        ResearchList[i].Stop = false;
+                        ResearchList[i].SlowM = false;
+                        continue; 
+                    }
+
+                    bool Revers = (ResearchList[i].CoDirection < 0.3 && ResearchList[i].CoDirection!=-1) ? true : false,
+                        Stop = (ResearchList[i].CoDirection > 0.3 && ResearchList[i].CoDirection < 0.8 && ResearchList[i].CoDirection != -1) ? true : false,
+                        SlowM = ResearchList[i].LineAveraging < minShift * 1.5 ? true: false;
+
+                    ResearchList[i].Revers = Revers;
+                    ResearchList[i].Stop = Stop;
+                    ResearchList[i].SlowM = SlowM;
+                }
+
+                var sgsdf = ResearchList.Where(x => x.SlowM).Count();
+                var sgsdf2 = ResearchList.Where(x => x.SlowM || x.Stop).Count();
+
+                PercentUnderMinShift = ResearchList.Where(x => x.SlowM).Count() * 100 / ResearchList.Count();
+                var Dublicate = ResearchList.Where(x => x.SlowM || x.Stop).ToList();
+                var persentForDublicate = ResearchList.Where(x => x.SlowM || x.Stop).Count() * 100 / ResearchList.Count();
+                //CheckForDecelerationAndStop(SelectedFiles);
+
+                var chanceOfRevers = ResearchList.Any(x => x.Revers);
+                var dsf2 = ResearchList.Count(x => x.Revers);
+
+                var st = ResearchList.Any(x => x.Stop);
+                var dsf4 = ResearchList.Count(x => x.Stop);
+
+                var slm = ResearchList.Any(x => x.SlowM );
+                var dsf6 = ResearchList.Count(x => x.Stop);
+
+                var zeroShift = ResearchList.Any(x => x.AverageShift == 0);
+                var zsh = ResearchList.Count(x => x.AverageShift == 0);
+                
+                TrainStop = st;
+                SlowMotion = slm;
+
+                int N = 15;
+                bool stopByShift = false;
+                Queue<double> queue = new Queue<double>();
+                if (zsh>5)
+                {
+                    for (int i = 0; i < ResearchList.Count; i++)
+                    {
+                        //if (ResearchList[i].CoDirection == -1) continue;
+                        queue.Enqueue(ResearchList[i].AverageShift);
+                        if (queue.Count > N) queue.Dequeue();
+                        if (queue.Count >= N / 2)
+                        {
+                            ResearchList[i].StopByShift = queue.Sum() / queue.Count;
+                            //var sdf = ResearchList[i].StopByShift - 0.5;
+                            //tmps.Add(new StopPoint() { FullName = ResearchList[i].FullName, averagDirection = (ResearchList[i].ReversPercent - 0.5) });
+                            if (queue.Count >= N - 1 && ResearchList[i].StopByShift < 0.1) stopByShift = true;
+                        }
+                    }
+                }
+
+                bool isRevers = false;
+                queue.Clear();
+                // List<StopPoint> tmps = new List<StopPoint>();
+                if (chanceOfRevers)
+                {
+                    for (int i = 0; i < ResearchList.Count; i++)
+                    {
+                        if (ResearchList[i].CoDirection == -1)continue;
+                        queue.Enqueue(ResearchList[i].CoDirection);
+                        if(queue.Count>N)queue.Dequeue();
+                        if (queue.Count >= N/2)
+                        { 
+                            ResearchList[i].ReversPercent = queue.Sum() / queue.Count - 0.5;
+                            if (!isRevers && queue.Count >= N - 1 && ResearchList[i].ReversPercent < -0.3) isRevers = true;
+                            //tmps.Add(new StopPoint() { FullName = ResearchList[i].FullName, averagDirection = (ResearchList[i].ReversPercent - 0.5) });
+                            //if (!isRevers && queue.Count>=N-1 && ResearchList[i].ReversPercent < 0.2) isRevers = true;
+                        }
+                    }
+                }
+
+                ReverseMotion = isRevers;
+                if (ReverseMotion)
+                {
+                    StopPoints = FindCrossZero();
+                    //if (StopPoints.Count > 1) TrainStop = true;
+                    //else if (StopPoints.Count == 1) TrainStop = true;
+                    //else TrainStop = false;
+                    TrainStop = true;
+                    SlowMotion = true;
+                    Messag = "Если есть реверс значит должны быть Stop и SlowM";
+                }
+                else if (!SlowMotion && TrainStop) Messag = "Скорее всего это не остановка поезда, а просто он закончился!";
+                else if (!TrainStop && !SlowMotion && !TrainStop) Messag = "Все норм, обычный поезд!";
+
+                for (int i = 0; i < ResearchList.Count; i++)
+                {
+                    if (ResearchList[i].Stop && ResearchList[i].SlowM) ResearchList[i].StatusInformation = "Замедленное движение или остановка";
+                    else if (ResearchList[i].SlowM ) ResearchList[i].StatusInformation = "Замедленное движение";
+                    else if (ResearchList[i].Stop) ResearchList[i].StatusInformation = "Предположительное место остановки";
+                    if (ResearchList[i].StopByShift < 0.1 && ResearchList[i].StopByShift != -1) ResearchList[i].StatusInformation = "Остановка или какмера глючит(создает множество копий)";
+                    if (ResearchList[i].Revers) ResearchList[i].StatusInformation = "Движение в обратном направлении " + GetOpositDirection(MainDirection);
+                    if(!ResearchList[i].Stop && !ResearchList[i].SlowM && !ResearchList[i].Revers && (ResearchList[i].StopByShift > 0.1 || ResearchList[i].StopByShift == -1)) ResearchList[i].StatusInformation = "Движение по основному направлению " + MainDirection;
+                }
+                // List<StopPoint> stopPoints2 = FindCrossZero(tmps);
+                return true;
+            }
+
+            private List<StopPoint> FindCrossZero()  // Получаем точки в которых происходит пересечение нуля
+            {
+                if(ResearchList.Count < 10) return new List<StopPoint>();
+                List<StopPoint> rezultList = new List<StopPoint>();
+                for (int i = 0; i < ResearchList.Count; i++)
+                {
+                    if (i < 2 || i > ResearchList.Count() - 3) continue;
+                    if ((ResearchList[i - 2].ReversPercent < 0 && ResearchList[i - 1].ReversPercent < 0 && ResearchList[i].ReversPercent >= 0 && ResearchList[i + 1].ReversPercent > 0) ||
+                        (ResearchList[i - 2].ReversPercent > 0 && ResearchList[i - 1].ReversPercent > 0 && ResearchList[i].ReversPercent <= 0 && ResearchList[i + 1].ReversPercent < 0))
+                        rezultList.Add(new StopPoint() { FullName = ResearchList[i].FullName, averagDirection = ResearchList[i].ReversPercent});   
+                }
+
+                return rezultList;
+            }
+            private double CountAreaDirection(Queue<EnumDirection?> queue)
+            {
+                if (queue == null) return 0;
+                if (queue.Count() == 0) return 0;
+                var existDirections = queue.Distinct().ToArray();// Получаем все существующие направления движения
+                if (existDirections.Length == 1) return 1;
+
+                List<DirectionCheck> DirectionCheckList = new List<DirectionCheck>();
+                foreach (EnumDirection? direction in existDirections)
+                {
+                    var amaunt = queue.Count(x => x == direction);
+                    DirectionCheckList.Add(new DirectionCheck
+                    {
+                        EnumDirection = direction,
+                        Amount = amaunt
+                    });
+                }
+                var mainDirection =  DirectionCheckList.Where(x => x.Amount == DirectionCheckList.Max(y => y.Amount)).Select(z => z.EnumDirection).FirstOrDefault();
+
+                return CountCoDirection(queue, mainDirection);
+            }
+            private double CountCoDirection(Queue<EnumDirection?> queue , EnumDirection? mainDirection = null )
+            {
+                if (mainDirection == null) mainDirection = MainDirection;
+                double Sum = 0;
+                foreach (EnumDirection? elem in queue)
+                {
+                    if (elem == null || OpositDirection(elem, mainDirection)) continue;
+                    else if (elem == mainDirection) Sum++;
+                    else Sum += 0.5;
+                }
+
+                return Sum / queue.Count;
+            }
+            private bool OpositDirection(EnumDirection? dir, EnumDirection? mainDirection= null )
+            {
+                if (dir == null) return false;
+                if (mainDirection == null) mainDirection = MainDirection;
+                if ((MainDirection == EnumDirection.Left && dir == EnumDirection.Right) ||
+                    (MainDirection == EnumDirection.Right && dir == EnumDirection.Left) ||
+                    (MainDirection == EnumDirection.Up && dir == EnumDirection.Down) ||
+                    (MainDirection == EnumDirection.Down && dir == EnumDirection.Up)) return true;
+
+                return false;
+            }
+            private EnumDirection? GetOpositDirection(EnumDirection? mainDirection)
+            {
+                if (mainDirection == null  || mainDirection == EnumDirection.Undefined) return mainDirection;
+                if (MainDirection == EnumDirection.Left) return EnumDirection.Right;
+                if (MainDirection == EnumDirection.Right) return EnumDirection.Left;
+                if (MainDirection == EnumDirection.Up) return EnumDirection.Down;
+                if (MainDirection == EnumDirection.Down) return EnumDirection.Up;
+                return EnumDirection.Undefined;
             }
         }
         public List<AreaForDel> FindeBlockForDelet()
@@ -308,7 +636,7 @@ namespace ImgAssemblingLibOpenCV.Models
             int[] Errors = FindErrs();
             var Area = HaosMeasur(Errors);
             int maxErrLvl = 4;
-            areasForDelet = GetAreasForDel(Area,maxErrLvl);
+            areasForDelet = GetAreasForDel(Area, maxErrLvl);
             return JoinAreas(areasForDelet, SelectedFiles.Count);
         }
         public void DeletAreas(List<StitchingBlock.AreaForDel> areasForDelet)
@@ -359,7 +687,33 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return Errors;
         }
-
+        public class tmp
+        {
+            public int I { get; set; }
+            public int Err { get; set; }
+            public List<string> ErrText { get; set; }
+            public string ErrLine { get; set; }
+            public tmp(int i)
+            {
+                I = i;
+            }
+            public tmp(int i, string errText)
+            {
+                I = i;
+                Err = 1;
+                ErrText = new List<string>() { errText };
+                ErrLine = errText;
+            }
+            public void Add(string errText, int i = -1)
+            {
+                if (i != -1) I = i;
+                Err++;
+                if (ErrText == null) ErrText = new List<string> { errText };
+                else ErrText.Add(errText);
+                if (string.IsNullOrEmpty(ErrLine)) ErrLine = errText;
+                else ErrLine += " " + errText;
+            }
+        }
         private List<AreaForDel> GetAreasForDel(int[] Area, int maxErrLvl)
         {
             List<AreaForDel> areasForDelet = new List<AreaForDel>();
@@ -413,14 +767,12 @@ namespace ImgAssemblingLibOpenCV.Models
 
             return newListAreaForDels;
         }
-
         public class AreaForDel
         {
             public int From {get;set;} 
             public int To {get;set;} 
             public AreaForDel (int from, int to) {From = from; To = to;}
         }
-
         private int[] HaosMeasur(int[] errors)
         {
             int N = 10;
@@ -439,7 +791,7 @@ namespace ImgAssemblingLibOpenCV.Models
 
             return result.ToArray();
         }
-
+        public List<Vector> GetVectorList(string file1, string file2, bool makeFotoRezult = false) => GetVectorList(new Mat(file1), new Mat(file2), makeFotoRezult);
         public List<Vector> GetVectorList(Mat matSrc, Mat matTo, bool makeFotoRezult = false)
         {
             List<Vector> goodPointList = new List<Vector>();
@@ -498,87 +850,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 }
             }
             return goodPointList;
-        }
-
-        public List<Vector> GetVectorList(string file1, string file2, bool makeFotoRezult = false)
-        {
-
-            return GetVectorList(new Mat(file1), new Mat(file2), makeFotoRezult);
-
-            //using (Mat matSrc = new Mat(file1))
-            //using (Mat matTo = new Mat(file2))
-            //{
-            //    List<Vector> goodPointList = new List<Vector>();
-            //    List<DMatch> goodMatches = new List<DMatch>();
-            //    //Mat matSrc = Cv2.ImRead(file1, ImreadModes.Grayscale);
-            //    //Mat matTo = Cv2.ImRead(file2, ImreadModes.Grayscale);
-            //    if (matSrc.Width == 0 || matSrc.Height == 0 || matTo.Width == 0 || matTo.Height == 0)
-            //    {
-            //        SetErr("Err GetVectorList.один из фалов " + file1 + " или " + file2 + " не найден!!!\n", EnumErrCode.FileNotFound);
-            //        return goodPointList;
-            //    }
-            //if (matSrc.Width != matTo.Width || matSrc.Height != matTo.Height)
-            //{
-            //    SetErr("Err GetVectorList.один из парамеров фалов " + file1 + " или " + file2 + " не совпадает!!!\n", EnumErrCode.Err);
-            //    return goodPointList;
-            //}
-            //KeyPoint[] keyPointsSrc, keyPointsTo;
-            //    using (Mat matSrcRet = new Mat())
-            //    using (Mat matToRet = new Mat())
-            //    {
-            //        using (var sift = OpenCvSharp.Features2D.SIFT.Create())
-            //        {
-            //            sift.DetectAndCompute(matSrc, null, out keyPointsSrc, matSrcRet);
-            //            sift.DetectAndCompute(matTo, null, out keyPointsTo, matToRet);
-            //        }
-
-            //        using (var bfMatcher = new BFMatcher())
-            //        {
-            //            var matches = bfMatcher.KnnMatch(matSrcRet, matToRet, k: 2);
-
-            //            if (matches.Length == 0)
-            //            {
-            //                SetErr("Err StitchImgsByPointsImgs.Length = 0 !!!", EnumErrCode.Err);
-            //                return goodPointList;
-            //            }
-
-            //            if (matches[0].Length == 2) goodPointList = GetVectors(matches, keyPointsSrc, keyPointsTo, out goodMatches);
-            //            else
-            //            {
-            //                SetErr("Err StitchImgsByPointsImgs.matches[0].Length != 2 !!!", EnumErrCode.Err);
-            //                return goodPointList;
-            //            }
-            //        }
-
-            //        if (goodPointList.Count == 0)
-            //        {
-            //            if (string.IsNullOrEmpty(ErrText)) SetErr("Err StitchImgsByPointsImgs.ключевые точки не найдены!!!", EnumErrCode.PointsNotFound);
-            //            return goodPointList;
-            //        }
-
-            //        //foreach (var elem in goodPointList) elem.GetDirection();
-
-            //        if (makeFotoRezult)// Если нужно создаем изображение с найденными точками
-            //        {
-            //            VectorInfo vectorInfo = GetAverages(goodPointList);
-            //            goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
-
-            //            string text = goodPointList.Count + " points found " +
-            //                (Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? Math.Round(vectorInfo.AverageXShift, 2) : Math.Round(vectorInfo.AverageYShift, 2)).ToString() +
-            //                  " " + vectorInfo.Direction + " Shift \n";
-
-            //            int i = 0;
-            //            foreach (Vector point in goodPointList) text += "P " + i++ + " Sh " + Math.Round(point.Delta, 2) + " " + point.Direction + " Shift " + point.Delta +
-            //                 " Identity " + Math.Round(point.Identity, 2) + " CoDirection " + Math.Round(point.CoDirection, 2) + " dX " + Math.Round(point.dX, 2) + " dY " + Math.Round(point.Yfr, 2) + "\n";
-
-            //            OnTextChanged(text);
-            //            Mat RezultImg = new Mat();
-            //            Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, RezultImg, flags: drawMatchesFlags);
-            //            OnChangedImg(RezultImg);
-            //        }
-            //    }
-            //    return goodPointList;
-            //}
         }
         public bool CheckAndFixErr(object param)
         {
@@ -685,7 +956,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 else return true;
             }
         }
-
         private int CheckForCrossZero(List<double> midlAverageShift,out int nOfFirstPoint)
         {
             nOfFirstPoint = 0;
@@ -706,9 +976,7 @@ namespace ImgAssemblingLibOpenCV.Models
 
             return NOfZeroCrossing;
         }
-
-        // проверка на замедление \ остановку поезда
-        private int CheckForDecelerationAndStop(List<SelectedFiles> SelectedFilesTempList)
+        private int CheckForDecelerationAndStop(List<SelectedFiles> SelectedFilesTempList) // проверка на замедление \ остановку поезда
         {
             int conter = 0;
             List<int> intList = new List<int>();
@@ -727,7 +995,6 @@ namespace ImgAssemblingLibOpenCV.Models
             int rezult = conter * 100 / SelectedFilesTempList.Count();
             return rezult;
         }
-
         private bool CheckForReplacement(int i, int j, out VectorInfo vectorInfo)
         {
             vectorInfo = new VectorInfo();
@@ -741,7 +1008,6 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return false;
         }
-
         private void RemovingErrRecords(SynchronizationContext context)
         {
             if (Direction == null)
@@ -932,319 +1198,8 @@ namespace ImgAssemblingLibOpenCV.Models
             AddErrStitchingInfo();
             return rezult;
         }
-
-        private int CheckBorders(int Delta, bool recurs = true)
-        {
-            int DeltaSave = Delta;
-            Mat imgFile = SelectedFiles[0].Mat;
-            if(imgFile == null && !string.IsNullOrEmpty(SelectedFiles[0].FullName)) imgFile = new Mat(SelectedFiles[0].FullName);
-            
-            if(imgFile == null) return Delta;
-            if(imgFile.Width == 0) return Delta;
-
-            int newDelta = Delta;
-            int w2 = imgFile.Width / 2;
-            int lastElem = 0;
-            if (Direction == EnumDirection.Left)
-            {
-                List<int> intsD2 = new List<int>();
-                for(int i =0; i< SelectedFiles.Count; i++)
-                {
-                    if(i == SelectedFiles.Count-1)
-                    {
-                        lastElem = w2 - (int)SelectedFiles[i].AverageShift + Delta - 1;   
-                        //int d1 = w2 - shift + Delta - 1;
-                        //int d2 = shift - Delta - 1;
-                    }
-                    else
-                    {
-                    int d2 = w2 - (int)SelectedFiles[i].AverageShift + Delta;
-                    intsD2.Add(d2);
-                    }
-                }
-
-                //foreach (var elem in SelectedFiles)
-                //{
-                //    int d2 = w2 - (int)elem.AverageShift + Delta;
-                //    intsD2.Add(d2);
-                //    intsD3.Add(d2 + (int)elem.AverageShift - 1);
-                //    int lastElem = (int)elem.AverageShift - Delta - 1;
-                //}
-
-                int minD2 = intsD2.Min();
-                int maxD2 = intsD2.Max();
-
-                if (minD2 < 0 || lastElem < 0 || lastElem > w2)
-                {
-                    if (minD2 < 0) newDelta = -minD2 + 5;
-                    //lastElem = w2 - (int)SelectedFiles[i].AverageShift + Delta - 1;   
-                    if (lastElem < 0)
-                    {
-                        newDelta = -lastElem + 5;
-                       // newDelta = lastElem = w2 - (int)SelectedFiles[SelectedFiles.Count - 1].AverageShift + Delta - 1;
-                    }                    
-                    if (lastElem > w2)
-                    {
-                        newDelta = - lastElem + 5;
-                        
-                        // newDelta = lastElem = w2 - (int)SelectedFiles[SelectedFiles.Count - 1].AverageShift + Delta - 1;
-                    }
-
-                    if (recurs)
-                    {
-                        int delta2 =  CheckBorders(newDelta, false);
-                        if (newDelta != delta2) newDelta = DeltaSave;
-                    }
-                }
-                //if (maxD2 > w2) newDelta = - minD2+5;
-            }
-            return newDelta;
-        }
-
-        private void InvertDirection()
-        {
-            if (Direction == EnumDirection.Right) Direction = EnumDirection.Left;
-            if (Direction == EnumDirection.Down) Direction = EnumDirection.Up;
-            List<SelectedFiles> TempSelectedFiles = new List<SelectedFiles>();
-
-            int y = 0;
-            for (int i = SelectedFiles.Count - 1; i > -1; i--)
-            {
-                if (i == 0)
-                {
-                    TempSelectedFiles.Add(new SelectedFiles()
-                    {
-                        Id = y++,
-                        FullName = SelectedFiles[0].FullName,
-                        Mat = SelectedFiles[0].Mat,
-                    });
-                }
-                else
-                {
-                    SelectedFiles tempSf;
-                    if (SelectedFiles[i].IsErr)
-                    {
-                        tempSf = new SelectedFiles(SelectedFiles[i]);
-                        tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
-                    }
-                    else
-                    {
-                        if (!SelectedFiles[i - 1].IsErr)
-                        {
-                            tempSf = new SelectedFiles(SelectedFiles[i - 1]);
-                            tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
-                            tempSf.Mat = SelectedFiles[i].Mat;
-                        }
-                        else
-                        {
-                            int z = i - 1;
-                            while (!SelectedFiles[z--].IsErr)
-                                if (z == 0) break;
-
-                            tempSf = new SelectedFiles(SelectedFiles[z]);
-                            tempSf.Mat = SelectedFiles[z].Mat;
-                            tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
-                            tempSf.VectorList = SelectedFiles[z].VectorList;
-                            tempSf.Direction = SelectedFiles[z].Direction;
-                            tempSf.Hint = SelectedFiles[z].Hint;
-                            tempSf.AverageXShift = SelectedFiles[z].AverageXShift;
-                            tempSf.AverageYShift = SelectedFiles[z].AverageYShift;
-                            tempSf.AverageShift = SelectedFiles[z].AverageShift;
-                            tempSf.IsErr = SelectedFiles[z].IsErr;
-                            tempSf.ErrCode = SelectedFiles[z].ErrCode;
-                            tempSf.ErrText = SelectedFiles[z].ErrText;
-                        }
-
-                        tempSf.Id = y++;
-                        tempSf.FullName = SelectedFiles[i].FullName;
-                        tempSf.Direction = Direction;
-                    }
-                    TempSelectedFiles.Add(tempSf);
-                }
-            }
-
-            SelectedFiles = TempSelectedFiles;
-        }
-        
-        public List<Vector> GetVectors(DMatch[][] matches, KeyPoint[] keyPointsSrc, KeyPoint[] keyPointsTo, out List<DMatch> goodMatches)
-        {
-            goodMatches = new List<DMatch>();
-            List<Vector> goodPointList = new List<Vector>();
-            if (matches == null) return goodPointList;
-            int i = 0, n = 0;
-
-            if (SelectSearchArea && matches.Length>30) // Отсееваем точки если выбран определенный сектор
-            {
-                double minHeight = MinHeight , maxHeight = MaxHeight , delta = Math.Abs(MinHeight - MaxHeight);
-                var matches2 = matches.Where(x => keyPointsSrc[x[0].QueryIdx].Pt.Y > minHeight && keyPointsSrc[x[0].QueryIdx].Pt.Y < maxHeight && keyPointsTo[x[0].TrainIdx].Pt.Y > minHeight - 5 && keyPointsTo[x[0].TrainIdx].Pt.Y < maxHeight + 5).ToArray();
-
-                if (delta < 10) delta = 10;
-                minHeight -= delta / 2; maxHeight += delta / 2;
-                while (matches2.Length <20)
-                {
-                    if (n++ > 10) break;
-                    if (minHeight < 0) minHeight = 0;
-                    //if (maxHeight > MaxHeight) maxHeight = MaxHeight;
-                    matches2 = matches.Where(x => keyPointsSrc[x[0].QueryIdx].Pt.Y > minHeight && keyPointsSrc[x[0].QueryIdx].Pt.Y < maxHeight && keyPointsTo[x[0].TrainIdx].Pt.Y > minHeight - 5 && keyPointsTo[x[0].TrainIdx].Pt.Y < maxHeight + 5).ToArray();
-                    minHeight -= delta / 2; maxHeight += delta / 2;
-                }
-                if(matches2.Length>=20) matches= matches2;
-            }
-
-            if (matches.Length == 0)
-            {
-                SetErr("Не найдены подходящие точки", EnumErrCode.PointsNotFound);
-                return goodPointList;
-            }
-
-            for (i = 0; i < Precision.Length; i++)
-            {
-                goodMatches = new List<DMatch>();
-                goodPointList = new List<Vector>();
-                int SamePoints = 0;
-                for (int j = 0; j < matches.Length; j++)
-                {
-                    var match = matches[j][0];
-                    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance)
-                    {
-                        Vector vector = new Vector(match.QueryIdx, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
-                        if (AllPointsChkBox || !vector.isSamePoint)
-                        {
-                            goodPointList.Add(vector);
-                            goodMatches.Add(matches[j][0]);
-                        }
-                        else if (vector.isSamePoint) SamePoints++;
-                    }
-                    //goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
-                    //if (SelectSearchArea)
-                    //{
-                    //    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight && keyPointsTo[match.TrainIdx].Pt.Y < MaxHeight + 5 && keyPointsTo[match.TrainIdx].Pt.Y > MinHeight - 5)
-                    //    //if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight)
-                    //    //if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight && keyPointsSrc[match.QueryIdx].Pt.X > MinWight && keyPointsSrc[match.QueryIdx].Pt.X < MaxWight)
-                    //    {
-                    //        Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
-                    //        if (AllPointsChkBox || !vector.isSamePoint)
-                    //        {
-                    //            goodPointList.Add(vector);
-                    //            goodMatches.Add(matches[j][0]);
-                    //        }
-                    //        else if (vector.isSamePoint) SamePoints++;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance)
-                    //    {
-                    //        Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
-                    //        if (AllPointsChkBox || !vector.isSamePoint)
-                    //        {
-                    //            goodPointList.Add(vector);
-                    //            goodMatches.Add(matches[j][0]);
-                    //        }
-                    //        else if (vector.isSamePoint) SamePoints++;
-                    //    }
-                    //}
-                }
-                if (SamePoints >= matches.Length * 0.9)
-                {
-                    SetErr("COPY", EnumErrCode.Copy);
-                    return goodPointList;
-                }
-                if (matches.Length == goodPointList.Count) break;
-                if (SelectSearchArea && goodPointList.Count > MinSufficientNumberOfPoints/2 && !AllPointsChkBox) break;
-                if (goodPointList.Count > MinSufficientNumberOfPoints && !AllPointsChkBox) break;
-            }
-            PointFiltr pointFiltr = new PointFiltr(goodPointList);
-            if (AdditionalFilter)
-            {
-                goodPointList = pointFiltr.PointFiltering();
-                if (goodPointList.Count == 0)
-                {
-                    SetErr(pointFiltr.ErrText);
-                    return goodPointList;
-                }
-            }
-
-            if (goodPointList.Count >= 10)  goodPointList = pointFiltr.PointScreening();
-            return goodPointList;
-        }
-        private EnumDirection? GetAverageDirection(List<EnumDirection?> directionList)// Определение направления движения
-        {
-            if (directionList == null) return null;
-            directionList = directionList.Where(x => x!=null).ToList();
-            if (directionList.Count() == 0) return null;
-            var existDirections = directionList.Distinct().ToArray();// Получаем все существующие направления движения
-            List<DirectionCheck> DirectionCheckList = new List<DirectionCheck>();
-            foreach (EnumDirection? direction in existDirections)
-            {
-                var amaunt = directionList.Count(x => x == direction);
-                DirectionCheckList.Add(new DirectionCheck
-                {
-                    EnumDirection = direction,
-                    Amount = amaunt
-                });
-            }
-            return DirectionCheckList.Where(x => x.Amount == DirectionCheckList.Max(y => y.Amount)).Select(z => z.EnumDirection).FirstOrDefault();
-        }
-        class DirectionCheck
-        {
-            public EnumDirection? EnumDirection { get; set; }
-            public int Amount { get; set; }
-        }
-        public VectorInfo GetAverages(List<Vector> VectorList)
-        {
-            double dXSum = VectorList.Sum(x=>Math.Abs(x.dX)), dYSum = VectorList.Sum(x => Math.Abs(x.dY));
-            return new VectorInfo()
-            {
-                Direction = GetAverageDirection(VectorList.Select(x => (EnumDirection?)x.Direction).ToList()),
-                AverageXShift = dXSum / VectorList.Count,
-                AverageYShift = dYSum / VectorList.Count
-            };
-        }
-        private bool SetErr(string err, EnumErrCode enumErrCode = EnumErrCode.NoErr)
-        {
-            ErrCode = enumErrCode;
-            ErrList.Add(err);
-            IsErr = true;
-            ErrText = err;
-            return false;
-        }
-        public string GetErrText()
-        {
-            if (!IsErr) return string.Empty;
-            if (ErrList.Count == 0) return ErrText;
-
-            string errTxt = ErrText;
-            foreach (string elem in ErrList) errTxt += "\n" + elem;
-            return errTxt;
-        }
-
-        private void EraseError()
-        {
-            IsErr = false;
-            ErrCode = EnumErrCode.NoErr;
-            ErrText = string.Empty;
-        }
-        private void AddStitchingInfo()
-        {
-            StitchingInfo = string.Empty;
-            for (int i = 0; i < SelectedFiles.Count - 2; i++)
-            {
-                if (SelectedFiles[i].AverageShift == 0 || SelectedFiles[i].Direction != Direction) StitchingInfo += SelectedFiles[i].FullName + " ??  Shift " + Math.Round(SelectedFiles[i].AverageShift, 2) + " Direction " + SelectedFiles[i].Direction + "\n";
-                else StitchingInfo += SelectedFiles[i].Hint + " " + Math.Round(SelectedFiles[i].AverageShift, 2) + " " + SelectedFiles[i].Direction + "\n";
-            }
-        }
-        private void AddErrStitchingInfo()
-        {
-            if (ErrList.Count != 0)
-            {
-                StitchingInfo += "\n\nError info:\n";
-                foreach (var info in ErrList) StitchingInfo += info + "\n";
-            }
-        }
-
-        private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)=>JoinImg(new Mat(file1), new Mat(file2), shift, enumFramePosition, Delta);
-        private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0)=>JoinImg(Img1, new Mat(file2), shift, enumFramePosition, Delta);
+        private Mat JoinImg(string file1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0) => JoinImg(new Mat(file1), new Mat(file2), shift, enumFramePosition, Delta);
+        private Mat JoinImg(Mat Img1, string file2, int shift, EnumFramePosition enumFramePosition, int Delta = 0) => JoinImg(Img1, new Mat(file2), shift, enumFramePosition, Delta);
         private Mat JoinImg(Mat Img1, Mat Img2, int shift, EnumFramePosition FramePosition, int Delta = 0)
         {
             shift = Math.Abs(shift);
@@ -1369,7 +1324,298 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return rezult;
         }
+        private int CheckBorders(int Delta, bool recurs = true)
+        {
+            int DeltaSave = Delta;
+            Mat imgFile = SelectedFiles[0].Mat;
+            if(imgFile == null && !string.IsNullOrEmpty(SelectedFiles[0].FullName)) imgFile = new Mat(SelectedFiles[0].FullName);
+            
+            if(imgFile == null) return Delta;
+            if(imgFile.Width == 0) return Delta;
 
+            int newDelta = Delta;
+            int w2 = imgFile.Width / 2;
+            int lastElem = 0;
+            if (Direction == EnumDirection.Left)
+            {
+                List<int> intsD2 = new List<int>();
+                for(int i =0; i< SelectedFiles.Count; i++)
+                {
+                    if(i == SelectedFiles.Count-1)
+                    {
+                        lastElem = w2 - (int)SelectedFiles[i].AverageShift + Delta - 1;   
+                        //int d1 = w2 - shift + Delta - 1;
+                        //int d2 = shift - Delta - 1;
+                    }
+                    else
+                    {
+                    int d2 = w2 - (int)SelectedFiles[i].AverageShift + Delta;
+                    intsD2.Add(d2);
+                    }
+                }
+
+                //foreach (var elem in SelectedFiles)
+                //{
+                //    int d2 = w2 - (int)elem.AverageShift + Delta;
+                //    intsD2.Add(d2);
+                //    intsD3.Add(d2 + (int)elem.AverageShift - 1);
+                //    int lastElem = (int)elem.AverageShift - Delta - 1;
+                //}
+
+                int minD2 = intsD2.Min();
+                int maxD2 = intsD2.Max();
+
+                if (minD2 < 0 || lastElem < 0 || lastElem > w2)
+                {
+                    if (minD2 < 0) newDelta = -minD2 + 5;
+                    //lastElem = w2 - (int)SelectedFiles[i].AverageShift + Delta - 1;   
+                    if (lastElem < 0)
+                    {
+                        newDelta = -lastElem + 5;
+                       // newDelta = lastElem = w2 - (int)SelectedFiles[SelectedFiles.Count - 1].AverageShift + Delta - 1;
+                    }                    
+                    if (lastElem > w2)
+                    {
+                        newDelta = - lastElem + 5;
+                        
+                        // newDelta = lastElem = w2 - (int)SelectedFiles[SelectedFiles.Count - 1].AverageShift + Delta - 1;
+                    }
+
+                    if (recurs)
+                    {
+                        int delta2 =  CheckBorders(newDelta, false);
+                        if (newDelta != delta2) newDelta = DeltaSave;
+                    }
+                }
+                //if (maxD2 > w2) newDelta = - minD2+5;
+            }
+            return newDelta;
+        }
+        private void InvertDirection()
+        {
+            if (Direction == EnumDirection.Right) Direction = EnumDirection.Left;
+            if (Direction == EnumDirection.Down) Direction = EnumDirection.Up;
+            List<SelectedFiles> TempSelectedFiles = new List<SelectedFiles>();
+
+            int y = 0;
+            for (int i = SelectedFiles.Count - 1; i > -1; i--)
+            {
+                if (i == 0)
+                {
+                    TempSelectedFiles.Add(new SelectedFiles()
+                    {
+                        Id = y++,
+                        FullName = SelectedFiles[0].FullName,
+                        Mat = SelectedFiles[0].Mat,
+                    });
+                }
+                else
+                {
+                    SelectedFiles tempSf;
+                    if (SelectedFiles[i].IsErr)
+                    {
+                        tempSf = new SelectedFiles(SelectedFiles[i]);
+                        tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
+                    }
+                    else
+                    {
+                        if (!SelectedFiles[i - 1].IsErr)
+                        {
+                            tempSf = new SelectedFiles(SelectedFiles[i - 1]);
+                            tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
+                            tempSf.Mat = SelectedFiles[i].Mat;
+                        }
+                        else
+                        {
+                            int z = i - 1;
+                            while (!SelectedFiles[z--].IsErr)
+                                if (z == 0) break;
+
+                            tempSf = new SelectedFiles(SelectedFiles[z]);
+                            tempSf.Mat = SelectedFiles[z].Mat;
+                            tempSf.StitchingFile = SelectedFiles[i - 1].FullName;
+                            tempSf.VectorList = SelectedFiles[z].VectorList;
+                            tempSf.Direction = SelectedFiles[z].Direction;
+                            tempSf.Hint = SelectedFiles[z].Hint;
+                            tempSf.AverageXShift = SelectedFiles[z].AverageXShift;
+                            tempSf.AverageYShift = SelectedFiles[z].AverageYShift;
+                            tempSf.AverageShift = SelectedFiles[z].AverageShift;
+                            tempSf.IsErr = SelectedFiles[z].IsErr;
+                            tempSf.ErrCode = SelectedFiles[z].ErrCode;
+                            tempSf.ErrText = SelectedFiles[z].ErrText;
+                        }
+
+                        tempSf.Id = y++;
+                        tempSf.FullName = SelectedFiles[i].FullName;
+                        tempSf.Direction = Direction;
+                    }
+                    TempSelectedFiles.Add(tempSf);
+                }
+            }
+
+            SelectedFiles = TempSelectedFiles;
+        }
+        public List<Vector> GetVectors(DMatch[][] matches, KeyPoint[] keyPointsSrc, KeyPoint[] keyPointsTo, out List<DMatch> goodMatches)
+        {
+            goodMatches = new List<DMatch>();
+            List<Vector> goodPointList = new List<Vector>();
+            if (matches == null)
+            {
+                SetErr("Не найдены совпадающие ключевые точки", EnumErrCode.PointsNotFound);
+                return goodPointList;
+            }
+            int i = 0, n = 0;
+
+            if (SelectSearchArea && matches.Length>30) // Отсееваем точки если выбран определенный сектор
+            {
+                double minHeight = MinHeight , maxHeight = MaxHeight , delta = Math.Abs(MinHeight - MaxHeight);
+                var matches2 = matches.Where(x => keyPointsSrc[x[0].QueryIdx].Pt.Y > minHeight && keyPointsSrc[x[0].QueryIdx].Pt.Y < maxHeight && keyPointsTo[x[0].TrainIdx].Pt.Y > minHeight - 5 && keyPointsTo[x[0].TrainIdx].Pt.Y < maxHeight + 5).ToArray();
+
+                if (delta < 10) delta = 10;
+                minHeight -= delta / 2; maxHeight += delta / 2;
+                while (matches2.Length <20)
+                {
+                    if (n++ > 10) break;
+                    if (minHeight < 0) minHeight = 0;
+                    matches2 = matches.Where(x => keyPointsSrc[x[0].QueryIdx].Pt.Y > minHeight && keyPointsSrc[x[0].QueryIdx].Pt.Y < maxHeight && keyPointsTo[x[0].TrainIdx].Pt.Y > minHeight - 5 && keyPointsTo[x[0].TrainIdx].Pt.Y < maxHeight + 5).ToArray();
+                    minHeight -= delta / 2; maxHeight += delta / 2;
+                }
+                if(matches2.Length>=20) matches= matches2;
+            }
+
+            if (matches.Length == 0)
+            {
+                SetErr("Не найдены подходящие точки", EnumErrCode.PointsNotFound);
+                return goodPointList;
+            }
+
+            double Precisious = 0;
+
+            for (i = 0; i < Precision.Length; i++)
+            {
+                Precisious = Precision[i];
+                goodMatches = new List<DMatch>();
+                goodPointList = new List<Vector>();
+                int SamePoints = 0;
+                for (int j = 0; j < matches.Length; j++)
+                {
+                    var match = matches[j][0];
+                    if (matches[j][0].Distance < Precisious * matches[j][1].Distance)
+                    {
+                        Vector vector = new Vector(match.QueryIdx, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
+                        if (AllPointsChkBox || !vector.isSamePoint)
+                        {
+                            goodPointList.Add(vector);
+                            goodMatches.Add(matches[j][0]);
+                        }
+                        else if (vector.isSamePoint) SamePoints++;
+                    }
+                    //goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
+                    //if (SelectSearchArea)
+                    //{
+                    //    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight && keyPointsTo[match.TrainIdx].Pt.Y < MaxHeight + 5 && keyPointsTo[match.TrainIdx].Pt.Y > MinHeight - 5)
+                    //    //if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight)
+                    //    //if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight && keyPointsSrc[match.QueryIdx].Pt.X > MinWight && keyPointsSrc[match.QueryIdx].Pt.X < MaxWight)
+                    //    {
+                    //        Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
+                    //        if (AllPointsChkBox || !vector.isSamePoint)
+                    //        {
+                    //            goodPointList.Add(vector);
+                    //            goodMatches.Add(matches[j][0]);
+                    //        }
+                    //        else if (vector.isSamePoint) SamePoints++;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance)
+                    //    {
+                    //        Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
+                    //        if (AllPointsChkBox || !vector.isSamePoint)
+                    //        {
+                    //            goodPointList.Add(vector);
+                    //            goodMatches.Add(matches[j][0]);
+                    //        }
+                    //        else if (vector.isSamePoint) SamePoints++;
+                    //    }
+                    //}
+                }
+                if (SamePoints >= matches.Length * 0.9)
+                {
+                    SetErr("COPY", EnumErrCode.Copy);
+                    return goodPointList;
+                }
+                if (matches.Length == goodPointList.Count) break;
+                if (SelectSearchArea && goodPointList.Count > MinSufficientNumberOfPoints/2 && !AllPointsChkBox) break;
+                if (goodPointList.Count > MinSufficientNumberOfPoints && !AllPointsChkBox) break;
+            }
+
+            var pr = Precisious;
+
+            PointFiltr pointFiltr = new PointFiltr(goodPointList);
+            if (!AdditionalFilter)
+            {
+                goodPointList = pointFiltr.PointFiltering();
+                if (goodPointList.Count == 0)
+                {
+                    SetErr(pointFiltr.ErrText);
+                    return goodPointList;
+                }
+            }
+
+            if (goodPointList.Count >= 10)  goodPointList = pointFiltr.PointScreening();
+            return goodPointList;
+        }
+        private EnumDirection? GetAverageDirection(List<EnumDirection?> directionList)// Определение направления движения
+        {
+            if (directionList == null) return null;
+            directionList = directionList.Where(x => x!=null).ToList();
+            if (directionList.Count() == 0) return null;
+            var existDirections = directionList.Distinct().ToArray();// Получаем все существующие направления движения
+            List<DirectionCheck> DirectionCheckList = new List<DirectionCheck>();
+            foreach (EnumDirection? direction in existDirections)
+            {
+                var amaunt = directionList.Count(x => x == direction);
+                DirectionCheckList.Add(new DirectionCheck
+                {
+                    EnumDirection = direction,
+                    Amount = amaunt
+                });
+            }
+            return DirectionCheckList.Where(x => x.Amount == DirectionCheckList.Max(y => y.Amount)).Select(z => z.EnumDirection).FirstOrDefault();
+        }
+        class DirectionCheck
+        {
+            public EnumDirection? EnumDirection { get; set; }
+            public int Amount { get; set; }
+        }
+        public VectorInfo GetAverages(List<Vector> VectorList)
+        {
+            double dXSum = VectorList.Sum(x=>Math.Abs(x.dX)), dYSum = VectorList.Sum(x => Math.Abs(x.dY));
+            return new VectorInfo()
+            {
+                Direction = GetAverageDirection(VectorList.Select(x => (EnumDirection?)x.Direction).ToList()),
+                AverageXShift = dXSum / VectorList.Count,
+                AverageYShift = dYSum / VectorList.Count
+            };
+        }
+        private void AddStitchingInfo()
+        {
+            StitchingInfo = string.Empty;
+            for (int i = 0; i < SelectedFiles.Count - 2; i++)
+            {
+                if (SelectedFiles[i].AverageShift == 0 || SelectedFiles[i].Direction != Direction) StitchingInfo += SelectedFiles[i].FullName + " ??  Shift " + Math.Round(SelectedFiles[i].AverageShift, 2) + " Direction " + SelectedFiles[i].Direction + "\n";
+                else StitchingInfo += SelectedFiles[i].Hint + " " + Math.Round(SelectedFiles[i].AverageShift, 2) + " " + SelectedFiles[i].Direction + "\n";
+            }
+        }
+        private void AddErrStitchingInfo()
+        {
+            if (ErrList.Count != 0)
+            {
+                StitchingInfo += "\n\nError info:\n";
+                foreach (var info in ErrList) StitchingInfo += info + "\n";
+            }
+        }
         public async Task<bool> TryReadMapPlan(int from = 0, int to = 100)
         {
             StitchingPlan stitchingPlan = new StitchingPlan();
@@ -1412,8 +1658,7 @@ namespace ImgAssemblingLibOpenCV.Models
             if (File.Exists(GetPlanName())) return true;
             else return false;
         }
-
-        private string GetPlanName()
+        private string GetPlanName() // Получить имя файла для сохранения плана
         {
             string PlanName = string.Empty;
 

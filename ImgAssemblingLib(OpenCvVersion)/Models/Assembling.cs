@@ -415,6 +415,8 @@ namespace ImgAssemblingLibOpenCV.Models
             if (_context != null) _context.Send(OnRTBAddInfo, ErrText);
             logger.Error(ErrText);
         }
+
+        private bool ReactOnStopSlowingDown { get; set; } = false;
         private async Task<bool> FindKeyPoints()
         {
             if (AssemblyPlan.BitMap) stitchingBlock = new StitchingBlock(BitmapData);
@@ -434,7 +436,6 @@ namespace ImgAssemblingLibOpenCV.Models
                     if (AssemblyPlan.DefaultParameters || (AssemblyPlan.Percent && AssemblyPlan.From == 0 && AssemblyPlan.To == 100)) await stitchingBlock.TrySaveMapPlan();
                 }
             }
-
             if(stitchingBlock.Direction==null) return SetCriticalErr("CriticalErr Direction not detect !!!");
 
             var areasForDelet = stitchingBlock.FindeBlockForDelet();// Обнаружение и удаление областей с большим количеством ошибок
@@ -447,7 +448,6 @@ namespace ImgAssemblingLibOpenCV.Models
             if (stitchingBlock != null)
             {
                 RezultImg = new Mat();
-                //await Task.Run(() => { RezultImg = stitchingBlock.Stitch(_context, AssemblyPlan.From, AssemblyPlan.To, AssemblyPlan.Delta); });
                 await Task.Run(() => { RezultImg = stitchingBlock.Stitch(_context, AssemblyPlan.Delta); });
                 if (_context!=null) _context.Send(OnImgUpdate, RezultImg);
                 if (RezultImg.Width == 0 && RezultImg.Height == 0) return SetErr(stitchingBlock.GetErrText());
@@ -469,38 +469,5 @@ namespace ImgAssemblingLibOpenCV.Models
             ErrList.Clear();
             stitchingBlock = null;
         }
-
-        //public string JpegTest()
-        //{
-
-        //    var stopwatch = new Stopwatch();
-        //    stopwatch.Start();
-
-        //    var fileList = fileEdit.SearchFiles("E:\\ImageArchive\\JPG\\3840x2400");
-        //    List<byte[]> byteList = new List<byte[]>();
-
-        //    for (int i = 0; i < 20; i++)
-        //    {
-        //        foreach (FileInfo file in fileList)
-        //        {
-        //            //Mat ssdf = new Mat(file.FullName);
-        //            byteList.Add(File.ReadAllBytes(file.FullName));
-        //        }
-        //    }
-        //    TimeSpan ts = stopwatch.Elapsed;
-        //    string rezult1 = String.Format($"{ts.Seconds} s {ts.Milliseconds} ms");
-        //    //stopwatch.Stop();
-        //    stopwatch.Restart();
-
-        //    foreach (var elem in byteList)
-        //    {
-        //        Mat imageMat = Mat.FromImageData(elem);
-        //    }
-
-        //    ts = stopwatch.Elapsed;
-        //    string rezult2 = String.Format($"{ts.Seconds} s {ts.Milliseconds} ms");
-        //    stopwatch.Stop();
-        //    return rezult2;
-        //}
     }
 }

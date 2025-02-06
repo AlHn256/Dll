@@ -96,3 +96,9 @@ dkms.conf
 /ImgAssemblingLib(OpenCvVersion)/StartTestProject/bin
 /ImgAssemblingLib(OpenCvVersion)/.vs
 /ImgAssemblingLib(OpenCvVersion)/StartTestProject/obj
+/AlfaPribor.ImgAssemblingLib(OpenCvVersion)/.vs
+/AlfaPribor.ImgAssemblingLib(OpenCvVersion)/obj
+/AlfaPribor.ImgAssemblingLib(OpenCvVersion)/packages
+/AlfaPribor.ImgAssemblingLib(OpenCvVersion)/StartTestProject/bin
+/AlfaPribor.ImgAssemblingLib(OpenCvVersion)/StartTestProject/obj
+/AlfaPribor.ImgAssemblingLib(OpenCvVersion)/bin

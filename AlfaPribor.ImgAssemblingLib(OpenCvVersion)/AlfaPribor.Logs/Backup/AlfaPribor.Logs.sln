@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlfaPribor.Logs", "AlfaPribor.Logs\AlfaPribor.Logs.csproj", "{9CB54E4B-A3CD-407B-BB97-01FD9295F19A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlfaPribor.Logs.Demo", "AlfaPribor.Logs.Demo\AlfaPribor.Logs.Demo.csproj", "{161DEB34-AE66-49FA-AF93-B7247DB9997E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9CB54E4B-A3CD-407B-BB97-01FD9295F19A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CB54E4B-A3CD-407B-BB97-01FD9295F19A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CB54E4B-A3CD-407B-BB97-01FD9295F19A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CB54E4B-A3CD-407B-BB97-01FD9295F19A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{161DEB34-AE66-49FA-AF93-B7247DB9997E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{161DEB34-AE66-49FA-AF93-B7247DB9997E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{161DEB34-AE66-49FA-AF93-B7247DB9997E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{161DEB34-AE66-49FA-AF93-B7247DB9997E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

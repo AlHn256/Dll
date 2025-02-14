@@ -1,0 +1,14 @@
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\obj\Debug\AlfaPribor.Logs.Demo.csproj.AssemblyReference.cache
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\obj\Debug\AlfaPribor.Logs.Demo.FormMain.resources
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\obj\Debug\AlfaPribor.Logs.Demo.Properties.Resources.resources
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\obj\Debug\AlfaPribor.Logs.Demo.csproj.GenerateResource.cache
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\obj\Debug\AlfaPribor.Logs.Demo.csproj.CoreCompileInputs.cache
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\bin\Debug\AlfaPribor.Logs.Demo.exe.config
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\bin\Debug\AlfaPribor.Logs.Demo.exe
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\bin\Debug\AlfaPribor.Logs.Demo.pdb
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\obj\Debug\AlfaPribor.Logs.Demo.exe
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\obj\Debug\AlfaPribor.Logs.Demo.pdb
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\bin\Debug\AlfaPribor.Logs.dll
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\bin\Debug\AlfaPribor.Logs.pdb
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\bin\Debug\AlfaPribor.Logs.xml
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs.Demo\obj\Debug\AlfaPribor.Logs.Demo.csproj.CopyComplete

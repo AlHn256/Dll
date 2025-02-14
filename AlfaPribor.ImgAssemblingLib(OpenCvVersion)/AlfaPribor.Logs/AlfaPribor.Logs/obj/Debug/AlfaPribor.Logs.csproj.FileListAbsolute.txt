@@ -1,0 +1,7 @@
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs\bin\Debug\AlfaPribor.Logs.XML
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs\bin\Debug\AlfaPribor.Logs.dll
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs\bin\Debug\AlfaPribor.Logs.pdb
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs\obj\Debug\AlfaPribor.Logs.csproj.AssemblyReference.cache
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs\obj\Debug\AlfaPribor.Logs.csproj.CoreCompileInputs.cache
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs\obj\Debug\AlfaPribor.Logs.dll
+D:\CVS\VS2022Projects\Components\AlfaPribor.Logs\AlfaPribor.Logs\obj\Debug\AlfaPribor.Logs.pdb

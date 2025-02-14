@@ -155,6 +155,12 @@
       <DependentUpon>ThreadsNumber.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="AlfaPribor.Logs\AlfaPribor.Logs\AlfaPribor.Logs.csproj">
+      <Project>{9cb54e4b-a3cd-407b-bb97-01fd9295f19a}</Project>
+      <Name>AlfaPribor.Logs</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

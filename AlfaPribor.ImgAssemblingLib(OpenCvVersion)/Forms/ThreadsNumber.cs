@@ -79,9 +79,17 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 {
                     AssemblyPlan assemblyPlan = new AssemblyPlan();
                     // !!! Временно вклчена имитацияполучения потока изображения с камеры или массива кадров !!!
-                    if(i<4) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\3156_1_" + i.ToString();
-                    else if (i == 4 ) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\4";
-                    else if(i>4) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\3156_6_" + (i-5).ToString();
+                    if (i < 4) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\3156_1_" + i.ToString();
+                    else if (i == 4) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\4";
+                    else if (i > 4)
+                    {
+                        assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\3156_6_" + (i - 5).ToString();
+
+                        if (i == 10) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\941_1_1";
+                        if (i == 11) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\941_1_1AutoOut";
+                        if (i == 12) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\941_1_1JPG";
+                        if (i == 13) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\941_1_1AutoJPG";
+                    }
 
                     assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
                     fileEdit.SaveJson(file, assemblyPlan);

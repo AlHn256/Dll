@@ -105,7 +105,7 @@ namespace ImgAssemblingLibOpenCV.Models
 
             if (string.IsNullOrEmpty(file))
             {
-                SetErr("Err StitchingBlock.string.IsNullOrEmpty(File1TxtBox.Text)!!!");
+                SetErr("Err StitchingBlock.string.IsNullOrEmpty(file)!!!");
                 return;
             }
             if (!fileEdit.ChkFileDir(file))

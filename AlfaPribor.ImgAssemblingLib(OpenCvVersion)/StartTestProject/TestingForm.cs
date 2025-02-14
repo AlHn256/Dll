@@ -36,7 +36,6 @@ namespace StartTestProject
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.WorkerSupportsCancellation = true;
-
             worker.DoWork += new DoWorkEventHandler(worker_DoWork);
             worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
             //worker.RunWorkerCompleted +=
@@ -86,17 +85,19 @@ namespace StartTestProject
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             consol += keyData;
-            if (consol.Length > 5)
+            if (consol.Length > 6)
             {
-                consol = consol.Substring(consol.Length - 5);
+                consol = consol.Substring(consol.Length - 6);
                 if (consol.IndexOf("IMG") != -1){ ShowImgFixingForm(); consol = string.Empty; }
                 if (consol.IndexOf("MAIN") != -1){ ShowMainForm(); consol = string.Empty; }
                 if (consol.IndexOf("EDIT") != -1){ ShowEditingStitchingForm(); consol = string.Empty; }
                 if (consol.IndexOf("AUTO") != -1){ OpenAutoTest(); consol = string.Empty; }
+                if (consol.IndexOf("THREAD") != -1){ OpenAutoThread(); consol = string.Empty; }
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
         private void OpenAutoTest()=>new AutoTest().ShowDialog();
+        private void OpenAutoThread() => new ThreadsNumber().Show();
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)=>CpuLb.Text = "CPU " + e.ProgressPercentage + "% RAM " + getAvailableRAM();
         public string getAvailableRAM()=> ramCounter.NextValue() + "MB";
         void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -107,11 +108,9 @@ namespace StartTestProject
                 worker.ReportProgress((int)cpuCounter.NextValue());
             }
         }
-        private void ShowMainForm()
-        {
-            MainForm imgFixingForm = new MainForm();
-            imgFixingForm.ShowDialog();
-        }
+        private void ShowMainForm()=>new MainForm().ShowDialog();
+        private void SecondFormBtn_Click(object sender, EventArgs e) => OpenAutoThread();
+
         private void ShowEditingStitchingForm()
         {
             EditingStitchingPlan imgFixingForm = new EditingStitchingPlan(new AssemblyPlan());
@@ -125,7 +124,7 @@ namespace StartTestProject
 
         private void MainFormBtn_Click(object sender, EventArgs e)=>ShowMainForm();
 
-        private void EditingStitchingPlanBtn_Click(object sender, EventArgs e)=>ShowEditingStitchingForm();
+        private void EditingStitchingPlanBtn_Click(object sender, EventArgs e) => ShowEditingStitchingForm();
         //private string assemblingFile = string.Empty;
 
         // Пример сборки изображения с использованием только файла плана сборки

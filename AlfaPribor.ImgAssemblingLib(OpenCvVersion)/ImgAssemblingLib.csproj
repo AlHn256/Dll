@@ -79,28 +79,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AditionalForms\EditingStitchingPlan.cs">
+    <Compile Include="Forms\EditingStitchingPlan.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AditionalForms\EditingStitchingPlan.Designer.cs">
+    <Compile Include="Forms\EditingStitchingPlan.Designer.cs">
       <DependentUpon>EditingStitchingPlan.cs</DependentUpon>
     </Compile>
-    <Compile Include="AditionalForms\MainForm.cs">
+    <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AditionalForms\MainForm.Designer.cs">
+    <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="AditionalForms\ImgFixingForm.cs">
+    <Compile Include="Forms\ImgFixingForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AditionalForms\ImgFixingForm.Designer.cs">
+    <Compile Include="Forms\ImgFixingForm.Designer.cs">
       <DependentUpon>ImgFixingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Enum\EnumDirection.cs" />
     <Compile Include="Enum\EnumErrCode.cs" />
     <Compile Include="Enum\EnumErrorLevel.cs" />
     <Compile Include="Enum\EnumFramePosition.cs" />
+    <Compile Include="Forms\ThreadsNumber.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ThreadsNumber.Designer.cs">
+      <DependentUpon>ThreadsNumber.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Assembling.cs" />
     <Compile Include="Models\AssemblyPlan.cs" />
     <Compile Include="Models\Cadr.cs" />
@@ -136,14 +142,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AditionalForms\EditingStitchingPlan.resx">
+    <EmbeddedResource Include="Forms\EditingStitchingPlan.resx">
       <DependentUpon>EditingStitchingPlan.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AditionalForms\MainForm.resx">
+    <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AditionalForms\ImgFixingForm.resx">
+    <EmbeddedResource Include="Forms\ImgFixingForm.resx">
       <DependentUpon>ImgFixingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ThreadsNumber.resx">
+      <DependentUpon>ThreadsNumber.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

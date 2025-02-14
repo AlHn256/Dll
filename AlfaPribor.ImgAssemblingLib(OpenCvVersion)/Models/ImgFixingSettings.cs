@@ -10,9 +10,9 @@ namespace ImgFixingLibOpenCvVersion.Models
         public double Zoom { get; set; }
         public int Rotation90 { get; set; }
         public bool BlackWhiteMode { get; set; } = false;
-        public bool Distortion { get; set; }
+        public bool Distortion { get; set; } = true;
         public DistorSettings DistorSettings { get; set; }
-        public bool CropAfterChkBox { get; set; }
+        public bool CropAfterChkBox { get; set; } = true;
         public int XAfter { get; set; }
         public int DXAfter { get; set; }
         public int YAfter { get; set; }

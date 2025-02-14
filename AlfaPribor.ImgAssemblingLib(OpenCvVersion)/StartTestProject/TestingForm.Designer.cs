@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.MainFormBtn = new System.Windows.Forms.Button();
-            this.EditingStitchingPlanBtn = new System.Windows.Forms.Button();
             this.FixingImgsUsingDataArrayBtn = new System.Windows.Forms.Button();
             this.Exampl1Btn = new System.Windows.Forms.Button();
             this.Exampl2Btn = new System.Windows.Forms.Button();
@@ -46,6 +45,7 @@
             this.ExamplDirectory = new System.Windows.Forms.TextBox();
             this.OpenDirBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.SecondFormBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // MainFormBtn
@@ -57,16 +57,6 @@
             this.MainFormBtn.Text = "Main Form";
             this.MainFormBtn.UseVisualStyleBackColor = true;
             this.MainFormBtn.Click += new System.EventHandler(this.MainFormBtn_Click);
-            // 
-            // EditingStitchingPlanBtn
-            // 
-            this.EditingStitchingPlanBtn.Location = new System.Drawing.Point(48, 416);
-            this.EditingStitchingPlanBtn.Name = "EditingStitchingPlanBtn";
-            this.EditingStitchingPlanBtn.Size = new System.Drawing.Size(527, 23);
-            this.EditingStitchingPlanBtn.TabIndex = 1;
-            this.EditingStitchingPlanBtn.Text = "Editing Stitching Plan";
-            this.EditingStitchingPlanBtn.UseVisualStyleBackColor = true;
-            this.EditingStitchingPlanBtn.Click += new System.EventHandler(this.EditingStitchingPlanBtn_Click);
             // 
             // FixingImgsUsingDataArrayBtn
             // 
@@ -203,7 +193,7 @@
             this.ExamplDirectory.Name = "ExamplDirectory";
             this.ExamplDirectory.Size = new System.Drawing.Size(331, 20);
             this.ExamplDirectory.TabIndex = 33;
-            this.ExamplDirectory.Text = "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgExample";
+            this.ExamplDirectory.Text = "D:\\Work\\C#\\Dll\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\AlfaPribor.ImgExample";
             this.ExamplDirectory.TextChanged += new System.EventHandler(this.ExamplDirectory_TextChanged);
             // 
             // OpenDirBtn
@@ -225,11 +215,22 @@
             this.label1.TabIndex = 35;
             this.label1.Text = "Папка с примерами в CVS:";
             // 
+            // SecondFormBtn
+            // 
+            this.SecondFormBtn.Location = new System.Drawing.Point(48, 416);
+            this.SecondFormBtn.Name = "SecondFormBtn";
+            this.SecondFormBtn.Size = new System.Drawing.Size(527, 23);
+            this.SecondFormBtn.TabIndex = 36;
+            this.SecondFormBtn.Text = "Second Form";
+            this.SecondFormBtn.UseVisualStyleBackColor = true;
+            this.SecondFormBtn.Click += new System.EventHandler(this.SecondFormBtn_Click);
+            // 
             // TestingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 451);
+            this.Controls.Add(this.SecondFormBtn);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.OpenDirBtn);
             this.Controls.Add(this.ExamplDirectory);
@@ -246,7 +247,6 @@
             this.Controls.Add(this.Exampl2Btn);
             this.Controls.Add(this.Exampl1Btn);
             this.Controls.Add(this.FixingImgsUsingDataArrayBtn);
-            this.Controls.Add(this.EditingStitchingPlanBtn);
             this.Controls.Add(this.MainFormBtn);
             this.MaximumSize = new System.Drawing.Size(640, 490);
             this.MinimumSize = new System.Drawing.Size(640, 490);
@@ -260,7 +260,6 @@
         #endregion
 
         private System.Windows.Forms.Button MainFormBtn;
-        private System.Windows.Forms.Button EditingStitchingPlanBtn;
         private System.Windows.Forms.Button FixingImgsUsingDataArrayBtn;
         private System.Windows.Forms.Button Exampl1Btn;
         private System.Windows.Forms.Button Exampl2Btn;
@@ -277,6 +276,7 @@
         private System.Windows.Forms.TextBox ExamplDirectory;
         private System.Windows.Forms.Button OpenDirBtn;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button SecondFormBtn;
     }
 }
 

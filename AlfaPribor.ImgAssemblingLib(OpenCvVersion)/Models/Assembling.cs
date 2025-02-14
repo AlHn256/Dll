@@ -18,7 +18,7 @@ namespace ImgAssemblingLibOpenCV.Models
         private SynchronizationContext _context;
         private FileEdit fileEdit = new FileEdit();
         public Bitmap[] BitmapData { get; set; }
-        private AssemblyPlan AssemblyPlan { get; set; }
+        public AssemblyPlan AssemblyPlan { get; set; }
         private string SavedFileName { get; set; } = string.Empty;
         private Mat RezultImg { get; set; }
         private StitchingBlock stitchingBlock { get; set; }
@@ -69,6 +69,20 @@ namespace ImgAssemblingLibOpenCV.Models
             _context = (SynchronizationContext)param;
             logger = LogManager.GetCurrentClassLogger();
         }
+        public Assembling(string assemlingFile)
+        {
+            LoadAssemblyPlan(assemlingFile);
+            logger = LogManager.GetCurrentClassLogger();
+        }
+
+        private AssemblyPlan LoadAssemblyPlan(string file)
+        {
+            AssemblyPlan assemblyPlan;
+            fileEdit.LoadeJson(file, out assemblyPlan);
+            if (assemblyPlan != null) AssemblyPlan = assemblyPlan;
+            return assemblyPlan;
+        }
+
         public Assembling(AssemblyPlan assemblyPlan, Bitmap[] bitmapData, object param)
         {
             BitmapData = bitmapData;
@@ -100,9 +114,16 @@ namespace ImgAssemblingLibOpenCV.Models
             if (AssemblyPlan == null) return SetCriticalErr("Err Assembling.AssemblyPlan = null!!!");
             if (AssemblyPlan.BitMap)
             {
-                if (BitmapData==null || BitmapData.Length == 0) return SetCriticalErr("Err Assembling.BitmapData = null || = 0!!!");
+                if (BitmapData == null || BitmapData.Length == 0) return SetCriticalErr("Err Assembling.BitmapData = null || = 0!!!");
             }
-            else if (string.IsNullOrEmpty(AssemblyPlan.WorkingDirectory)) return SetCriticalErr("Err AssemblyPlan.WorkingDirectory Is Null Or Empty!!!");
+            else
+            {
+                if (string.IsNullOrEmpty(AssemblyPlan.WorkingDirectory)) return SetCriticalErr("Err CheckPlane.WorkingDirectory Is Null Or Empty!!!");
+                if (string.IsNullOrEmpty(AssemblyPlan.StitchingDirectory)) return SetCriticalErr("Err CheckPlane.StitchingDirectory Is Null Or Empty!!!");
+
+                if (!Directory.Exists(AssemblyPlan.WorkingDirectory)) return SetCriticalErr($"Err {AssemblyPlan.WorkingDirectory} !Exists!!!");
+                if (!Directory.Exists(AssemblyPlan.StitchingDirectory)) return SetCriticalErr($"Err {AssemblyPlan.StitchingDirectory} !Exists!!!");
+            }
 
             if (AssemblyPlan.FixImg)
             {
@@ -134,11 +155,27 @@ namespace ImgAssemblingLibOpenCV.Models
             try
             {
                 await StartAssembling();
+                
+
+                if (RezultImg == null)
+                    return new FinalResult()
+                    {
+                        Speed = AssemblyPlan.Speed,
+                        MatRezult = null,
+                        BitRezult = null,
+                        IsErr = IsErr,
+                        IsCriticalErr = IsCriticalErr,
+                        ErrText = ErrText,
+                        ErrList = ErrList
+                    };
+
+                Bitmap rezultImg = (RezultImg.Width != 0 && RezultImg.Height != 0) ? BitmapConverter.ToBitmap(RezultImg) : null;
+
                 return new FinalResult()
                 {
                     Speed = AssemblyPlan.Speed,
                     MatRezult = RezultImg,
-                    BitRezult = RezultImg == null ? null : BitmapConverter.ToBitmap(RezultImg),
+                    BitRezult = rezultImg,
                     IsErr = IsErr,
                     IsCriticalErr = IsCriticalErr,
                     ErrText = ErrText,
@@ -415,8 +452,6 @@ namespace ImgAssemblingLibOpenCV.Models
             if (_context != null) _context.Send(OnRTBAddInfo, ErrText);
             logger.Error(ErrText);
         }
-
-        private bool ReactOnStopSlowingDown { get; set; } = false;
         private async Task<bool> FindKeyPoints()
         {
             if (AssemblyPlan.BitMap) stitchingBlock = new StitchingBlock(BitmapData);

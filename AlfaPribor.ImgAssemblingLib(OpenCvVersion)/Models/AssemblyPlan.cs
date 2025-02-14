@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-
-namespace ImgAssemblingLibOpenCV.Models
+﻿namespace ImgAssemblingLibOpenCV.Models
 {
     public class AssemblyPlan  
     {
-        public bool BitMap { get; set; } = false; // Работаем не через файлы, а через массивы Bitmapов
+        public bool BitMap { get; set; } = true; // Работаем не через файлы, а через массивы Bitmapов
         public bool SaveImgFixingRezultToFile { get; set; } = false; // Принудительное сохранение исправленных кадров в фалы при работе с Bitmapами
         public string WorkingDirectory { get; set; } = string.Empty;
         public bool FileNameCheck { get; set; } = false; // Проверка и исправление имен файлов
@@ -18,7 +14,7 @@ namespace ImgAssemblingLibOpenCV.Models
         public bool DelFileCopy { get; set; } = true; // Удаление дублирующихся изображений
         public string DelFileCopyRezult { get; set; } = "Не выполнено!";
 
-        public bool FixImg { get; set; } = true; // Исправление избражений
+        public bool FixImg { get; set; } = false; // Исправление избражений
         public string FixingImgDirectory { get; set; } = string.Empty;
         public bool ChekFixImg { get; set; } = true;
         public string ChekFixImgRezult { get; set; } = "Не выполнено!";
@@ -33,7 +29,7 @@ namespace ImgAssemblingLibOpenCV.Models
         public int From { get; set; } = 0; // Период от и 
         public int To { get; set; } = 100; // до
         public bool Percent { get; set; } = true; // в процентах или номерах файлов
-        public int Delta { get; set; } = 20; // смещение линии сборки от центра картинки
+        public int Delta { get; set; } = 0; // смещение линии сборки от центра картинки
         public bool SelectSearchArea { get; set; } = false;
         public float MinHeight { get; set; } = 0;
         public float MaxHeight { get; set; } = 0;
@@ -51,10 +47,10 @@ namespace ImgAssemblingLibOpenCV.Models
         public bool Stitch { get; set; } = true;  // Склейка изображений
         public string StitchRezult { get; set; } = "Не выполнено!";
 
-        public bool SaveRezult { get; set; } = false; // Автосохранение результирующего изображения
+        public bool SaveRezult { get; set; } = true; // Автосохранение результирующего изображения
         public string RezultOfSavingRezults { get; set; } = "Не выполнено!";
         public const string defaultAssemblingFile = "NewAssemblyPlan.asp";
-        public bool ShowRezult { get; set; } = false; // Показать сохраненный файл ( работает только при включенном SaveRezults) 
+        public bool ShowRezult { get; set; } = true; // Показать сохраненный файл ( работает только при включенном SaveRezults) 
 
         public bool AdditionalFilter { get; set; } = false; // Включение/отключение дополнительный фильтр ключевых точек
         public void ResetRezults()

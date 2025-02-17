@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,7 +17,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
     //unblok
     public partial class ImgFixingForm : Form
     {
-        private int rotation90 = 0;
+        private int rotation90 = 0, FileNumber=0;
         private double A = -0.13, B = 0.39, C = 0.08, D = 0, E = 0, Zoom = 1;
         private double Sm11 = 1500, Sm12 = 0.0, Sm13 = 0.0;
         private double Sm21 = 0.0, Sm22 = 1500, Sm23 = 0.0;
@@ -29,6 +30,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         public bool IsErr { get; set; } = false;
         public static bool StopProcess = false;
         public string ErrText { get; set; } = string.Empty;
+        private List<string> FileList = new List<string>();
+
 
         // Конструктор для стандартной работы с окном и файлами
         public ImgFixingForm(string directory)
@@ -38,15 +41,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Load += OnLoad;
         }
 
-        // Конструктор для исправления кадров без отрисовки окна
+        // Конструктор для работы с дополнительным окном
         public ImgFixingForm(string imgFixingPlan, string directory)
         {
             InitializeComponent();
-
             if (!string.IsNullOrEmpty(imgFixingPlan)) ImgFixingFile = imgFixingPlan;
             InputDirTxtBox.Text = directory;
-            TryReadSettings();
-            OpenCvReloadImg();
+            Load += OnLoad;
         }
 
         private bool SaveRezultToFile;
@@ -108,21 +109,28 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             ZoomLbl.Text = Zoom.ToString();
             this.MouseWheel += panel1_MouseWheel;
 
-            ATxtBox.Text = A.ToString();
-            BTxtBox.Text = B.ToString();
-            CTxtBox.Text = C.ToString();
-            DTxtBox.Text = D.ToString();
-            ETxtBox.Text = E.ToString();
-            Sm11TxtBox.Text = Sm11.ToString();
-            Sm12TxtBox.Text = Sm12.ToString();
-            Sm13TxtBox.Text = Sm13.ToString();
-            Sm21TxtBox.Text = Sm21.ToString();
-            Sm22TxtBox.Text = Sm22.ToString();
-            Sm23TxtBox.Text = Sm23.ToString();
-            Sm31TxtBox.Text = Sm31.ToString();
-            Sm32TxtBox.Text = Sm32.ToString();
-            Sm33TxtBox.Text = Sm33.ToString();
 
+            if (!string.IsNullOrEmpty(ImgFixingFile)) TryReadSettings();
+            else
+            {
+                ATxtBox.Text = A.ToString();
+                BTxtBox.Text = B.ToString();
+                CTxtBox.Text = C.ToString();
+                DTxtBox.Text = D.ToString();
+                ETxtBox.Text = E.ToString();
+                Sm11TxtBox.Text = Sm11.ToString();
+                Sm12TxtBox.Text = Sm12.ToString();
+                Sm13TxtBox.Text = Sm13.ToString();
+                Sm21TxtBox.Text = Sm21.ToString();
+                Sm22TxtBox.Text = Sm22.ToString();
+                Sm23TxtBox.Text = Sm23.ToString();
+                Sm31TxtBox.Text = Sm31.ToString();
+                Sm32TxtBox.Text = Sm32.ToString();
+                Sm33TxtBox.Text = Sm33.ToString();
+            }
+
+            LoadFileList();
+            OpenCvReloadImg();
             BlockOn();
         }
         protected void BlockOn()
@@ -170,8 +178,37 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             KeyDown(keyData);
+
+            if (FileList.Count == 0) return false;
+            if (keyData == Keys.Right || keyData == Keys.Left)
+            {
+                if (keyData == Keys.Right ) FileNumber++;
+                if (keyData == Keys.Left) FileNumber--;
+            }
+
+
+            if (FileNumber < 0) FileNumber = 0;
+            if (FileNumber > FileList.Count - 1) FileNumber = FileList.Count - 1;
+
+            InputDirTxtBox.Text = Path.GetDirectoryName(FileList[FileNumber]);
+            InputFileTxtBox.Text = Path.GetFileName(FileList[FileNumber]);
+
+            OpenCvReloadImg();
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
+        private bool LoadFileList(string serchingDir = null)
+        {
+            if (string.IsNullOrEmpty(serchingDir) && string.IsNullOrEmpty(InputDirTxtBox.Text)) return false;
+
+            if (string.IsNullOrEmpty(serchingDir)) serchingDir = InputDirTxtBox.Text;
+                var list = fileEdit.SearchFiles(serchingDir);
+                FileList = list.Select(f => f.FullName).ToList();
+            
+            return true;
+        }
+
         private new void KeyDown(Keys keyData)
         {
             if (keyData == Keys.Z) DistZero();
@@ -305,7 +342,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         }
         public bool CheckFixingImg(string imgFixingDir = "")
         {
-            // ??todo перенести это в fileEdit
             if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
             if (!Directory.Exists(imgFixingDir)) return false;
 
@@ -683,7 +719,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
-
             DistChkBox.Checked = false;
 
             if (imgFixingSettings.Zoom < 1) imgFixingSettings.Zoom = 1;
@@ -899,5 +934,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             else return BitmapConverter.ToBitmap(mat);
         }
         public string GetImgFixingPlan() => ImgFixingFile;
+
     }
 }

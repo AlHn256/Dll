@@ -105,3 +105,5 @@ dkms.conf
 /AlfaPribor.ImgAssemblingLib(OldCvVersion)/packages
 /AlfaPribor.ImgAssemblingLib(OpenCvVersion)/AlfaPribor.Logs/.vs
 /AlfaPribor.ImgAssemblingLib(OpenCvVersion)/AlfaPribor.Logs/AlfaPribor.Logs.Demo/obj
+/AlfaPribor.ImgAssemblingLib(OpenCvVersion)/AlfaPribor.Logs/.vs
+/AlfaPribor.ImgAssemblingLib(OpenCvVersion)/AlfaPribor.Logs/AlfaPribor.Logs.Demo/obj

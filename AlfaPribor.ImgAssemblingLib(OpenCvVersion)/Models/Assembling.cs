@@ -1,6 +1,4 @@
-﻿using ImgAssemblingLibOpenCV.AditionalForms;
-using NLog;
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;
@@ -15,6 +13,8 @@ namespace ImgAssemblingLibOpenCV.Models
 {
     public class Assembling
     {
+        #region Fields
+        public int AssemblingId { get; set; }
         private SynchronizationContext _context;
         private FileEdit fileEdit = new FileEdit();
         public Bitmap[] BitmapData { get; set; }
@@ -27,54 +27,46 @@ namespace ImgAssemblingLibOpenCV.Models
         public event Action<string> RTBUpDateInfo;
         public event Action<string> RTBAddInfo;
         public event Action<Mat> UpdateImg;
+        public event Action<string> AddLogEvent;
+        public event Action<string> AddErrEvent;
         public bool CalculationSpeedDespiteErrors { get; set; } = false;
         public bool IsErr { get; set; } = false;
         public bool IsCriticalErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
         public EnumErrCode ErrCode { get; set; }
         public List<string> ErrList { get; set; } = new List<string>();
+        public FinalResult LastFinalResult { get; set; }    
+        #endregion
 
-        private void worker_ProcessChang(int progress)
-        {
-            if(_context!=null)_context.Send(OnProgressChanged, progress);
-        }
-        private void worker_TextChang(string text)
-        {
-            if (_context != null) _context.Send(OnTextChanged, text);
-        }
-        public void OnImgUpdate(object img)
-        {
-            if (UpdateImg != null) UpdateImg((Mat)img);
-        }
-        public void OnProgressChanged(object i)
-        {
-            if (ProcessChanged != null) ProcessChanged((int)i);
-        }
-        public void OnTextChanged(object txt)
-        {
-            if (TextChanged != null) TextChanged((string)txt);
-        }
-        public void OnRTBUpDateInfo(object txt)
-        {
-            if (RTBUpDateInfo != null) RTBUpDateInfo((string)txt);
-        }
-        public void OnRTBAddInfo(object txt)
-        {
-            if (RTBAddInfo != null) RTBAddInfo((string)txt);
-        }
+        #region Дополнительные функции для взаимодействия с винформами
 
-        private static Logger logger;
+        public void TriggerAddLog(object txt) => AddLogEvent?.Invoke((string)txt);
+        public void TriggerAddErr(object txt) => AddLogEvent?.Invoke((string)txt);
+        private void worker_ProcessChang(int progress)=>_context?.Send(OnProgressChanged, progress);
+        private void worker_TextChang(string text)=>_context?.Send(OnTextChanged, text);
+        public void OnImgUpdate(object img)=>UpdateImg?.Invoke((Mat)img);
+        public void OnProgressChanged(object i)=>ProcessChanged?.Invoke((int)i);
+        public void OnTextChanged(object txt)=>TextChanged?.Invoke((string)txt);
+        public void OnRTBUpDateInfo(object txt)=>RTBUpDateInfo?.Invoke((string)txt);
+        public void OnRTBAddInfo(object txt)=>RTBAddInfo?.Invoke((string)txt);
+
         public Assembling(object param)
         {
             _context = (SynchronizationContext)param;
-            logger = LogManager.GetCurrentClassLogger();
         }
         public Assembling(string assemlingFile)
         {
             LoadAssemblyPlan(assemlingFile);
-            logger = LogManager.GetCurrentClassLogger();
         }
-
+        #endregion
+        public Assembling(AssemblyPlan assemblyPlan, Bitmap[] bitmapData, object param)
+        {
+            BitmapData = bitmapData;
+            AssemblyPlan = assemblyPlan;
+            _context = (SynchronizationContext)param;
+        }
+        /// <summary>Загрузка плана сборки</summary>
+        /// <param name="file">Путь к файлу параметров</param>
         private AssemblyPlan LoadAssemblyPlan(string file)
         {
             AssemblyPlan assemblyPlan;
@@ -82,33 +74,31 @@ namespace ImgAssemblingLibOpenCV.Models
             if (assemblyPlan != null) AssemblyPlan = assemblyPlan;
             return assemblyPlan;
         }
-
-        public Assembling(AssemblyPlan assemblyPlan, Bitmap[] bitmapData, object param)
-        {
-            BitmapData = bitmapData;
-            AssemblyPlan = assemblyPlan;
-            _context = (SynchronizationContext)param;
-            logger = LogManager.GetCurrentClassLogger();
-        }
+        /// <summary> Замена плана сборки</summary>
+        /// <param name="assemblyPlan">Новый план</param>
         public void ChangeAssemblyPlan(AssemblyPlan assemblyPlan) => AssemblyPlan = assemblyPlan;
+        public void DelRezultImg(Mat rezultImg) => RezultImg = rezultImg;
         public Mat GetRezultImg() => RezultImg;
-        public string GetSavedFileName() => SavedFileName;
-        public void SetRezultImg(Mat rezultImg) => RezultImg = rezultImg;
+        /// <summary>  Запись ошибки</summary>
         private bool SetErr(string err)
         {
+            TriggerAddErr(AssemblingId + " " + err);
             IsErr = true;
             ErrText = err;
             ErrList.Add(err);
             return false;
         }
+        /// <summary> Запись критической ошибки </summary>
         private bool SetCriticalErr(string err)
         {
+            TriggerAddErr(AssemblingId + " Critical" + err);
             IsErr = true;
             IsCriticalErr = true;
             ErrText = err;
             ErrList.Add(err);
             return false;
         }
+        /// <summary> Предварительная проверка плана сборки</summary>
         public bool CheckPlane()
         {
             if (AssemblyPlan == null) return SetCriticalErr("Err Assembling.AssemblyPlan = null!!!");
@@ -150,17 +140,20 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return true;
         }
+        /// <summary>
+        /// Сборка кадров с подробной записью результатов
+        /// </summary>
+        /// <returns>FinalResult Подробный отчет о результатах сборки</returns>
         public async Task<FinalResult> TryAssemble()
         {
             try
             {
                 await StartAssembling();
-                
-
                 if (RezultImg == null)
-                    return new FinalResult()
+                {
+                    return LastFinalResult = new FinalResult()
                     {
-                        Speed = AssemblyPlan.Speed,
+                        Speed = 0,
                         MatRezult = null,
                         BitRezult = null,
                         IsErr = IsErr,
@@ -168,14 +161,12 @@ namespace ImgAssemblingLibOpenCV.Models
                         ErrText = ErrText,
                         ErrList = ErrList
                     };
-
-                Bitmap rezultImg = (RezultImg.Width != 0 && RezultImg.Height != 0) ? BitmapConverter.ToBitmap(RezultImg) : null;
-
-                return new FinalResult()
+                }
+                else return LastFinalResult = new FinalResult()
                 {
                     Speed = AssemblyPlan.Speed,
                     MatRezult = RezultImg,
-                    BitRezult = rezultImg,
+                    BitRezult = (RezultImg.Width != 0 && RezultImg.Height != 0) ? BitmapConverter.ToBitmap(RezultImg) : null,
                     IsErr = IsErr,
                     IsCriticalErr = IsCriticalErr,
                     ErrText = ErrText,
@@ -185,7 +176,7 @@ namespace ImgAssemblingLibOpenCV.Models
             catch (Exception ex)
             {
                 SetCriticalErr(ex.Message);
-                return new FinalResult() {
+                return LastFinalResult = new FinalResult() {
                     IsErr = IsErr,
                     IsCriticalErr = IsCriticalErr,
                     ErrText = ErrText + "Ex.Message " + ex.Message,
@@ -193,11 +184,13 @@ namespace ImgAssemblingLibOpenCV.Models
                 };
             }
         }
+
+        /// <summary>  Запуск сборки изображения </summary>
         public async Task<bool> StartAssembling()
         {
             bool contectIsOn = _context == null ? false : true;
             if (contectIsOn) _context.Send(OnRTBUpDateInfo, "Start Assembling\n");
-            logger.Info("\nStart Assembling");
+            TriggerAddLog("/n"+AssemblingId+" Start Assembling");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -209,21 +202,21 @@ namespace ImgAssemblingLibOpenCV.Models
             
             if (AssemblyPlan.BitMap)
             {
-                logger.Info("Working with Bitmap. BitmapData - " + BitmapData.Length);
+                TriggerAddLog(AssemblingId+" Working with Bitmap. BitmapData - " + BitmapData.Length);
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Bitmap. BitmapData - " + BitmapData.Length+"\n");
             }
             else
             {
-                logger.Info("Working with Directory");
+                TriggerAddLog(AssemblingId+" Working with Directory");
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   Working with Directory");
             }
-            logger.Info("Delta = " + AssemblyPlan.Delta);
+            TriggerAddLog(AssemblingId+" Delta = " + AssemblyPlan.Delta);
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Delta = " + AssemblyPlan.Delta);
 
             if (!AssemblyPlan.BitMap)
             {
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   Start File Name Checking ");
-                logger.Info("   Start File Name Checking");
+                TriggerAddLog(AssemblingId+"   Start File Name Checking");
                 if (AssemblyPlan.FileNameCheck)
                 {
                     var check = fileEdit.CheckFileName(AssemblyPlan.WorkingDirectory);
@@ -235,7 +228,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 stopwatch.Restart();
 
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   File Name Fixing ");
-                logger.Info("File Name Fixing");
+                TriggerAddLog(AssemblingId+" File Name Fixing");
                 if (AssemblyPlan.FileNameFixing)
                 {
                     if (fileEdit.FixFileName(AssemblyPlan.WorkingDirectory)) { SendFinished(); AssemblyPlan.FileNameFixingRezult = "Выполнено."; }
@@ -244,17 +237,17 @@ namespace ImgAssemblingLibOpenCV.Models
                 else { SendSkipped(); AssemblyPlan.FileNameFixingRezult = "Этап пропущен!!!"; }
                 ts = stopwatch.Elapsed;
                 tSum += ts;
-                SendTime("  Time ", ts);
+                SendTime(" Time ", ts);
                 stopwatch.Restart();
 
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   Del File Copy ");
-                logger.Info("Del File Copy");
+                TriggerAddLog(AssemblingId+" Del File Copy");
                 if (AssemblyPlan.DelFileCopy)
                 {
                     if (await fileEdit.FindCopyAndDel(AssemblyPlan.WorkingDirectory))
                     {
                         if (contectIsOn) _context.Send(OnRTBAddInfo, " - " + fileEdit.TextMessag + "\n");
-                        logger.Info(fileEdit.TextMessag);
+                        TriggerAddLog(fileEdit.TextMessag);
                         AssemblyPlan.DelFileCopyRezult = fileEdit.TextMessag;
                     }
                     else {SendErr(fileEdit.ErrText + "\n"); AssemblyPlan.DelFileCopyRezult = fileEdit.ErrText; }
@@ -263,35 +256,37 @@ namespace ImgAssemblingLibOpenCV.Models
                 else { SendSkipped(); AssemblyPlan.DelFileCopyRezult = "Этап пропущен!!!"; }
                 ts = stopwatch.Elapsed;
                 tSum += ts;
-                SendTime("  Time ", ts);
+                SendTime(" Time ", ts);
                 stopwatch.Restart();
             }
 
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Img Fixing ");
-            logger.Info("Img Fixing"); // Исправление кадров по загруженной инструкции
+            // Исправление кадров по загруженной инструкции
+            TriggerAddLog(AssemblingId+" Img Fixing");
             if (AssemblyPlan.FixImg)
             {
                 if (AssemblyPlan.BitMap)
                 {
-                    logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
+                    TriggerAddLog(AssemblingId+" Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                     if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                     
-                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.SaveImgFixingRezultToFile, AssemblyPlan.FixingImgDirectory);
+                    //ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.SaveImgFixingRezultToFile, AssemblyPlan.FixingImgDirectory);
+                    FixFrames FixFrames = new FixFrames(AssemblyPlan.ImgFixingPlan, AssemblyPlan.SaveImgFixingRezultToFile, AssemblyPlan.FixingImgDirectory);
                     if (contectIsOn)
                     {
-                        imgFixingForm.ProcessChanged += worker_ProcessChang;
-                        imgFixingForm.TextChanged += worker_TextChang;
-                        await Task.Run(() => { BitmapData = imgFixingForm.FixImges(_context, BitmapData); });
+                        FixFrames.ProcessChanged += worker_ProcessChang;
+                        FixFrames.TextChanged += worker_TextChang;
+                        await Task.Run(() => { BitmapData = FixFrames.FixImges(_context, BitmapData); });
                     }
-                    else BitmapData = imgFixingForm.FixImges(null, BitmapData);
+                    else BitmapData = FixFrames.FixImges(null, BitmapData);
 
-                    if (imgFixingForm.IsErr || BitmapData.Length == 0)
+                    if (FixFrames.IsErr || BitmapData.Length == 0)
                     {
                         SendErr(" "); AssemblyPlan.FixImgRezult = "Не выполнено из-за ошибки!!!";
-                        if (imgFixingForm.IsErr)
+                        if (FixFrames.IsErr)
                         {
-                            AssemblyPlan.FixImgRezult = imgFixingForm.ErrText;
-                            return SetErr(imgFixingForm.ErrText);
+                            AssemblyPlan.FixImgRezult = FixFrames.ErrText;
+                            return SetErr(FixFrames.ErrText);
                         }
                         if (BitmapData.Length == 0)
                         {
@@ -307,15 +302,17 @@ namespace ImgAssemblingLibOpenCV.Models
                     if (string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory)) ImgFixingDir = AssemblyPlan.WorkingDirectory + "AutoOut";
                     else ImgFixingDir = AssemblyPlan.FixingImgDirectory;
 
-                    ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
-                    if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = imgFixingForm.GetImgFixingPlan();
+                    //ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
+                    FixFrames FixFrames = new FixFrames(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory); 
+
+                    if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = FixFrames.GetImgFixingPlan();
                     if (contectIsOn) _context.Send(OnRTBAddInfo, " Checking old files ");
-                    logger.Info("Checking old files");
-                    if (AssemblyPlan.ChekFixImg && imgFixingForm.CheckFixingImg(ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
+                    TriggerAddLog(AssemblingId+" Checking old files");
+                    if (AssemblyPlan.ChekFixImg && FixFrames.CheckFixingImg(ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
                     {
                         AssemblyPlan.StitchingDirectory = ImgFixingDir;
                         if (contectIsOn) _context.Send(OnRTBAddInfo, " - Using old files\n");
-                        logger.Info("Using old files");
+                        TriggerAddLog(AssemblingId+" Using old files");
                         AssemblyPlan.ChekFixImgRezult = "Выполнено.";
                         AssemblyPlan.FixImgRezult = "Пропущено т.к. уже есть исправленные файлы.";
                     }
@@ -324,20 +321,19 @@ namespace ImgAssemblingLibOpenCV.Models
                         if (AssemblyPlan.ChekFixImg)
                         {
                             if (contectIsOn) _context.Send(OnRTBAddInfo, " - Old files not founded ");
-                            logger.Info("Old files not founded");
+                            TriggerAddLog(AssemblingId + " Old files not founded");
                             AssemblyPlan.ChekFixImgRezult = "Исправленные файлы не найдены!!!";
                         }
 
-                        imgFixingForm.ProcessChanged += worker_ProcessChang;
-                        imgFixingForm.TextChanged += worker_TextChang;
-
-                        logger.Info("   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
+                        FixFrames.ProcessChanged += worker_ProcessChang;
+                        FixFrames.TextChanged += worker_TextChang;
+                        TriggerAddLog(AssemblingId + "   Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
                         if (contectIsOn) _context.Send(OnRTBAddInfo, "\n     Starting Img Fixing using " + AssemblyPlan.ImgFixingPlan + " plan ");
 
                         await Task.Run(() => 
                         {
-                            if (imgFixingForm.FixImges(_context, ImgFixingDir)) { SendErr(imgFixingForm.ErrText); AssemblyPlan.FixImgRezult = imgFixingForm.ErrText; }
-                            else { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
+                            //if (FixFrames.FixImges(_context, ImgFixingDir)) { SendErr(FixFrames.ErrText); AssemblyPlan.FixImgRezult = FixFrames.ErrText; }
+                            //else { SendFinished(); AssemblyPlan.FixImgRezult = "Выполнено."; AssemblyPlan.StitchingDirectory = ImgFixingDir; }
                         });
                     }
                 }
@@ -345,11 +341,11 @@ namespace ImgAssemblingLibOpenCV.Models
             else {SendSkipped();AssemblyPlan.FixImgRezult = "Этап пропущен!!!";AssemblyPlan.ChekFixImgRezult = "Этап пропущен!!!";}
             ts = stopwatch.Elapsed;
             tSum += ts;
-            SendTime("  Time ", ts);
+            SendTime(" Time ", ts);
             stopwatch.Restart();
 
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Find Key Points ");
-            logger.Info("Find Key Points");
+            TriggerAddLog(AssemblingId + " Find Key Points");
             if (AssemblyPlan.FindKeyPoints) // Поиск ключевых точек
             {
                 if (await FindKeyPoints()) { SendFinished(); AssemblyPlan.FindKeyPointsRezult = "Выполнено."; }
@@ -362,11 +358,11 @@ namespace ImgAssemblingLibOpenCV.Models
             else { SendSkipped(); AssemblyPlan.FindKeyPointsRezult = "Этап пропущен!!!"; }
             ts = stopwatch.Elapsed;
             tSum += ts;
-            SendTime("  Time ", ts);
+            SendTime(" Time ", ts);
             stopwatch.Stop();
 
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Get Speed \n");
-            logger.Info("Get Speed");
+            TriggerAddLog(AssemblingId + " Get Speed");
             if (AssemblyPlan.SpeedCounting) // Подсчет скорости
             {
                 SpeedСounter speedСounter = new SpeedСounter(stitchingBlock.GetSelectedFiles(), AssemblyPlan.MillimetersInPixel, AssemblyPlan.TimePerFrame);
@@ -383,11 +379,11 @@ namespace ImgAssemblingLibOpenCV.Models
             else { SendSkipped(); AssemblyPlan.SpeedCountingRezults = "Этап пропущен!!!"; }
             ts = stopwatch.Elapsed;
             tSum += ts;
-            SendTime("  Time ", ts);
+            SendTime(" Time ", ts);
             stopwatch.Stop();
 
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Image Assembling ");
-            logger.Info("Image Assembling");
+            TriggerAddLog(AssemblingId + " Image Assembling");
             if (AssemblyPlan.Stitch) // Запуск сборки изображения из нескольких кадров
             {
                 if (await StitchImgs()) { SendFinished(); AssemblyPlan.StitchRezult = "Выполнено."; }
@@ -396,12 +392,11 @@ namespace ImgAssemblingLibOpenCV.Models
             else {SendSkipped(); AssemblyPlan.StitchRezult = "Этап пропущен!!!"; }
             ts = stopwatch.Elapsed;
             tSum += ts;
-            SendTime("  Time ", ts);
+            SendTime(" Time ", ts);
             stopwatch.Stop();
-
             
             if (contectIsOn) _context.Send(OnRTBAddInfo, "   Saving Rezult ");
-            logger.Info("Saving Rezult ");
+            TriggerAddLog(AssemblingId + " Saving Rezult");
             if (AssemblyPlan.SaveRezult) // Сохранение итогового изображения
             {
                 fileEdit.ClearInformation();
@@ -417,41 +412,52 @@ namespace ImgAssemblingLibOpenCV.Models
             else { SendSkipped(); AssemblyPlan.RezultOfSavingRezults = "Этап пропущен!!!"; }
             ts = stopwatch.Elapsed;
             tSum += ts;
-            SendTime("  Time ", ts);
-            SendTime("  AllTime ", tSum);
+            SendTime(" Time ", ts);
+            SendTime(" AllTime ", tSum);
+            
+            TriggerAddLog(AssemblingId +" Assembling Finished\n");
+            
             stopwatch.Stop();
             return !IsErr;
         }
         public double GetSpeed() => AssemblyPlan.Speed;
+        /// <summary> Отправка сообщения об затраченном времени на операцию</summary>
         private void SendTime(string text, TimeSpan ts)
         {
             if (_context!=null) _context.Send(OnRTBAddInfo, text + String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10) + "\n");
-            logger.Info(text + String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10));
+            TriggerAddLog(AssemblingId + text + String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10));
         }
+        /// <summary> Сообщения о пропуске этапа </summary>
+        private void SendSkipped()
+        {
+            if (_context!=null) _context.Send(OnRTBAddInfo, " -  Skipped\n");
+            TriggerAddLog(AssemblingId + " Skipped");
+        }
+        /// <summary> Отправка сообщения об ошибке </summary>
+        private void SendErr(string err)
+        {
+            SetErr(err);
+            if (_context != null) _context.Send(OnRTBAddInfo, ErrText);
+            TriggerAddLog(AssemblingId + ErrText);
+        }
+        /// <summary>
+        /// Отправка сообщения об оконцании операции
+        /// </summary>
+        /// <param name="text">Дополнительная информация</param>
         private void SendFinished(string text = null)
         {
             if (string.IsNullOrEmpty(text))
             {
                 if (_context != null) _context.Send(OnRTBAddInfo, " - Finished\n");
-                logger.Info("Finished");
+                TriggerAddLog(AssemblingId + " Finished");
             }
             else
             {
-                if (_context != null) _context.Send(OnRTBAddInfo, " - Finished " + text );
-                logger.Info("Finished " + text);
+                if (_context != null) _context.Send(OnRTBAddInfo, " - Finished " + text);
+                TriggerAddLog(AssemblingId + " Finished " + text);
             }
         }
-        private void SendSkipped()
-        {
-            if (_context!=null) _context.Send(OnRTBAddInfo, " -  Skipped\n");
-            logger.Info("Skipped");
-        }
-        private void SendErr(string err)
-        {
-            SetErr(err);
-            if (_context != null) _context.Send(OnRTBAddInfo, ErrText);
-            logger.Error(ErrText);
-        }
+        /// <summary> Поиск ключевых точек  </summary>
         private async Task<bool> FindKeyPoints()
         {
             if (AssemblyPlan.BitMap) stitchingBlock = new StitchingBlock(BitmapData);
@@ -478,6 +484,7 @@ namespace ImgAssemblingLibOpenCV.Models
 
             return true;
         }
+        /// <summary> Сборка изображения по ранее найденным ключевым точкам</summary>
         private async Task<bool> StitchImgs()
         {
             if (stitchingBlock != null)
@@ -491,6 +498,7 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             else return SetErr("Err StitchingBlock = null !!!");
         }
+        /// <summary> Очистка всех записей с предыдущей сборки</summary>
         public void ClearAll()
         {
             BitmapData = null;

@@ -13,6 +13,7 @@ using System.Drawing;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace ImgAssemblingLibOpenCV.Models
 {
@@ -36,48 +37,91 @@ namespace ImgAssemblingLibOpenCV.Models
 
         private bool SetErr(Exception e) => SetErr(e.Message);
 
-        public bool AutoSave(string[] Info)
+        public bool AutoSave(string[] Info, string fileName = null)
         {
-            string[] FiletoSave = GetAutoSaveFilesList();
+            string[] FiletoSave = GetAutoSaveFilesList(fileName);
             if (Info.Length == 0 || FiletoSave.Length == 0)
                  return SetErr("Err AutoSave.Info.Length == 0 || FiletoSave.Length == 0!!");
 
             string str = string.Empty;
             foreach (string txt in Info) str += txt + "\r";
 
-            foreach (string FtoSave in FiletoSave)
-                if (ChkFile(FtoSave)) SetFileString(FtoSave, str);
-            
-            return false;
+            try
+            {
+                foreach (string FtoSave in FiletoSave)
+                    if (ChkFile(FtoSave)) SetFileString(FtoSave, str);
+                    else SetErr("Не удалось создать файл: "+ FtoSave);
+            }
+            catch (Exception e)
+            {
+                return SetErr($"Err {e.Message} !!!");
+            }
+
+            return true;
         }
 
-        public bool AutoSave<T>(T obj)
+        //public bool AutoSave(string[] Info, string fileName)
+        //{
+        //    string[] FiletoSave = GetAutoSaveFilesList(fileName);
+
+        //    if (Info.Length == 0 || FiletoSave.Length == 0)
+        //        return SetErr("Err AutoSave.Info.Length == 0 || FiletoSave.Length == 0!!");
+
+        //    string str = string.Empty;
+        //    foreach (string txt in Info) str += txt + "\r";
+
+        //    //for (int i=0; i<FiletoSave.Length; i++)
+        //    //{
+        //    //    string Dir = Path.GetDirectoryName(FiletoSave[i]);
+        //    //    string File = Path.GetDirectoryName(FiletoSave[i]) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(FiletoSave[i])+"."+ fileName + Path.GetExtension(FiletoSave[i]);
+        //    //    FiletoSave[i] = File;
+        //    //}
+
+        //    try
+        //    {
+        //        foreach (string FtoSave in FiletoSave)
+        //            if (ChkFile(FtoSave)) SetFileString(FtoSave, str);
+        //            else SetErr("Не удалось создать файл: " + FtoSave);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return SetErr($"Err {e.Message} !!!");
+        //    }
+
+        //    //AutoSave(Info);
+        //    return false;
+        //}
+
+        public bool AutoSave<T>(T obj, string fileName = null)
         {
-            string[] FiletoSave = GetAutoSaveFilesList();
+            string[] FiletoSave = GetAutoSaveFilesList(fileName);
             if (obj == null || FiletoSave.Length == 0) return SetErr("Err AutoSave.obj == null || FiletoSave.Length == 0!!!");
-            foreach (string FtoSave in FiletoSave)
+            try
             {
-                // ToDo Добавить проверку
-                //var sdf = CheckAccessToFolder(FtoSave);
-                SaveJson<T>(FtoSave, obj);
+                foreach (string FtoSave in FiletoSave) 
+                    SaveJson<T>(FtoSave, obj);
+            }
+            catch (Exception ex) 
+            { 
+                return SetErr(ex.Message); 
             }
             return true;
         }
 
-        public bool AutoLoade<T>(out T obj)
+        public bool AutoLoade<T>(out T obj, string fileName = null)
         {
             obj = default(T);
-            string[] FiletoSave = GetAutoSaveFilesList();
+            string[] FiletoSave = GetAutoSaveFilesList(fileName);
             if (FiletoSave.Length == 0) return SetErr("Err AutoLoade.FiletoSave.Length == 0!!!");
             foreach (string LFile in FiletoSave)
                 if (LoadeJson(LFile, out obj)) return true;
 
             return SetErr("Err Autoloade File not found !!!");
         }
-        public string AutoLoade()
+        public string AutoLoade(string fileName = null)
         {
             string LoadeInfo = string.Empty;
-            string[] FiletoLoad = GetAutoSaveFilesList();
+            string[] FiletoLoad = GetAutoSaveFilesList(fileName);
 
             foreach (string LFile in FiletoLoad)
             {
@@ -180,7 +224,7 @@ namespace ImgAssemblingLibOpenCV.Models
             else return false;
         }
 
-        internal bool IsSameDisk(string Dir, string Dir2)
+        public bool IsSameDisk(string Dir, string Dir2)
         {
             if (Dir != null && Dir2 != null)
             {
@@ -197,7 +241,7 @@ namespace ImgAssemblingLibOpenCV.Models
             return false;
         }
 
-        internal bool IsSameDir(string DirFrom, string DirTo)
+        public bool IsSameDir(string DirFrom, string DirTo)
         {
             if (DirFrom != null && DirTo != null)
             {
@@ -209,10 +253,10 @@ namespace ImgAssemblingLibOpenCV.Models
             return false;
         }
 
-        internal string GetAutoLoadeFirstFile()
+        public string GetAutoLoadeFirstFile(string fileName = null)
         {
             string LoadeFile = "";
-            string[] FiletoLoad = GetAutoSaveFilesList();
+            string[] FiletoLoad = GetAutoSaveFilesList(fileName);
 
             foreach (string LFile in FiletoLoad)
             {
@@ -224,11 +268,12 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return LoadeFile;
         }
-        public string[] GetAutoSaveFilesList()
+        public string[] GetAutoSaveFilesList(string additionText = null)
         {
             string ApplicationFileName = Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName.Split('\\').Last()) + ".inf";
             string AdditionalFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + Path.DirectorySeparatorChar + Process.GetCurrentProcess().MainModule.FileName.Split('\\').Last();
             string[] AutoSaveFiles = new string[] { "C:" + Path.DirectorySeparatorChar + "Windows" + Path.DirectorySeparatorChar + "Temp", @"D:", @"E:" };
+
             List<string> AutoSaveFilesList = new List<string>() 
             { 
                 Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + ApplicationFileName , 
@@ -237,9 +282,15 @@ namespace ImgAssemblingLibOpenCV.Models
             foreach (string elem in AutoSaveFiles)
                 AutoSaveFilesList.Add(elem + Path.DirectorySeparatorChar + ApplicationFileName);
 
+            if (!string.IsNullOrEmpty(additionText))
+            {
+                for (int i = 0; i < AutoSaveFilesList.Count; i++)
+                    AutoSaveFilesList[i] = Path.GetDirectoryName(AutoSaveFilesList[i]) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(AutoSaveFilesList[i]) + "." + additionText + Path.GetExtension(AutoSaveFilesList[i]);
+            }
             return AutoSaveFilesList.ToArray();
         }
 
+        public List<string> GetFileList() => GetFileList(GetDefoltDirectory());
         public List<string> GetFileList(string file)
         {
             List<string> FileList = new List<string>();
@@ -351,7 +402,6 @@ namespace ImgAssemblingLibOpenCV.Models
             return fileList;
         }
         public string GetDefoltDirectory() => AppDomain.CurrentDomain.BaseDirectory;
-
         public bool DelAll() => DelAll(GetDefoltDirectory());
         public bool DelAll(string stitchingDirectory)
         {
@@ -388,7 +438,7 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return rezult;
         }
-        internal bool DelAllFileFromList(FileInfo[] fileList)
+        public bool DelAllFileFromList(FileInfo[] fileList)
         {
             bool rezult = true;
             if (fileList == null) return false;
@@ -444,7 +494,7 @@ namespace ImgAssemblingLibOpenCV.Models
             return true;
         }
 
-        internal async Task<bool> SaveJsonAsync<T>(string filename, T obj)
+        public async Task<bool> SaveJsonAsync<T>(string filename, T obj)
         {
             try
             {
@@ -512,7 +562,7 @@ namespace ImgAssemblingLibOpenCV.Models
 
             if (isSaved)
             {
-                TextMessag += "   File saved to: \n" + GetDefoltDirectory() + FileSaveString+"\n";
+                TextMessag += " File saved to: " + GetDefoltDirectory() + FileSaveString;
                 SaveId++;
             }
             return FileSaveString;

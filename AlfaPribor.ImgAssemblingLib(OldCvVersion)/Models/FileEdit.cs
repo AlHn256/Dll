@@ -414,6 +414,7 @@ namespace ImgAssemblingLibOpenCV.Models
                     {
                         // Read the stream as a string, and write the string to the console.
                         string jsonString = sr.ReadToEnd();
+
                         if (jsonString != null)
                         {
                             obj = JsonConvert.DeserializeObject<T>(jsonString);

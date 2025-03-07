@@ -49,22 +49,61 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoTest.cs">
+    <Compile Include="Forms\AutoTest.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AutoTest.Designer.cs">
+    <Compile Include="Forms\AutoTest.Designer.cs">
       <DependentUpon>AutoTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestingForm.cs">
+    <Compile Include="Forms\DebugingForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestingForm.Designer.cs">
+    <Compile Include="Forms\DebugingForm.Designer.cs">
+      <DependentUpon>DebugingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EditingStitchingPlan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EditingStitchingPlan.Designer.cs">
+      <DependentUpon>EditingStitchingPlan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ImgFixingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ImgFixingForm.Designer.cs">
+      <DependentUpon>ImgFixingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HidenForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HidenForm.Designer.cs">
+      <DependentUpon>HidenForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TestingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TestingForm.Designer.cs">
       <DependentUpon>TestingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="AutoTest.resx">
+    <Compile Include="Forms\ThreadsNumber.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ThreadsNumber.Designer.cs">
+      <DependentUpon>ThreadsNumber.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Forms\AutoTest.resx">
       <DependentUpon>AutoTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DebugingForm.resx">
+      <DependentUpon>DebugingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EditingStitchingPlan.resx">
+      <DependentUpon>EditingStitchingPlan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImgFixingForm.resx">
+      <DependentUpon>ImgFixingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -75,7 +114,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="TestingForm.resx">
+    <EmbeddedResource Include="Forms\TestingForm.resx">
       <DependentUpon>TestingForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
@@ -92,10 +131,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ImgAssemblingLib.csproj">
+    <ProjectReference Include="..\..\..\AlfaPribor.Logs\AlfaPribor.Logs\AlfaPribor.Logs.csproj">
+      <Project>{9cb54e4b-a3cd-407b-bb97-01fd9295f19a}</Project>
+      <Name>AlfaPribor.Logs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AlfaPribor.ImgAssembling.csproj">
       <Project>{78827561-4874-4841-aaf4-bf5316b63821}</Project>
-      <Name>ImgAssemblingLib</Name>
+      <Name>AlfaPribor.ImgAssembling</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

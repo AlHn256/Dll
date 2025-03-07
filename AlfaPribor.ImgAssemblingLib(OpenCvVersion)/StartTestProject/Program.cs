@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ImgAssemblingLibOpenCV.AditionalForms;
+using System;
 using System.Windows.Forms;
 
 namespace StartTestProject
@@ -16,7 +14,8 @@ namespace StartTestProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TestingForm());
+            //Application.Run(new HidenForm());
+            Application.Run(new DebugingForm());
         }
     }
 }

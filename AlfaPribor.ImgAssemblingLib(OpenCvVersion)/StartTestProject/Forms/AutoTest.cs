@@ -265,7 +265,7 @@ namespace StartTestProject
                     assemblyPlan.ShowRezult = false;
                     assembling.ChangeAssemblyPlan(assemblyPlan);
                     assembling.CalculationSpeedDespiteErrors = true;
-                    fileFinalResult = await assembling.TryAssemble();
+                    fileFinalResult = await assembling.TryAssembleAsync();
                     
                     // Тоже саме только с помощью масива битмапов
                     assemblyPlan.BitMap = true;
@@ -276,7 +276,7 @@ namespace StartTestProject
                     assembling.BitmapData = LoadeBitmap(assemblyPlan.WorkingDirectory);
                     assembling.ChangeAssemblyPlan(assemblyPlan);
                     assembling.CalculationSpeedDespiteErrors = true;
-                    imgFinalResult = await assembling.TryAssemble();
+                    imgFinalResult = await assembling.TryAssembleAsync();
 
                     //progress = i++* 100 / plansNumber / 2;
                     progress = i++ * progressMultiplier;

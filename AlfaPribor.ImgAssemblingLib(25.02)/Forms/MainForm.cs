@@ -1,6 +1,5 @@
 ﻿using AlfaPribor.Logs;
 using ImgAssemblingLibOpenCV.Models;
-//using NLog;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using OpenCvSharp.XFeatures2D;
@@ -327,7 +326,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                     var pointsSrc = new List<Point2f>();
                     var pointsDst = new List<Point2f>();
                     var goodMatches = new List<DMatch>();
-                    foreach (DMatch[] items in matches.Where(x => x.Length > 1))
+                    foreach (OpenCvSharp.DMatch[] items in matches.Where(x => x.Length > 1))
                     {
                         if (items[0].Distance < 0.5 * items[1].Distance)
                         {
@@ -760,7 +759,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 bmp.Save(newFile, System.Drawing.Imaging.ImageFormat.Jpeg);
             }
         }
-
         private void TestImgFixingBtn_Click(object sender, EventArgs e)
         {
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();

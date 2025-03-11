@@ -423,6 +423,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             BTxtBox.Text = ImgFixingSettings.DistorSettings.B.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
+
         private void CTxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(CTxtBox.Text)) return;

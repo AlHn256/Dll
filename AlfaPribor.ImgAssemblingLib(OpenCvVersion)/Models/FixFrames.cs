@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace ImgAssemblingLibOpenCV.Models
@@ -84,14 +85,15 @@ namespace ImgAssemblingLibOpenCV.Models
         /// <returns></returns>
         public bool StitchTwoImg()
         {
-            bool IsGorizontal = true;
 
+            bool IsGorizontal = true;
+            if (Rezult == null) Rezult = new Mat();
             if (IsGorizontal && FixingFrame1.Height != FixingFrame2.Height) return SetErr("Высота изображения несовместима");
             if (!IsGorizontal && FixingFrame1.Width != FixingFrame2.Width) return SetErr("Ширина изображения несовместима");
 
             if(FixingFrame1 ==null) FixingFrame1 = new Mat();
-            if (!IsGorizontal) Cv2.VConcat(FixingFrame1, FixingFrame2, FixingFrame1);
-            else Cv2.HConcat(FixingFrame1, FixingFrame2, FixingFrame1);
+            if (!IsGorizontal) Cv2.VConcat(FixingFrame1, FixingFrame2, Rezult);
+            else Cv2.HConcat(FixingFrame1, FixingFrame2, Rezult);
 
             //if (SelectSearchArea)
             //{
@@ -112,10 +114,9 @@ namespace ImgAssemblingLibOpenCV.Models
             //    Cv2.Rectangle(result, new OpenCvSharp.Point((int)MinWight, (int)MinHeight), new OpenCvSharp.Point((int)MaxWight, (int)MaxHeight), Scalar.Red, 2);
             //}
             //else RTB.Text = "Область поиска точек отключена";
-
-            if (Rezult == null) Rezult = new Mat();
+           
             if (ImgFixingSettings.Zoom == 0) ImgFixingSettings.Zoom = 1;
-            Cv2.Resize(FixingFrame1, Rezult, new OpenCvSharp.Size((int)(FixingFrame1.Width * ImgFixingSettings.Zoom), (int)(FixingFrame1.Height * ImgFixingSettings.Zoom)));
+            Cv2.Resize(Rezult, Rezult, new OpenCvSharp.Size((int)(Rezult.Width * ImgFixingSettings.Zoom), (int)(Rezult.Height * ImgFixingSettings.Zoom)));
             return true;
         }
 
@@ -478,6 +479,136 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return Rezult;
         }
+
+
+        public Point2d Point2fToPoint2d(Point2f point) => new Point2d((double)point.X, (double)point.Y);
+        public Mat MatchPicBySift(Mat matSrc, Mat matTo)
+        {
+            using (Mat matSrcRet = new Mat())
+            using (Mat matToRet = new Mat())
+            {
+                KeyPoint[] keyPointsSrc, keyPointsTo;
+                using (var sift = OpenCvSharp.Features2D.SIFT.Create())
+                {
+                    sift.DetectAndCompute(matSrc, null, out keyPointsSrc, matSrcRet);
+                    sift.DetectAndCompute(matTo, null, out keyPointsTo, matToRet);
+                }
+                using (var bfMatcher = new BFMatcher())
+                {
+                    var matches = bfMatcher.KnnMatch(matSrcRet, matToRet, k: 2);
+                    var pointsSrc = new List<Point2f>();
+                    var pointsDst = new List<Point2f>();
+                    var goodMatches = new List<DMatch>();
+                    var TempArray = matches.Where(x=>x.Length > 1).ToArray();
+
+                    // foreach (OpenCvSharp.DMatch[] items in matches.Where(x => x.Length > 1))
+                    foreach (OpenCvSharp.DMatch[] items in TempArray)
+                    {
+                        if (items[0].Distance < 0.5 * items[1].Distance)
+                        {
+                            pointsSrc.Add(keyPointsSrc[items[0].QueryIdx].Pt);
+                            pointsDst.Add(keyPointsTo[items[0].TrainIdx].Pt);
+                            goodMatches.Add(items[0]);
+                           // RTB.Text += $"{keyPointsSrc[items[0].QueryIdx].Pt.X}, {keyPointsSrc[items[0].QueryIdx].Pt.Y}\n";
+                        }
+                    }
+
+                    var outMat = new Mat();
+                    //Алгоритм RANSAC фильтрует совпадающие результаты
+                    var pSrc = pointsSrc.ConvertAll(Point2fToPoint2d);
+                    var pDst = pointsDst.ConvertAll(Point2fToPoint2d);
+                    var outMask = new Mat();
+                    // Если исходный результат сопоставления пуст, пропустите шаг фильтрации
+                    if (pSrc.Count > 0 && pDst.Count > 0)
+                        Cv2.FindHomography(pSrc, pDst, HomographyMethods.Ransac, mask: outMask);
+                    // Применять фильтрацию только в том случае, если количество совпадающих точек, обработанных RANSAC, превышает 10. В противном случае используйте исходные результаты совпадающих точек (если точек совпадения слишком мало, после обработки RANSAC вы можете получить результат 0 совпадающих точек) .
+                    if (outMask.Rows > 10)
+                    {
+                        byte[] maskBytes = new byte[outMask.Rows * outMask.Cols];
+                        outMask.GetArray(out maskBytes);
+                        Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, outMat, matchesMask: maskBytes, flags: DrawMatchesFlags.NotDrawSinglePoints);
+                    }
+                    else
+                        Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, outMat, flags: DrawMatchesFlags.NotDrawSinglePoints);
+
+                    Cv2.Resize(outMat, outMat, new OpenCvSharp.Size((int)(outMat.Width * ImgFixingSettings.Zoom), (int)(outMat.Height * ImgFixingSettings.Zoom)));
+                    return outMat;
+                }
+            }
+        }
+
+        //public Mat MatchPicBySurf(Mat matSrc, Mat matTo, double threshold = 40)
+        //{
+        //    using (Mat matSrcRet = new Mat())
+        //    using (Mat matToRet = new Mat())
+        //    {
+        //        KeyPoint[] keyPointsSrc, keyPointsTo;
+        //        using (var surf = SURF.Create(threshold, 4, 3, true, true))
+        //        {
+        //            surf.DetectAndCompute(matSrc, null, out keyPointsSrc, matSrcRet);
+        //            surf.DetectAndCompute(matTo, null, out keyPointsTo, matToRet);
+        //        }
+
+        //        using (var flnMatcher = new FlannBasedMatcher())
+        //        {
+        //            var matches = flnMatcher.Match(matSrcRet, matToRet);
+        //            // Находим минимальное и максимальное расстояние
+        //            double minDistance = 1000;// Обратное приближение
+        //            double maxDistance = 0;
+        //            for (int i = 0; i < matSrcRet.Rows; i++)
+        //            {
+        //                double distance = matches[i].Distance;
+        //                if (distance > maxDistance) maxDistance = distance;
+        //                if (distance < minDistance) minDistance = distance;
+        //            }
+        //            RTB.Text = $"max distance : {maxDistance}\n";
+        //            RTB.Text += $"min distance : {minDistance}";
+
+        //            var pointsSrc = new List<Point2f>();
+        //            var pointsDst = new List<Point2f>();
+        //            //Выбираем лучшие точки соответствия
+        //            var goodMatches = new List<DMatch>();
+        //            for (int i = 0; i < matSrcRet.Rows; i++)
+        //            {
+        //                double distance = matches[i].Distance;
+        //                var sdfsdf = Math.Max(minDistance * 2, 0.02);
+        //                if (distance < Math.Max(minDistance * 2, 0.02))
+        //                {
+        //                    pointsSrc.Add(keyPointsSrc[matches[i].QueryIdx].Pt);
+        //                    pointsDst.Add(keyPointsTo[matches[i].TrainIdx].Pt);
+        //                    //Если расстояние меньше диапазона, вставляем новый DMatch
+        //                    goodMatches.Add(matches[i]);
+        //                }
+        //            }
+        //            var outMat = new Mat();
+
+        //            //Алгоритм RANSAC фильтрует совпадающие результаты
+        //            var pSrc = pointsSrc.ConvertAll(Point2fToPoint2d);
+        //            var pDst = pointsDst.ConvertAll(Point2fToPoint2d);
+        //            var outMask = new Mat();
+        //            if (pSrc != null && pDst != null)
+        //            {
+        //                // Если исходный результат сопоставления пуст, пропустите шаг фильтрации
+        //                if (pSrc.Count > 3 && pDst.Count > 3)
+        //                    Cv2.FindHomography(pSrc, pDst, HomographyMethods.Ransac, mask: outMask);
+        //                // Применять фильтрацию только в том случае, если количество совпадающих точек, обработанных RANSAC, превышает 10. В противном случае используйте исходные результаты совпадающих точек (если точек совпадения слишком мало, после обработки RANSAC вы можете получить результат 0 совпадающих точек) .
+        //                if (outMask.Rows > 100)
+        //                {
+        //                    byte[] maskBytes = new byte[outMask.Rows * outMask.Cols];
+        //                    outMask.GetArray(out maskBytes);
+        //                    Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, outMat, matchesMask: maskBytes, flags: DrawMatchesFlags.NotDrawSinglePoints);
+        //                }
+        //                else
+        //                    Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, outMat, flags: DrawMatchesFlags.NotDrawSinglePoints);
+        //            }
+
+        //            Cv2.Resize(outMat, outMat, new OpenCvSharp.Size((int)(outMat.Width * Zoom), (int)(outMat.Height * Zoom)));
+        //            return outMat;
+        //        }
+        //    }
+        //}
+
+
         private Bitmap MatToBitmap(Mat mat)
         {
             if (mat.Width == 0 && mat.Height == 0) return null;

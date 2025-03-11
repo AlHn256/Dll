@@ -215,7 +215,7 @@ namespace StartTestProject.Forms
                 assembling.CheckPlane();
                 if (assembling.IsErr) return SetErr(assembling.ErrText);
 
-                FinalResult finalResult = await assembling.TryAssemble();
+                FinalResult finalResult = await assembling.TryAssembleAsync();
                 if (finalResult.IsErr) return SetErr(assembling.ErrText);
             }
             catch (Exception ex) { return SetErr(ex.Message); }

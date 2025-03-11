@@ -148,7 +148,7 @@ namespace StartTestProject.Forms
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null); 
 
             // Запускаем сборку
-            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssembleAsync());
         }
         
         // Пример без исправления изображений
@@ -164,7 +164,7 @@ namespace StartTestProject.Forms
             //Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\Exampels\\15AutoOut");
             Bitmap[] dataArray = LoadeBitmap(ExamplDirectory.Text + dirList[1]);
 
-            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssembleAsync());
         }
 
         // Пример с установкой другого плана корректировки изображения
@@ -179,7 +179,7 @@ namespace StartTestProject.Forms
             
             Bitmap[] dataArray = LoadeBitmap(ExamplDirectory.Text + dirList[2], 27);
 
-            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssembleAsync());
         }
 
         // Пример настройки смещения полосы сборки относительно центра катинки (иногда помогает избавиться от повторяющихся объектов на заднем фоне вроде столбов)
@@ -195,7 +195,7 @@ namespace StartTestProject.Forms
             //Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 29);
             Bitmap[] dataArray = LoadeBitmap(ExamplDirectory.Text + dirList[2],29);
 
-            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssembleAsync());
         }
 
         // Пример только с подсчетом скорости (без сборки изображения)
@@ -213,7 +213,7 @@ namespace StartTestProject.Forms
             //Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4").Skip(10).Take(10).ToArray();
             Bitmap[] dataArray = LoadeBitmap(ExamplDirectory.Text + dirList[2]).Skip(10).Take(10).ToArray();
 
-            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssembleAsync());
         }
 
         // Пример заполнения параметров без загрузки файла сбоки
@@ -241,7 +241,7 @@ namespace StartTestProject.Forms
 
             //Bitmap[] dataArray = LoadeBitmap("E:\\ImageArchive\\4", 27);
             Bitmap[] dataArray = LoadeBitmap(ExamplDirectory.Text + dirList[2],27);
-            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssemble());
+            ShowResult(await new Assembling(assemblyPlan, dataArray, null).TryAssembleAsync());
         }
 
         // Пример коррекции изображений без сборки
@@ -313,7 +313,7 @@ namespace StartTestProject.Forms
                 assembling.ProcessChanged += worker_ProcessChang;
                 assembling.TextChanged += worker_TextChang;
 
-                FinalResult finalResult = await assembling.TryAssemble();
+                FinalResult finalResult = await assembling.TryAssembleAsync();
                 if (finalResult.IsErr) RezultLb.Text = finalResult.ErrText;
             }
             catch (Exception ex){RezultLb.Text = ex.Message;}

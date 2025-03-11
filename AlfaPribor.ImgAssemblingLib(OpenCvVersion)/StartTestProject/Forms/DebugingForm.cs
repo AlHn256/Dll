@@ -24,14 +24,15 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private bool SelectSearchArea { get; set; } = false;
         private float MinHeight = 0, MaxHeight = 0, MinWight = 0, MaxWight = 0;
         private double Zoom { get; set; } = 1.0;
-        //private Bitmap BitmapRezult {  get; set; }
         private int Delta = 0, deltaStep = 20, Xdn = 0, Ydn = 0, Xup = 0, Yup = 0;
         private int FirstFileNumber = 0, SecondFileNumber = 0;
         private List<string> FileList = new List<string>();
         private string SecondFile = string.Empty, FirstFile = string.Empty, console = string.Empty;
         private string[] fileFilter = new string[] {"*.jpeg", "*.jpg", "*.png", "*.bmp"};
+        private string prevFirstFile = string.Empty, prevSecondFile = string.Empty;
         private object _context;
         private FixFrames FixingFrames;
+        private Bitmap rezultImg {  get; set; }    
 
         public DebugingForm()
         {
@@ -452,58 +453,41 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         //}
         private void panel1_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0) ZoomIn();
-            else ZoomOut();
+            if (e.Delta > 0) zoom(true);
+            else zoom(false);
         }
-        private void ZoomOut()
+
+        private void zoom(bool zoomIn)
         {
-            if (Zoom < 0.07) Zoom -= 0.005;
-            else if (Zoom < 0.3) Zoom -= 0.04;
-            else Zoom -= 0.2;
-            if (Zoom < 0.01) Zoom = 0.01;
+            if (zoomIn)
+            {
+                Zoom += 0.2;
+                ZoomLabel.Text = Zoom.ToString();
+            }
+            else
+            {
+                if (Zoom < 0.07) Zoom -= 0.005;
+                else if (Zoom < 0.3) Zoom -= 0.04;
+                else Zoom -= 0.2;
+                if (Zoom < 0.01) Zoom = 0.01;
+            }
 
             if (FixingFrames == null) return;
             if (FixingFrames.ImgFixingSettings == null) return;
             FixingFrames.ImgFixingSettings.Zoom = Zoom;
             ZoomLabel.Text = FixingFrames.ImgFixingSettings.Zoom.ToString();
+
+            if (rezultImg != null)
+            {
+                if (rezultImg.Width != 0 && rezultImg.Height != 0)
+                {
+                    Size newSize = new Size((int)(rezultImg.Width * Zoom), (int)(rezultImg.Height * Zoom));
+                    picBox_Display.Image = new Bitmap(rezultImg, newSize);
+                    return;
+                }
+            }
+            
             ShowLoadedImgs();
-
-
-            //if (rezultImg != null)
-            //{
-            //    if (rezultImg.Width != 0 && rezultImg.Height != 0)
-            //    {
-            //        Mat rezult = new Mat();
-            //        Cv2.Resize(rezultImg, rezult, new OpenCvSharp.Size((int)(rezultImg.Width * Zoom), (int)(rezultImg.Height * Zoom)));
-            //        picBox_Display.Image = BitmapConverter.ToBitmap(rezult);
-            //    }
-            //    else  ShowLoadedImgs();
-            //}
-            //else  ShowLoadedImgs();
-        }
-        private void ZoomIn()
-        {
-            Zoom += 0.2;
-            ZoomLabel.Text = Zoom.ToString();
-
-            if (FixingFrames == null) return;
-            if (FixingFrames.ImgFixingSettings == null) return;
-            FixingFrames.ImgFixingSettings.Zoom = Zoom;
-            ZoomLabel.Text = FixingFrames.ImgFixingSettings.Zoom.ToString();
-            ShowLoadedImgs();
-
-            //var rezultImg = Assembling.GetRezultImg();
-            //if (rezultImg != null)
-            //{
-            //    if (rezultImg.Width != 0 && rezultImg.Height != 0)
-            //    {
-            //        Mat rezult = new Mat();
-            //        Cv2.Resize(rezultImg, rezult, new OpenCvSharp.Size((int)(rezultImg.Width * Zoom), (int)(rezultImg.Height * Zoom)));
-            //        picBox_Display.Image = BitmapConverter.ToBitmap(rezult);
-            //    }
-            //    else ShowLoadeImgs();
-            //}
-            //else ShowLoadeImgs();
         }
 
         private void picBox_Display_MouseDown(object sender, MouseEventArgs e)
@@ -534,15 +518,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 var Delta = Math.Sqrt(dY * dY + dX * dX);
 
                 SelectSearchArea = true;
-                //MinHeight = (int)(Ydn/Zoom); MaxHeight = (int)(Yup / Zoom); MinWight = (int)(Xdn / Zoom); MaxWight = (int)(Xup/ Zoom);
                 MinWight = (int)(Xdn / Zoom); MinHeight = (int)(Ydn / Zoom);
                 MaxWight = (int)(Xup / Zoom); MaxHeight = (int)(Yup / Zoom);
 
                 ShowLoadedImgs();
             }
         }
-
-        private string prevFirstFile = string.Empty, prevSecondFile = string.Empty;
+        
         private void ShowLoadedImgs()
         {
             if (string.IsNullOrEmpty(FirstFile) && string.IsNullOrEmpty(FileDirTxtBox.Text))
@@ -559,11 +541,14 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                     if (FixingFrames != null) FixingFrames.ChangeFrames(FirstFile, SecondFile);
                     else FixingFrames = new FixFrames(FirstFile, SecondFile);
                 }
+
+                FixingFrames.ChangeSettings(new ImgFixingSettings { Zoom = Zoom });
                 prevFirstFile = FirstFile; prevSecondFile = SecondFile;
 
                 picBox_Display.Image = null;
                 //if(fixFrames.StitchImg()) picBox_Display.BackgroundImage = fixFrames.GetRezult();
-                if(FixingFrames.StitchTwoImg()) picBox_Display.Image = FixingFrames.GetOriginalFrame();
+                //if(FixingFrames.StitchTwoImg()) picBox_Display.Image = FixingFrames.GetOriginalFrame();
+                if (FixingFrames.StitchTwoImg()) picBox_Display.Image = FixingFrames.GetRezult();
                 else RTB.Text = FixingFrames.ErrText;
             }
             else
@@ -596,9 +581,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
             StitchingBlock stitchingBlock = new StitchingBlock(assemblyPln);
             stitchingBlock.TextChanged += rtbText_AddInfo;
-            //stitchingBlock.ChangImg += worker_UpdateImg;
+            stitchingBlock.ChangBitmapImg += worker_UpdateImg;
             stitchingBlock.AllPointsChkBox = AllPointsChkBox.Checked;
+            stitchingBlock.GetVectorListStringVersion(FirstFile, SecondFile, true);
             //stitchingBlock.GetVectorList(FirstFile, SecondFile, true);
+
             if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
         }
 
@@ -662,6 +649,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void worker_TextChang(string text) => progressBarLabel.Text = text;
         private void rtbText_AddInfo(string text)=>RTB.Text += text;
         private void rtbText_UpDateInfo(string text) => RTB.Text = text;
+        private void worker_UpdateImg(Bitmap img)
+        {
+            rezultImg = img;
+            Size newSize = new Size((int)(img.Width * Zoom), (int)(img.Height * Zoom));
+            picBox_Display.Image = new Bitmap(img, newSize);
+        }
+
         //private void worker_UpdateImg(Mat img)
         //{
         //    if (img.Width == 0 && img.Height == 0)
@@ -673,25 +667,22 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         //    if (img.Height * Zoom > picBox_Display.Height)
         //    {
         //        Zoom = Math.Round((decimal)(picBox_Display.Height * 0.9) / (decimal)img.Height, 2);
-        //        if (Zoom < 0.1m) Zoom = 0.1m;
+        //        if (Zoom < 0.1) Zoom = 0.1;
         //        ZoomLabel.Text = Zoom.ToString();
         //    }
 
         //    if (img.Width * Zoom > picBox_Display.Width)
         //    {
         //        Zoom = Math.Round((decimal)(picBox_Display.Width * 0.9) / (decimal)img.Width, 2);
-        //        if (Zoom < 0.1m) Zoom = 0.1m;
+        //        if (Zoom < 0.1) Zoom = 0.1;
         //        ZoomLabel.Text = Zoom.ToString();
         //    }
 
         //    Mat rezult = new Mat();
-
         //    if (SelectSearchArea) Cv2.Rectangle(img, new OpenCvSharp.Point((int)MinWight, (int)MinHeight), new OpenCvSharp.Point((int)MaxWight, (int)MaxHeight), Scalar.Red, 2);
-
         //    Cv2.Resize(img, rezult, new OpenCvSharp.Size((int)(img.Width * Zoom), (int)(img.Height * Zoom)));
         //    picBox_Display.Image = BitmapConverter.ToBitmap(rezult);
         //}
-
         private void StopBtn_Click(object sender, EventArgs e)
         {
             StitchingBlock.StopProcess = true;
@@ -914,7 +905,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
 
             Assembling.ChangeAssemblyPlan(assemblyPlan);
-            FinalResult ruzult = await Assembling.TryAssemble();
+            FinalResult ruzult = await Assembling.TryAssembleAsync();
             if (ruzult.IsErr)
             {
                 RTB.Text += Assembling.ErrText;

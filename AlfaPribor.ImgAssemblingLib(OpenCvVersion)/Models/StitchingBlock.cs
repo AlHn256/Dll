@@ -7,6 +7,7 @@ using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Drawing;
+using OpenCvSharp.Extensions;
 
 namespace ImgAssemblingLibOpenCV.Models
 {
@@ -39,6 +40,7 @@ namespace ImgAssemblingLibOpenCV.Models
         public event Action<int> ProcessChanged;
         public event Action<string> TextChanged;
         public event Action<Mat> ChangImg;
+        public event Action<Bitmap> ChangBitmapImg;
         public DrawMatchesFlags drawMatchesFlags { get; set; } = DrawMatchesFlags.NotDrawSinglePoints;
         private FileEdit fileEdit { get; set; } = new FileEdit();
         private bool SetErr(string err, EnumErrCode enumErrCode = EnumErrCode.NoErr)
@@ -175,6 +177,11 @@ namespace ImgAssemblingLibOpenCV.Models
         public void OnChangedImg(object i)
         {
             if (ChangImg != null)ChangImg((Mat)i);
+        }
+
+        public void OnChangedBitmapImg(object i)
+        {
+            if (ChangBitmapImg != null)ChangBitmapImg((Bitmap)i);
         }
 
         public void OnProgressChanged(object i)
@@ -772,6 +779,7 @@ namespace ImgAssemblingLibOpenCV.Models
             public int To {get;set;} 
             public AreaForDel (int from, int to) {From = from; To = to;}
         }
+
         private int[] HaosMeasur(int[] errors)
         {
             int N = 10;
@@ -790,7 +798,33 @@ namespace ImgAssemblingLibOpenCV.Models
 
             return result.ToArray();
         }
+
+        /// <summary>
+        /// Получаем список векторов смещения одной картинки относительно второй
+        /// Текстовая версия т.к. есть проблемы у перегрузки
+        /// </summary>
+        /// <param name="file1">Картинка №1</param>
+        /// <param name="file2">Картинка №2</param>
+        /// <param name="makeFotoRezult"></param>
+        /// <returns>Оприделяет нужно ли создавать изображение с найденными точками</returns>
+        public List<Vector> GetVectorListStringVersion(string file1, string file2, bool makeFotoRezult = false) => GetVectorList(new Mat(file1), new Mat(file2), makeFotoRezult);
+        /// <summary>
+        /// Получаем список векторов смещения одной картинки относительно второй
+        /// Текстовая версия т.к. есть проблемы у перегрузки
+        /// </summary>
+        /// <param name="file1">Картинка №1</param>
+        /// <param name="file2">Картинка №2</param>
+        /// <param name="makeFotoRezult"></param>
+        /// <returns>Оприделяет нужно ли создавать изображение с найденными точками</returns>
         public List<Vector> GetVectorList(string file1, string file2, bool makeFotoRezult = false) => GetVectorList(new Mat(file1), new Mat(file2), makeFotoRezult);
+        /// <summary>
+        /// Получаем список векторов смещения одной картинки относительно второй
+        /// Текстовая версия т.к. есть проблемы у перегрузки
+        /// </summary>
+        /// <param name="file1">Картинка №1</param>
+        /// <param name="file2">Картинка №2</param>
+        /// <param name="makeFotoRezult"></param>
+        /// <returns>Оприделяет нужно ли создавать изображение с найденными точками</returns>
         public List<Vector> GetVectorList(Mat matSrc, Mat matTo, bool makeFotoRezult = false)
         {
             List<Vector> goodPointList = new List<Vector>();
@@ -845,11 +879,12 @@ namespace ImgAssemblingLibOpenCV.Models
                     OnTextChanged(text);
                     Mat RezultImg = new Mat();
                     Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, RezultImg, flags: drawMatchesFlags);
-                    OnChangedImg(RezultImg);
+                    OnChangedBitmapImg(BitmapConverter.ToBitmap(RezultImg));
                 }
             }
             return goodPointList;
         }
+
         public bool CheckAndFixErr(object param)
         {
             SynchronizationContext context = (SynchronizationContext)param;

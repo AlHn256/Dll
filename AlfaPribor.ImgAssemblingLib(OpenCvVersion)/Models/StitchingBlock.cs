@@ -1650,7 +1650,8 @@ namespace ImgAssemblingLibOpenCV.Models
                 foreach (var info in ErrList) StitchingInfo += info + "\n";
             }
         }
-        public async Task<bool> TryReadMapPlan(int from = 0, int to = 100)
+
+        public bool TryReadMapPlan(int from = 0, int to = 100)
         {
             StitchingPlan stitchingPlan = new StitchingPlan();
             try
@@ -1671,7 +1672,8 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             else return false;
         }
-        public async Task TrySaveMapPlan()
+
+        public void TrySaveMapPlan()
         {
             if (!Directory.Exists(MainDir)) return;
             StitchingPlan stitchingPlan = new StitchingPlan(MainDir, SelectedFiles, Direction);

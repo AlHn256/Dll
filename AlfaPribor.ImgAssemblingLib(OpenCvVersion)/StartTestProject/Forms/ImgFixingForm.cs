@@ -22,7 +22,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private bool SaveRezultToFile;
         private string SavingRezultDir;
         public event Action<int> ProcessChanged;
-        public event Action<string> TextChanged;
+        //public event Action<string> TextChanged;
         public bool IsErr { get; set; } = false;
         public static bool StopProcess = false;
         public string ErrText { get; set; } = string.Empty;
@@ -91,7 +91,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         }
         public void OnTextChanged(object txt)
         {
-            if (TextChanged != null) TextChanged((string)txt);
+            //if (TextChanged != null) TextChanged((string)txt);
         }
         private void WindowsForm_DragEnter(object sender, DragEventArgs e)
         {
@@ -189,8 +189,10 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if (FileNumber > FileList.Count - 1) FileNumber = 0;
                 InputDirTxtBox.Text = Path.GetDirectoryName(FileList[FileNumber]);
                 InputFileTxtBox.Text = Path.GetFileName(FileList[FileNumber]);
-                if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+                //if (AutoReloadChkBox.Checked) OpenCvReloadImg();
             }
+
+            //if (AutoReloadChkBox.Checked) OpenCvReloadImg();
 
             return base.ProcessCmdKey(ref msg, keyData);
         }

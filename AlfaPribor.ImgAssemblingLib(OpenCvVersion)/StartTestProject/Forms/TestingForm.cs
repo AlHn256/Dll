@@ -285,7 +285,7 @@ namespace StartTestProject.Forms
             assemblyPlan.MaxWight = 766;
             assemblyPlan.MinWight = 11;
             Assembling assembling = new Assembling(assemblyPlan, dataArray, null);
-            if (!await assembling.StartAssembling()) RezultLb.Text = assembling.ErrText;
+            if (!await assembling.StartAssemblingAsync()) RezultLb.Text = assembling.ErrText;
         }
         // Пример c прогрессбаром
         private async void Exampl8Btn_Click(object sender, EventArgs e)=>await StartAssembling();

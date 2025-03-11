@@ -575,7 +575,83 @@ namespace ImgAssemblingLibOpenCV.Models
             IsErr = false;
             TextMessag = string.Empty;
         }
-        public async Task<bool> FindCopyAndDel(string Dir)
+        public bool FindCopyAndDel(string Dir)
+        {
+            if (!Directory.Exists(Dir)) return false;
+
+            string rezulText = string.Empty;
+            long maxLenghtFile = 16777216;
+            List<CopyList> CheckFileList = new List<CopyList>();
+            FileList fileList = new FileList(Dir, maxLenghtFile);
+
+            string text = string.Empty;
+            rezulText += "Start search" + "\nDir - " + Dir;
+            fileList.MadeList();
+            CheckFileList = fileList.GetList();
+            rezulText += "\nFinish " + CheckFileList.Count();
+
+            int i = 0, j = 0;
+            for (i = 0; i < CheckFileList.Count() - 1; i++)
+            {
+                if (CheckFileList[i].Copy > -1) continue;
+                string heshI = CheckFileList[i].Hesh;
+                long fileLength = CheckFileList[i].FileLength;
+
+                for (j = i + 1; j < CheckFileList.Count(); j++)
+                {
+                    if (CheckFileList[j].Copy > -1) continue;
+                    if (fileLength != 0)
+                    {
+                        if (CheckFileList[j].Copy == -1 && fileLength == CheckFileList[j].FileLength)
+                        {
+                            CheckFileList[i].Copy = i;
+                            CheckFileList[j].Copy = i;
+                        }
+                    }
+                    else
+                    {
+                        if (CheckFileList[j].Copy == -1 && heshI == CheckFileList[j].Hesh)
+                        {
+                            CheckFileList[i].Copy = i;
+                            CheckFileList[j].Copy = i;
+                        }
+                    }
+                }
+            }
+
+            var copyList = CheckFileList.Where(x => x.Copy != -1).OrderBy(y => y.Copy).ToList();
+            if (copyList.Count > 0)
+            {
+                i = -1;
+                int nDelFiles = 0;
+                foreach (var elem in copyList)
+                {
+                    if (i == elem.Copy)
+                    {
+                        elem.ForDel = true;
+
+                        File.Delete(elem.File);
+                        if (!File.Exists(elem.File)) nDelFiles++;
+                        if (elem.FileLength == 0) text += "\n" + i + " " + elem.Copy + " " + elem.File + " " + elem.Hesh + "  - DELETED by HeshCOPY";
+                        else text += "\n" + i + " " + elem.Copy + " " + elem.File + " " + elem.FileLength + "  - DELETED by LengthCOPY";
+
+                    }
+                    else
+                    {
+                        if (elem.FileLength == 0) text += "\n" + i + " " + elem.Copy + " " + elem.File + " " + elem.Hesh + "  -  HeshCOPY";
+                        else text += "\n" + i + " " + elem.Copy + " " + elem.File + " " + elem.FileLength + "  -  LengthCOPY";
+                    }
+                    i = elem.Copy;
+                }
+                if (nDelFiles > 0) text += "\n" + nDelFiles + " Deleted Files!!!";
+            }
+
+            if (copyList.Count == 0) TextMessag = "Kопий Nет!";
+            else TextMessag = text;
+
+            return true;
+        }
+        public async Task<bool> FindCopyAndDelAsync(string Dir)
         {
             if (!Directory.Exists(Dir)) return false;
 
@@ -651,7 +727,6 @@ namespace ImgAssemblingLibOpenCV.Models
 
             return true;
         }
-
         public bool OpenFileDir(string FilDir)
         {
             if(!ChkFileDir(FilDir))return SetErr("Err FilDir " + FilDir  + " !Exists!!!");

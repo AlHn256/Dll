@@ -628,7 +628,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             //assembling.UpdateImg += worker_UpdateImg;
             //assembling.RTBAddInfo += rtbText_AddInfo;
 
-            if (await Assembling.StartAssembling())// Запуск сборки изображения
+            if (await Assembling.StartAssemblingAsync())// Запуск сборки изображения
             {
                 RTB.Text += "Assembling is finished!";
                 return true;
@@ -943,7 +943,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             assemblyPlan.Stitch = false;
             Assembling.ChangeAssemblyPlan(assemblyPlan);
             Assembling.CalculationSpeedDespiteErrors = true;
-            await Assembling.StartAssembling();
+            await Assembling.StartAssemblingAsync();
         }
 
         private class SpeedStat
@@ -979,7 +979,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 assemblyPlan.SpeedCounting = false;
                 assemblyPlan.Stitch = false;
                 Assembling.ChangeAssemblyPlan(assemblyPlan);
-                await Assembling.StartAssembling();
+                await Assembling.StartAssemblingAsync();
 
                 List<SpeedStat> speedStatsList = new List<SpeedStat>();
                 Random random = new Random();
@@ -998,7 +998,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                     assemblyPlan.Stitch = false;
                     Assembling.ChangeAssemblyPlan(assemblyPlan);
                     Assembling.CalculationSpeedDespiteErrors = false;
-                    await Assembling.StartAssembling();
+                    await Assembling.StartAssemblingAsync();
                     double Speed = Assembling.GetSpeed();
                     speedStatsList.Add(new SpeedStat(fr, to, Speed));
                     Text += "Speed " + Speed + "  Fr " + fr + " To " + to + " ( " + (to - fr) + " )\n";

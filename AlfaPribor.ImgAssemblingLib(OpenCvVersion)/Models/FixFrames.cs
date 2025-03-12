@@ -385,7 +385,11 @@ namespace ImgAssemblingLibOpenCV.Models
         }
 
         private Mat Rezult {  get; set; }   
-
+        /// <summary>
+        /// Редактирование изображения в зависимости от настроенных параметров
+        /// </summary>
+        /// <param name="img">Картинка для редактировани</param>
+        /// <returns></returns>
         private Mat EditImg(Mat img)
         {
             if (ImgFixingSettings.Zoom > 1)
@@ -409,7 +413,7 @@ namespace ImgAssemblingLibOpenCV.Models
             if (ImgFixingSettings.Distortion)
             {
                 double[] distCoeffs = new double[] { ImgFixingSettings.DistorSettings.A, ImgFixingSettings.DistorSettings.B, ImgFixingSettings.DistorSettings.C, ImgFixingSettings.DistorSettings.D, ImgFixingSettings.DistorSettings.E };
-                InputArray _cameraMatrix = InputArray.Create<double>(new double[,]
+                InputArray _cameraMatrix = InputArray.Create<double> (new double[,]
                     {
                         { ImgFixingSettings.DistorSettings.Sm11, ImgFixingSettings.DistorSettings.Sm12, ImgFixingSettings.DistorSettings.Sm13 },
                         { ImgFixingSettings.DistorSettings.Sm21, ImgFixingSettings.DistorSettings.Sm22, ImgFixingSettings.DistorSettings.Sm23 },
@@ -425,40 +429,15 @@ namespace ImgAssemblingLibOpenCV.Models
 
             if (ImgFixingSettings.CropAfterChkBox)
             {
-                //if (string.IsNullOrEmpty(XAfterTxtBox.Text)) dYAfterTxtBox.Text = "0";
-                //if (string.IsNullOrEmpty(YAfterTxtBox.Text)) dYAfterTxtBox.Text = "0";
-                //if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = Rezult.Width.ToString();
-                //if (string.IsNullOrEmpty(dXAfterTxtBox.Text)) dYAfterTxtBox.Text = Rezult.Width.ToString();
-
-                //int Y = 0, X = 0, dY = 0, dX = 0;
-                //Int32.TryParse(XAfterTxtBox.Text, out X);
-                //Int32.TryParse(YAfterTxtBox.Text, out Y);
-                //if (Y < 0) Y = 0; if (X < 0) X = 0;
-                //if (Y > Rezult.Width) Y = Rezult.Width / 2;
-                //if (X > Rezult.Height) X = Rezult.Height / 2;
-                //Int32.TryParse(dYAfterTxtBox.Text, out dY);
-                //Int32.TryParse(dXAfterTxtBox.Text, out dX);
-
-                //if (dY <= 0 || Y + dY > Rezult.Height) dY = Rezult.Height - Y;
-                //if (dX <= 0 || X + dX > Rezult.Width) dX = Rezult.Width - X;
-                //XAfterTxtBox.Text = X.ToString();
-                //YAfterTxtBox.Text = Y.ToString();
-                //dYAfterTxtBox.Text = dY.ToString();
-                //dXAfterTxtBox.Text = dX.ToString();
-
                 int Y = ImgFixingSettings.YAfter, X = ImgFixingSettings.XAfter, dY = ImgFixingSettings.DYAfter, dX = ImgFixingSettings.DXAfter;
-               // Int32.TryParse(XAfterTxtBox.Text, out X);
-                //Int32.TryParse(YAfterTxtBox.Text, out Y);
                 if (Y < 0) Y = 0; if (X < 0) X = 0;
                 if (Y > Rezult.Width) Y = Rezult.Width / 2;
                 if (X > Rezult.Height) X = Rezult.Height / 2;
-                //Int32.TryParse(dYAfterTxtBox.Text, out dY);
-                //Int32.TryParse(dXAfterTxtBox.Text, out dX);
 
                 if (dY <= 0 || Y + dY > Rezult.Height) dY = Rezult.Height - Y;
                 if (dX <= 0 || X + dX > Rezult.Width) dX = Rezult.Width - X;
-                ImgFixingSettings.YAfter = X;
-                ImgFixingSettings.XAfter = Y;
+                ImgFixingSettings.YAfter = Y;
+                ImgFixingSettings.XAfter = X;
                 ImgFixingSettings.DYAfter = dY;
                 ImgFixingSettings.DXAfter = dX;
 
@@ -468,7 +447,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 Rezult = new Mat(Rezult, rect);
             }
 
-            //if (ShowGridСhckBox.Checked)
             if (ImgFixingSettings.ShowGrid)
             {
                 int n = 6;
@@ -479,7 +457,6 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return Rezult;
         }
-
 
         public Point2d Point2fToPoint2d(Point2f point) => new Point2d((double)point.X, (double)point.Y);
         public Mat MatchPicBySift(Mat matSrc, Mat matTo)

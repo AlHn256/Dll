@@ -167,6 +167,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             DBtnUp.Enabled = block;
             DTxtBox.Enabled = block;
         }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Z) DistZero();
@@ -189,7 +190,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if (FileNumber > FileList.Count - 1) FileNumber = 0;
                 InputDirTxtBox.Text = Path.GetDirectoryName(FileList[FileNumber]);
                 InputFileTxtBox.Text = Path.GetFileName(FileList[FileNumber]);
-                //if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+                // if (AutoReloadChkBox.Checked) OpenCvReloadImg();
             }
 
             //if (AutoReloadChkBox.Checked) OpenCvReloadImg();
@@ -371,7 +372,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if (ImgFixingSettings.Zoom < 1) ImgFixingSettings.Zoom = 1;
             }
             ZoomLbl.Text = ImgFixingSettings.Zoom.ToString();
-            ZeroCropAfter(false);
+            ZeroCropAfter();
             SetSm13Sm23();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
@@ -416,6 +417,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             ATxtBox.Text = ImgFixingSettings.DistorSettings.A.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
+
         private void BTxtBox_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(BTxtBox.Text)) return;
@@ -652,7 +654,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Sm33TxtBox.Text = ImgFixingSettings.DistorSettings.Sm33.ToString();
 
             AutoReloadChkBox.Checked = AutoReloadSave;
-            ZeroCropAfter(true);
+            ZeroCropAfter();
         }
         private void SetSm13Sm23()
         {
@@ -661,36 +663,35 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             ImgFixingSettings.DistorSettings.Sm13 = MidleWidthPoint;
             ImgFixingSettings.DistorSettings.Sm23 = MidleHeightPoint;
         }
-        private void ZeroCropAfterBtn_Click(object sender, EventArgs e) => ZeroCropAfter(true);
-        private void ZeroCropAfter(bool ReloadImg = false)
+        private void ZeroCropAfterBtn_Click(object sender, EventArgs e) => ZeroCropAfter();
+        private void ZeroCropAfter()
         {
-            if (AutoReloadChkBox.Checked)
-            {
-                ImgFixingSettings.DXAfter = 10000;
-                ImgFixingSettings.DYAfter = 10000;
-                OpenCvReloadImg();
-            }
+            //if (AutoReloadChkBox.Checked)
+            //{
+            //    ImgFixingSettings.DXAfter = 10000;
+            //    ImgFixingSettings.DYAfter = 10000;
+            //    OpenCvReloadImg();
+            //}
 
-            if (FixFrames==null)return;
-            Bitmap OriginalFrame =  FixFrames.GetOriginalFrame();
-            Bitmap RezultFrame = FixFrames.GetRezult();
+            //if (FixFrames==null)return;
+            //Bitmap OriginalFrame =  FixFrames.GetOriginalFrame();
+            //Bitmap RezultFrame = FixFrames.GetRezult();
             //if (bitmap == null || bitmap.Width ==0|| bitmap.Height == 0) return;
 
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
+            XAfterTxtBox.Text =  "0";
+            YAfterTxtBox.Text =  "0";
+            dXAfterTxtBox.Text = "0";
+            dYAfterTxtBox.Text = "0";
 
-            ImgFixingSettings.XAfter = 0;
-            ImgFixingSettings.YAfter = 0;
-            ImgFixingSettings.DXAfter = RezultFrame.Width;
-            ImgFixingSettings.DYAfter = RezultFrame.Height;
+            //ImgFixingSettings.XAfter = 0;
+            //ImgFixingSettings.YAfter = 0;
+            //ImgFixingSettings.DXAfter = 0;
+            //ImgFixingSettings.DYAfter = 0;
 
-            XAfterTxtBox.Text = ImgFixingSettings.XAfter.ToString();
-            YAfterTxtBox.Text = ImgFixingSettings.YAfter.ToString();
-            dXAfterTxtBox.Text = ImgFixingSettings.DXAfter.ToString();
-            dYAfterTxtBox.Text = ImgFixingSettings.DYAfter.ToString();
-
-            AutoReloadChkBox.Checked = AutoReloadSave;
             //if (ReloadImg) OpenCvReloadImg();
+            AutoReloadChkBox.Checked = AutoReloadSave;
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private async void SaveAsBtn_Click(object sender, EventArgs e)
@@ -862,8 +863,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         //        DYAfter = dY
         //    };
         //}
-        private void RBtnUpDn_Click(object sender, EventArgs e) { Rotation90(false); ZeroCropAfter(true); SetSm13Sm23(); }
-        private void RBtnUp90_Click(object sender, EventArgs e) { Rotation90(true); ZeroCropAfter(true); SetSm13Sm23(); }
+        private void RBtnUpDn_Click(object sender, EventArgs e) { Rotation90(false); ZeroCropAfter(); SetSm13Sm23(); }
+        private void RBtnUp90_Click(object sender, EventArgs e) { Rotation90(true); ZeroCropAfter(); SetSm13Sm23(); }
         private void RBtnUp001_Click(object sender, EventArgs e) => Rotation(100);
         private void RBtnDn001_Click(object sender, EventArgs e) => Rotation(-100);
         private void RBtnUp01_Click(object sender, EventArgs e) => Rotation(10);
@@ -995,6 +996,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         // private void OpenCvReloadImg()=>pictureBox1.BackgroundImage = MatToBitmap(EditImg());
         private void OpenCvReloadImg()
         {
+            UpdateSettings();
             string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
             if (string.IsNullOrEmpty(file))
             {
@@ -1006,10 +1008,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 SetErr("File: " + file + " не найден");
                 return;
             }
+
             var bitmapFrame  = FixFrames.EditImg(ImgFixingSettings, file);
-            MidleWidthPoint = bitmapFrame.Width / 2;
-            MidleHeightPoint = bitmapFrame.Height / 2;
+
+            UpdateForm();
             pictureBox1.BackgroundImage = bitmapFrame;
+            MidleWidthPoint = bitmapFrame.Width/ 2;
+            MidleHeightPoint = bitmapFrame.Height/ 2;
         }
 
         public string GetImgFixingPlan() => ImgFixingPlan;

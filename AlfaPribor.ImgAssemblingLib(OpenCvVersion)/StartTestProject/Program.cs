@@ -1,4 +1,5 @@
 ﻿using ImgAssemblingLibOpenCV.AditionalForms;
+using StartTestProject.Forms;
 using System;
 using System.Windows.Forms;
 
@@ -15,7 +16,9 @@ namespace StartTestProject
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new HidenForm());
-            Application.Run(new DebugingForm());
+            //Application.Run(new DebugingForm());
+            //Application.Run(new TestingForm());
+            Application.Run(new AutoTest());
         }
     }
 }

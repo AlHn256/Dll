@@ -259,18 +259,6 @@ namespace ImgAssemblingLibOpenCV.Models
 
             if (!AssemblyPlan.BitMap)
             {
-                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Start File Name Checking ");
-                TriggerAddLog(AssemblingId + "   Start File Name Checking");
-                if (AssemblyPlan.FileNameCheck)
-                {
-                    var check = fileEdit.CheckFileName(AssemblyPlan.WorkingDirectory);
-                    if (check) { SendFinished(); AssemblyPlan.FileNameCheckRezult = "Выполнено."; }
-                    else { SendErr("Ошибка при проверке файлов в папке " + AssemblyPlan.WorkingDirectory); AssemblyPlan.FileNameCheckRezult = ErrText; }
-                }
-                else { SendSkipped(); AssemblyPlan.FileNameCheckRezult = "Этап пропущен!!!"; }
-                SendTime("   Time ", ts);
-                stopwatch.Restart();
-
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   File Name Fixing ");
                 TriggerAddLog(AssemblingId + " File Name Fixing");
                 if (AssemblyPlan.FileNameFixing)
@@ -489,18 +477,6 @@ namespace ImgAssemblingLibOpenCV.Models
 
             if (!AssemblyPlan.BitMap)
             {
-                if (contectIsOn) _context.Send(OnRTBAddInfo, "   Start File Name Checking ");
-                TriggerAddLog(AssemblingId+"   Start File Name Checking");
-                if (AssemblyPlan.FileNameCheck)
-                {
-                    var check = fileEdit.CheckFileName(AssemblyPlan.WorkingDirectory);
-                    if (check) { SendFinished(); AssemblyPlan.FileNameCheckRezult = "Выполнено."; }
-                    else { SendErr("Ошибка при проверке файлов в папке " + AssemblyPlan.WorkingDirectory); AssemblyPlan.FileNameCheckRezult = ErrText; }
-                }
-                else { SendSkipped(); AssemblyPlan.FileNameCheckRezult = "Этап пропущен!!!"; }
-                SendTime("   Time ", ts);
-                stopwatch.Restart();
-
                 if (contectIsOn) _context.Send(OnRTBAddInfo, "   File Name Fixing ");
                 TriggerAddLog(AssemblingId+" File Name Fixing");
                 if (AssemblyPlan.FileNameFixing)

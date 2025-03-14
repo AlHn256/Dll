@@ -701,7 +701,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             saveFileDialog.Filter = "Fixing img plan (*.oip)|*.oip|All files(*.*)|*.*";
             saveFileDialog.FilterIndex = 1;
             if (saveFileDialog.ShowDialog() == DialogResult.Cancel) return;
-            
             await SaveSetting(saveFileDialog.FileName);
         }
 
@@ -710,7 +709,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             try
             {
                 UpdateSettings();
-                if (await fileEdit.SaveJsonAsync(file, ImgFixingSettings)) RezultRTB.Text = "Settings save in " + file;
+                if (await fileEdit.SaveJsonAsync(file, ImgFixingSettings,true)) RezultRTB.Text = "Settings save in " + file;
+                ImgFixingPlan = file;
             }
             catch (Exception ex)
             {

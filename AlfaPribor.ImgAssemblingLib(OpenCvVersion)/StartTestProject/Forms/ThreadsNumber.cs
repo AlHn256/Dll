@@ -101,7 +101,7 @@ namespace StartTestProject.Forms
                     }
 
                     assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
-                    if (!fileEdit.SaveJson(file, assemblyPlan))
+                    if (!fileEdit.SaveJson(file, assemblyPlan,true))
                     {
                         string Err = "Ошибка при записи в файла:" + file;
                         if (fileEdit.IsErr) Err += ". " + fileEdit.ErrText;

@@ -100,6 +100,46 @@ namespace ImgAssemblingLibOpenCV.Models
                 SelectedFiles.Add(new SelectedFiles() { Id = i, Mat = mat });
             }
         }
+        
+        public StitchingBlock(Bitmap[] bitMapArray, int period)
+        {
+            if (bitMapArray == null || bitMapArray.Length == 0)
+            {
+                SetErr("Err StitchingBlock.bitMapArray = null || bitMapArray.Length = 0!!!");
+                return;
+            }
+
+            if (SelectedFiles == null) SelectedFiles = new List<SelectedFiles>();
+            else SelectedFiles.Clear();
+
+            int i = 0, Width = 0, Height = 0;
+            for (i = From; i < bitMapArray.Length; i = i + period)
+            {
+                Mat mat = BitmapConverter.ToMat(bitMapArray[i]);
+                if (i == 0)
+                {
+                    Width = mat.Width;
+                    Height = mat.Height;
+                }
+                else if (mat.Width == 0 || mat.Height == 0)
+                {
+                    SetErr("Err GetVectorList.один из параметров (Width\\Height) нулевой!!!\n", EnumErrCode.ZeroFile);
+                    return;
+                }
+                else if (mat.Width != Width || mat.Height != Height)
+                {
+                    SetErr("Err StitchingBlock.не совпадают параметры в одном из блоков mat.Width != Width || mat.Height != Height",EnumErrCode.ParametersDontMatch);
+                    return;
+                }
+
+                SelectedFiles.Add(new SelectedFiles() { Id = i, Mat = mat });
+            }
+
+            //Если нет последнего файла, добавляем его
+            //if (period > 1 && (To == 100 || To == fileList.Length) && SelectedFiles[SelectedFiles.Count - 1].FullName != fileList[fileList.Length - 1].FullName)
+            //    SelectedFiles.Add(new SelectedFiles() { Id = i, FullName = fileList[fileList.Length - 1].FullName });
+        }
+
         public StitchingBlock(AssemblyPlan assemblyPlan):this(assemblyPlan.StitchingDirectory, assemblyPlan.AdditionalFilter, assemblyPlan.Percent, assemblyPlan.From, assemblyPlan.To, assemblyPlan.Period, assemblyPlan.SelectSearchArea, assemblyPlan.MinHeight, assemblyPlan.MaxHeight, assemblyPlan.MinWight, assemblyPlan.MaxWight)
         { }
         public StitchingBlock(string file, bool additionalFilter,bool percent = true, int from = 0, int to = 100, int period = 1, bool selectSearchArea = false,float minHeight =0,float maxHeight = 0,float minWight=0,float maxWight=0)
@@ -196,6 +236,11 @@ namespace ImgAssemblingLibOpenCV.Models
 
         private bool СuttingOnChangDirection { get; set; } = false;
         private bool ResearchIsOn { get; set; } = true;
+
+        /// <summary>
+        /// Поиск ключевых точек на кадрах
+        /// </summary>
+        /// <param name="param">Параметр синхронизации</param>
         public void FindKeyPoints(object param)
         {
             StopProcess = false;
@@ -805,26 +850,24 @@ namespace ImgAssemblingLibOpenCV.Models
         /// </summary>
         /// <param name="file1">Картинка №1</param>
         /// <param name="file2">Картинка №2</param>
-        /// <param name="makeFotoRezult"></param>
-        /// <returns>Оприделяет нужно ли создавать изображение с найденными точками</returns>
+        /// <param name="makeFotoRezult">Определяет нужно ли создавать изображение с найденными точками</param>
+        /// <returns></returns>
         public List<Vector> GetVectorListStringVersion(string file1, string file2, bool makeFotoRezult = false) => GetVectorList(new Mat(file1), new Mat(file2), makeFotoRezult);
         /// <summary>
         /// Получаем список векторов смещения одной картинки относительно второй
-        /// Текстовая версия т.к. есть проблемы у перегрузки
         /// </summary>
         /// <param name="file1">Картинка №1</param>
         /// <param name="file2">Картинка №2</param>
-        /// <param name="makeFotoRezult"></param>
-        /// <returns>Оприделяет нужно ли создавать изображение с найденными точками</returns>
+        /// <param name="makeFotoRezult">Определяет нужно ли создавать изображение с найденными точками</param>
+        /// <returns></returns>
         public List<Vector> GetVectorList(string file1, string file2, bool makeFotoRezult = false) => GetVectorList(new Mat(file1), new Mat(file2), makeFotoRezult);
         /// <summary>
         /// Получаем список векторов смещения одной картинки относительно второй
-        /// Текстовая версия т.к. есть проблемы у перегрузки
         /// </summary>
         /// <param name="file1">Картинка №1</param>
         /// <param name="file2">Картинка №2</param>
-        /// <param name="makeFotoRezult"></param>
-        /// <returns>Оприделяет нужно ли создавать изображение с найденными точками</returns>
+        /// <param name="makeFotoRezult">Определяет нужно ли создавать изображение с найденными точками</param>
+        /// <returns></returns>
         public List<Vector> GetVectorList(Mat matSrc, Mat matTo, bool makeFotoRezult = false)
         {
             List<Vector> goodPointList = new List<Vector>();
@@ -1678,7 +1721,7 @@ namespace ImgAssemblingLibOpenCV.Models
             if (!Directory.Exists(MainDir)) return;
             StitchingPlan stitchingPlan = new StitchingPlan(MainDir, SelectedFiles, Direction);
             string saveFile = GetPlanName();
-            fileEdit.SaveJson(saveFile, stitchingPlan);
+            fileEdit.SaveJson(saveFile, stitchingPlan, true);
         }
 
         public bool DeletPlan()

@@ -65,6 +65,7 @@ namespace StartTestProject.Forms
             InitializeComponent();
             if (assemblyPlan == null) AssemblyPlan = new AssemblyPlan();
             AssemblyPlan = assemblyPlan;
+            if(!string.IsNullOrEmpty(assemblyPlan.ImgFixingPlan))DefoltImgFixingPlan=assemblyPlan.ImgFixingPlan;
             LoadSettings();
 
             WorkingDirectoryTxtBox.AllowDrop = true;
@@ -197,7 +198,7 @@ namespace StartTestProject.Forms
             AssemblyPlan.MillimetersInPixel = millimetersInPixel;
             AssemblyPlan.TimePerFrame = timePerFrame;
 
-            if (!string.IsNullOrEmpty(AssemblingFile)) fileEdit.SaveJson(AssemblingFile, AssemblyPlan);
+            if (!string.IsNullOrEmpty(AssemblingFile)) fileEdit.SaveJson(AssemblingFile, AssemblyPlan,true);
         }
 
         private void AutoChckBox_CheckedChanged(object sender, EventArgs e) => FixStitchingDirectoryTxtBox();
@@ -232,7 +233,7 @@ namespace StartTestProject.Forms
             if (new FileInfo(DefoltImgFixingPlan).Length == 0)
             {
                 ImgFixingSettings imgFixingSettings = new ImgFixingSettings();
-                fileEdit.SaveJson(DefoltImgFixingPlan, imgFixingSettings);
+                fileEdit.SaveJson(DefoltImgFixingPlan, imgFixingSettings, true);
             }
         }
 
@@ -272,7 +273,7 @@ namespace StartTestProject.Forms
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 UpdateAssemblyPlan();
-                if (fileEdit.SaveJson(saveFileDialog1.FileName, AssemblyPlan)) InfoLabel.Text = "File saved: " + saveFileDialog1.FileName;
+                if (fileEdit.SaveJson(saveFileDialog1.FileName, AssemblyPlan, true)) InfoLabel.Text = "File saved: " + saveFileDialog1.FileName;
                 else InfoLabel.Text = "Saving Err: " + saveFileDialog1.FileName + "!!!";
             }
         }
@@ -330,7 +331,11 @@ namespace StartTestProject.Forms
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK) ImgFixingPlanTxtBox.Text = openFileDialog.FileName;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    ImgFixingPlanTxtBox.Text = openFileDialog.FileName;
+                    AssemblyPlan.FixingImgDirectory = openFileDialog.FileName;
+                }
             }
         }
         private void LoadParametrsCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -509,6 +514,9 @@ namespace StartTestProject.Forms
 
             ImgFixingForm imgFixingForm = new ImgFixingForm(DefoltImgFixingPlan, AssemblyPlan.WorkingDirectory);
             imgFixingForm.ShowDialog();
+            if (AssemblyPlan == null) return;
+            AssemblyPlan.FixingImgDirectory = imgFixingForm.GetImgFixingPlan();
+            if(!string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory))ImgFixingPlanTxtBox.Text = AssemblyPlan.FixingImgDirectory;
         }
 
         private void AdditionalSettingsBtn_Click(object sender, EventArgs e)

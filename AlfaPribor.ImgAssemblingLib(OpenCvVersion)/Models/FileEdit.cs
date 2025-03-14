@@ -98,8 +98,7 @@ namespace ImgAssemblingLibOpenCV.Models
             if (obj == null || FiletoSave.Length == 0) return SetErr("Err AutoSave.obj == null || FiletoSave.Length == 0!!!");
             try
             {
-                foreach (string FtoSave in FiletoSave) 
-                    SaveJson<T>(FtoSave, obj);
+                foreach (string FtoSave in FiletoSave) SaveJson<T>(FtoSave, obj);
             }
             catch (Exception ex) 
             { 
@@ -481,11 +480,12 @@ namespace ImgAssemblingLibOpenCV.Models
 
         public string GetJsonDefoltSaveFile() => GetDefoltDirectory() + JsonSaveFile;
         public bool SaveJson<T>(T obj) => SaveJson<T>(GetJsonDefoltSaveFile(),obj);
-        public bool SaveJson<T>(string file, T obj)
+        public bool SaveJson<T>(string file, T obj, bool UsingNewline = false)
         {
             try
             {
-                SetFileString(file, JsonConvert.SerializeObject(obj));
+                string json = UsingNewline ? JsonConvert.SerializeObject(obj, Formatting.Indented) : JsonConvert.SerializeObject(obj);
+                SetFileString(file, json);
             }
             catch (IOException e)
             {
@@ -494,11 +494,12 @@ namespace ImgAssemblingLibOpenCV.Models
             return true;
         }
 
-        public async Task<bool> SaveJsonAsync<T>(string filename, T obj)
+        public async Task<bool> SaveJsonAsync<T>(string filename, T obj, bool UsingNewline = false)
         {
             try
             {
-                await SetFileStringAsync(filename, JsonConvert.SerializeObject(obj));
+                string json = UsingNewline ? JsonConvert.SerializeObject(obj, Formatting.Indented) : JsonConvert.SerializeObject(obj);
+                await SetFileStringAsync(filename, json);
                 return true;
             }
             catch (IOException e)

@@ -48,7 +48,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.SaveThisImgBtn = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imgFixingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFileCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deletePlanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteResultesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,7 +65,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.RndBtn = new System.Windows.Forms.Button();
             this.OpenDirDtn = new System.Windows.Forms.Button();
             this.UseBitmapChckBox = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.сохранитьОригиналToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.сохрнитьИзображениеВОкнеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_Display)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -185,7 +185,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // SaveBtn
             // 
-            this.SaveBtn.Location = new System.Drawing.Point(218, 47);
+            this.SaveBtn.Location = new System.Drawing.Point(157, 48);
             this.SaveBtn.Name = "SaveBtn";
             this.SaveBtn.Size = new System.Drawing.Size(45, 23);
             this.SaveBtn.TabIndex = 24;
@@ -227,7 +227,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // SaveThisImgBtn
             // 
-            this.SaveThisImgBtn.Location = new System.Drawing.Point(263, 47);
+            this.SaveThisImgBtn.Location = new System.Drawing.Point(202, 48);
             this.SaveThisImgBtn.Name = "SaveThisImgBtn";
             this.SaveThisImgBtn.Size = new System.Drawing.Size(32, 23);
             this.SaveThisImgBtn.TabIndex = 29;
@@ -249,7 +249,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // menuToolStripMenuItem
             // 
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.imgFixingToolStripMenuItem,
+            this.сохранитьОригиналToolStripMenuItem,
+            this.сохрнитьИзображениеВОкнеToolStripMenuItem,
             this.deleteFileCopyToolStripMenuItem,
             this.deletePlanToolStripMenuItem,
             this.deleteResultesToolStripMenuItem,
@@ -258,38 +259,31 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.menuToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.menuToolStripMenuItem.Text = "Menu";
             // 
-            // imgFixingToolStripMenuItem
-            // 
-            this.imgFixingToolStripMenuItem.Name = "imgFixingToolStripMenuItem";
-            this.imgFixingToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.imgFixingToolStripMenuItem.Text = "Исправление дисторсий";
-            this.imgFixingToolStripMenuItem.Click += new System.EventHandler(this.imgFixingToolStripMenuItem_Click);
-            // 
             // deleteFileCopyToolStripMenuItem
             // 
             this.deleteFileCopyToolStripMenuItem.Name = "deleteFileCopyToolStripMenuItem";
-            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.deleteFileCopyToolStripMenuItem.Text = "Bmp в Jpeg";
             this.deleteFileCopyToolStripMenuItem.Click += new System.EventHandler(this.deleteFileCopyToolStripMenuItem_Click);
             // 
             // deletePlanToolStripMenuItem
             // 
             this.deletePlanToolStripMenuItem.Name = "deletePlanToolStripMenuItem";
-            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.deletePlanToolStripMenuItem.Text = "Удалить план сборки";
             this.deletePlanToolStripMenuItem.Click += new System.EventHandler(this.deletePlanToolStripMenuItem_Click);
             // 
             // deleteResultesToolStripMenuItem
             // 
             this.deleteResultesToolStripMenuItem.Name = "deleteResultesToolStripMenuItem";
-            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.deleteResultesToolStripMenuItem.Text = "Удалить результаты";
             this.deleteResultesToolStripMenuItem.Click += new System.EventHandler(this.deleteResultesToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.exitToolStripMenuItem.Text = "Выход";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -355,7 +349,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // TestImgFixingBtn
             // 
-            this.TestImgFixingBtn.Location = new System.Drawing.Point(70, 47);
+            this.TestImgFixingBtn.Location = new System.Drawing.Point(9, 48);
             this.TestImgFixingBtn.Name = "TestImgFixingBtn";
             this.TestImgFixingBtn.Size = new System.Drawing.Size(60, 23);
             this.TestImgFixingBtn.TabIndex = 37;
@@ -365,7 +359,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // StitchingByPlanBtn
             // 
-            this.StitchingByPlanBtn.Location = new System.Drawing.Point(130, 47);
+            this.StitchingByPlanBtn.Location = new System.Drawing.Point(69, 48);
             this.StitchingByPlanBtn.Name = "StitchingByPlanBtn";
             this.StitchingByPlanBtn.Size = new System.Drawing.Size(88, 23);
             this.StitchingByPlanBtn.TabIndex = 38;
@@ -426,15 +420,17 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.UseBitmapChckBox.UseVisualStyleBackColor = true;
             this.UseBitmapChckBox.CheckedChanged += new System.EventHandler(this.UseBitmapChckBox_CheckedChanged);
             // 
-            // button1
+            // сохранитьОригиналToolStripMenuItem
             // 
-            this.button1.Location = new System.Drawing.Point(8, 47);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(57, 23);
-            this.button1.TabIndex = 45;
-            this.button1.Text = "Img fix";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.сохранитьОригиналToolStripMenuItem.Name = "сохранитьОригиналToolStripMenuItem";
+            this.сохранитьОригиналToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.сохранитьОригиналToolStripMenuItem.Text = "Сохранить оригинал";
+            // 
+            // сохрнитьИзображениеВОкнеToolStripMenuItem
+            // 
+            this.сохрнитьИзображениеВОкнеToolStripMenuItem.Name = "сохрнитьИзображениеВОкнеToolStripMenuItem";
+            this.сохрнитьИзображениеВОкнеToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.сохрнитьИзображениеВОкнеToolStripMenuItem.Text = "Сохрнить изображение в окне";
             // 
             // DebugingForm
             // 
@@ -442,7 +438,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1734, 802);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.UseBitmapChckBox);
             this.Controls.Add(this.OpenDirDtn);
             this.Controls.Add(this.RndBtn);
@@ -514,7 +509,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Label label1;
         private Label label5;
         private Label label6;
-        private ToolStripMenuItem imgFixingToolStripMenuItem;
         private ToolStripMenuItem deleteFileCopyToolStripMenuItem;
         private Button TestImgFixingBtn;
         private Button StitchingByPlanBtn;
@@ -524,6 +518,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Button Zoom1Btn;
         private Button OpenDirDtn;
         private CheckBox UseBitmapChckBox;
-        private Button button1;
+        private ToolStripMenuItem сохранитьОригиналToolStripMenuItem;
+        private ToolStripMenuItem сохрнитьИзображениеВОкнеToolStripMenuItem;
     }
 }

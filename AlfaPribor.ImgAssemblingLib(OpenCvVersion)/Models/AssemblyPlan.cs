@@ -17,25 +17,25 @@
         //public bool FileNameCheck { get; set; } = false; // Проверка и исправление имен файлов
         //public string FileNameCheckRezult { get; set; } = "Не выполнено!";
         public bool FileNameFixing { get; set; } = false;
-        public string FileNameFixingRezult { get; set; } = "Не выполнено!";
         /// <summary>
         /// Удаление дублирующихся изображений
         /// </summary>
         public bool DelFileCopy { get; set; } = true;
-        public string DelFileCopyRezult { get; set; } = "Не выполнено!";
+        
         /// <summary>
         /// Исправление избражений
         /// </summary>
         public bool FixImg { get; set; } = false; 
+        /// <summary>
+        /// Папка для исправленных кадров
+        /// </summary>
         public string FixingImgDirectory { get; set; } = string.Empty;
         public bool ChekFixImg { get; set; } = true;
-        public string ChekFixImgRezult { get; set; } = "Не выполнено!";
 
         /// <summary>
         /// Файл для загрузки параметров поумолчанию
         /// </summary>
         public string ImgFixingPlan { get; set; } = "imgFixingSettings.oip";
-        public string FixImgRezult { get; set; } = "Не выполнено!";
         /// <summary>
         /// Поиск ключевых точек
         /// </summary>
@@ -72,18 +72,18 @@
         /// Смещение линии сборки от центра картинки
         /// </summary>
         public int Delta { get; set; } = 0; 
+        /// <summary>
+        /// Поиск точек в заданном участке
+        /// </summary>
         public bool SelectSearchArea { get; set; } = false;
         public float MinHeight { get; set; } = 0;
         public float MaxHeight { get; set; } = 0;
         public float MinWight { get; set; } = 0;
         public float MaxWight { get; set; } = 0;
-        public string ChekStitchPlanRezult { get; set; } = "Не выполнено!";
-        public string FindKeyPointsRezult { get; set; } = "Не выполнено!";
         /// <summary>
         /// Подсчет скорости
         /// </summary>
         public bool SpeedCounting { get; set; } = false; 
-        public string SpeedCountingRezults { get; set; } = "Не выполнено!";
         public double Speed { get; set; } = -1;
         /// <summary>
         /// Количество мм в одном пикселе
@@ -97,12 +97,10 @@
         /// Склейка изображений
         /// </summary>
         public bool Stitch { get; set; } = true; 
-        public string StitchRezult { get; set; } = "Не выполнено!";
         /// <summary>
         /// Автосохранение результирующего изображения
         /// </summary>
         public bool SaveRezult { get; set; } = true;
-        public string RezultOfSavingRezults { get; set; } = "Не выполнено!";
         public const string defaultAssemblingFile = "NewAssemblyPlan.asp";
         /// <summary>
         /// Показать сохраненный файл ( работает только при включенном SaveRezults) 
@@ -114,17 +112,17 @@
         public bool AdditionalFilter { get; set; } = false;
         public void ResetRezults()
         {
-            //FileNameCheckRezult = "Не выполнено!";
-            FileNameFixingRezult = "Не выполнено!";
-            //DelFileCopyRezult = "Не выполнено!";
-            ChekFixImgRezult = "Не выполнено!";
-            FixImgRezult = "Не выполнено!";
-            ChekStitchPlanRezult = "Не выполнено!";
-            FindKeyPointsRezult = "Не выполнено!";
-            SpeedCountingRezults = "Не выполнено!";
             Speed = -1;
-            StitchRezult = "Не выполнено!";
-            RezultOfSavingRezults = "Не выполнено!";
+            //FileNameCheckRezult = "Не выполнено!";
+            //FileNameFixingRezult = "Не выполнено!";
+            //DelFileCopyRezult = "Не выполнено!";
+            //ChekFixImgRezult = "Не выполнено!";
+            //FixImgRezult = "Не выполнено!";
+            //ChekStitchPlanRezult = "Не выполнено!";
+            //FindKeyPointsRezult = "Не выполнено!";
+            //SpeedCountingRezults = "Не выполнено!";
+            //StitchRezult = "Не выполнено!";
+            //RezultOfSavingRezults = "Не выполнено!";
         }
     }
 }

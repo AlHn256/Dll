@@ -589,6 +589,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
         }
 
+        /// <summary>
+        /// Объединение двух кадров
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void JoinImgs(object sender, EventArgs e) => await JoinImgs();
 
         private async Task<bool> JoinImgs()
@@ -614,23 +619,20 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             assemblyPlan.BitMap = true;
             assemblyPlan.Stitch = true;
             assemblyPlan.FixImg = false;
+            assemblyPlan.ShowRezult = false;
             assemblyPlan.SaveImgFixingRezultToFile = true;
 
-            RTB.Text = "Join Imgs\n";
-            
+            RTB.Text = "Объединение кадров\n";
+
+
+            Assembling.ClearAll();
             Assembling.BitmapData = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile)};
             Assembling.ChangeAssemblyPlan(assemblyPlan);
 
-            //Bitmap[] dataArray = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
-            //Assembling assembling;
-            //assembling = new Assembling(assemblyPlan, dataArray, _context);
-            //assembling.SaveImgFixingRezultToFile = true;
-            //assembling.UpdateImg += worker_UpdateImg;
-            //assembling.RTBAddInfo += rtbText_AddInfo;
-
             if (await Assembling.StartAssemblingAsync())// Запуск сборки изображения
             {
-                RTB.Text += "Assembling is finished!";
+                worker_UpdateImg(Assembling.FinalRezult.BitRezult);
+                RTB.Text += "Сборка завершена!";
                 return true;
             }
             else
@@ -651,6 +653,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void rtbText_UpDateInfo(string text) => RTB.Text = text;
         private void worker_UpdateImg(Bitmap img)
         {
+            if (img == null) return;
             rezultImg = img;
             Size newSize = new Size((int)(img.Width * Zoom), (int)(img.Height * Zoom));
             picBox_Display.Image = new Bitmap(img, newSize);
@@ -712,6 +715,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 return true;
             }
         }
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)=>this.Close();
         private void deleteResultesToolStripMenuItem_Click(object sender, EventArgs e) => fileEdit.DeleteResultes("Result");
         private void deletePlanToolStripMenuItem_Click(object sender, EventArgs e)
@@ -719,7 +723,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             StitchingBlock stitchingBlock = new StitchingBlock(FileDirTxtBox.Text, false);
             if (stitchingBlock.DeletPlan()) RTB.Text = "Plan Deleted!\n";
         }
-        private async void deleteFileCopyToolStripMenuItem_Click(object sender, EventArgs e)
+        private void deleteFileCopyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FileInfo[] fileList = fileEdit.SearchFiles(Path.GetDirectoryName(FileDirTxtBox.Text));
             foreach(FileInfo file in fileList)
@@ -737,7 +741,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             else assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
 
             EditingStitchingPlan editingStitchingPlan = new EditingStitchingPlan(assemblyPlan);
-            editingStitchingPlan.SetDefoltPlan("D:\\Work\\C#\\Dll\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\Fosforit6.oip");
+
+            editingStitchingPlan.SetDefoltPlan(assemblyPlan.ImgFixingPlan);
+            //editingStitchingPlan.SetDefoltPlan("D:\\Work\\C#\\Dll\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\Fosforit6.oip");
 
             editingStitchingPlan.ShowDialog();
             if (editingStitchingPlan.PlanIsUpDate)
@@ -848,15 +854,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 label6.Visible = assemblyPlan.Percent;
             }
         }
-        private void ImgFix()
-        {
-            ImgFixingForm imgFixingForm = new ImgFixingForm(Path.GetDirectoryName(FileDirTxtBox.Text));
-            imgFixingForm.ShowDialog();
-            string ImgFixingPlan = imgFixingForm.GetImgFixingPlan();
-            if (!string.IsNullOrEmpty(ImgFixingPlan)) assemblyPlan.ImgFixingPlan = ImgFixingPlan;
-        }
-        private void button1_Click(object sender, EventArgs e) => ImgFix();
-        private void imgFixingToolStripMenuItem_Click(object sender, EventArgs e) => ImgFix();
+
         private void UseBitmapChckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (assemblyPlan != null) assemblyPlan.BitMap = UseBitmapChckBox.Checked;
@@ -900,27 +898,28 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 //Assembling.SaveImgFixingRezultToFile = SavingImgWBitmapChckBox.Checked;
             }
 
-
             assemblyPlan.SpeedCounting = false;
             if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
 
             Assembling.ChangeAssemblyPlan(assemblyPlan);
-            FinalResult ruzult = await Assembling.TryAssembleAsync();
-            if (ruzult.IsErr)
+            await Assembling.TryAssembleAsync();
+            if (Assembling.FinalRezult.IsErr)
             {
                 RTB.Text += Assembling.ErrText;
                 _Log.DebugPrint(Assembling.ErrText);
             }
             else
             {
-                RTB.Text += "Assembling is finished!";
-                _Log.DebugPrint("Assembling is finished!");
+                RTB.Text += "Сборка завершена!";
+                _Log.DebugPrint("Сборка завершена!");
             }
-            picBox_Display.Image = ruzult.BitRezult;
+
+            worker_UpdateImg(Assembling.FinalRezult.BitRezult);
             //var sdf = Assembling.GetRezultImg();
 
-            return !ruzult.IsErr;
+            return !Assembling.FinalRezult.IsErr;
         }
+
         private async void GetSpeedBtn_Click(object sender, EventArgs e)
         {
             if(string.IsNullOrEmpty(FileDirTxtBox.Text))

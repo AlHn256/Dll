@@ -209,7 +209,7 @@ namespace StartTestProject.Forms
             // ChekStitchPlanСhckBox
             // 
             this.ChekStitchPlanСhckBox.AutoSize = true;
-            this.ChekStitchPlanСhckBox.Location = new System.Drawing.Point(138, 130);
+            this.ChekStitchPlanСhckBox.Location = new System.Drawing.Point(157, 130);
             this.ChekStitchPlanСhckBox.Name = "ChekStitchPlanСhckBox";
             this.ChekStitchPlanСhckBox.Size = new System.Drawing.Size(152, 17);
             this.ChekStitchPlanСhckBox.TabIndex = 19;
@@ -430,7 +430,7 @@ namespace StartTestProject.Forms
             // AdditionalFilterChckBox
             // 
             this.AdditionalFilterChckBox.AutoSize = true;
-            this.AdditionalFilterChckBox.Location = new System.Drawing.Point(297, 130);
+            this.AdditionalFilterChckBox.Location = new System.Drawing.Point(316, 130);
             this.AdditionalFilterChckBox.Name = "AdditionalFilterChckBox";
             this.AdditionalFilterChckBox.Size = new System.Drawing.Size(106, 17);
             this.AdditionalFilterChckBox.TabIndex = 59;

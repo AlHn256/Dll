@@ -98,6 +98,10 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.diminish0СhсkBox = new System.Windows.Forms.CheckBox();
+            this.diminish1СhсkBox = new System.Windows.Forms.CheckBox();
+            this.diminish2СhсkBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -377,9 +381,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // ApplyBtn
             // 
             this.ApplyBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyBtn.Location = new System.Drawing.Point(1111, 623);
+            this.ApplyBtn.Location = new System.Drawing.Point(1112, 684);
             this.ApplyBtn.Name = "ApplyBtn";
-            this.ApplyBtn.Size = new System.Drawing.Size(123, 36);
+            this.ApplyBtn.Size = new System.Drawing.Size(123, 26);
             this.ApplyBtn.TabIndex = 48;
             this.ApplyBtn.Text = "Применить";
             this.ApplyBtn.UseVisualStyleBackColor = true;
@@ -388,9 +392,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RezultRTB
             // 
             this.RezultRTB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.RezultRTB.Location = new System.Drawing.Point(1113, 721);
+            this.RezultRTB.Location = new System.Drawing.Point(1113, 758);
             this.RezultRTB.Name = "RezultRTB";
-            this.RezultRTB.Size = new System.Drawing.Size(121, 109);
+            this.RezultRTB.Size = new System.Drawing.Size(121, 72);
             this.RezultRTB.TabIndex = 49;
             this.RezultRTB.Text = "";
             this.RezultRTB.TextChanged += new System.EventHandler(this.RezultRTB_TextChanged);
@@ -513,9 +517,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // SaveAsBtn
             // 
             this.SaveAsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveAsBtn.Location = new System.Drawing.Point(1111, 665);
+            this.SaveAsBtn.Location = new System.Drawing.Point(1113, 716);
             this.SaveAsBtn.Name = "SaveAsBtn";
-            this.SaveAsBtn.Size = new System.Drawing.Size(53, 50);
+            this.SaveAsBtn.Size = new System.Drawing.Size(53, 36);
             this.SaveAsBtn.TabIndex = 65;
             this.SaveAsBtn.Text = "Сохранить";
             this.SaveAsBtn.UseVisualStyleBackColor = true;
@@ -524,9 +528,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // LoadFrBtn
             // 
             this.LoadFrBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.LoadFrBtn.Location = new System.Drawing.Point(1181, 665);
+            this.LoadFrBtn.Location = new System.Drawing.Point(1183, 716);
             this.LoadFrBtn.Name = "LoadFrBtn";
-            this.LoadFrBtn.Size = new System.Drawing.Size(53, 50);
+            this.LoadFrBtn.Size = new System.Drawing.Size(53, 36);
             this.LoadFrBtn.TabIndex = 66;
             this.LoadFrBtn.Text = "Загрузить";
             this.LoadFrBtn.UseVisualStyleBackColor = true;
@@ -534,7 +538,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // ShowGridСhckBox
             // 
-            this.ShowGridСhckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShowGridСhckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ShowGridСhckBox.AutoSize = true;
             this.ShowGridСhckBox.Location = new System.Drawing.Point(1113, 603);
             this.ShowGridСhckBox.Name = "ShowGridСhckBox";
@@ -577,7 +581,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // AutoReloadChkBox
             // 
-            this.AutoReloadChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AutoReloadChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AutoReloadChkBox.AutoSize = true;
             this.AutoReloadChkBox.Location = new System.Drawing.Point(1113, 581);
             this.AutoReloadChkBox.Name = "AutoReloadChkBox";
@@ -593,6 +597,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm11TxtBox.Name = "Sm11TxtBox";
             this.Sm11TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm11TxtBox.TabIndex = 73;
+            this.Sm11TxtBox.TextChanged += new System.EventHandler(this.Sm11TxtBox_TextChanged);
             // 
             // Sm12TxtBox
             // 
@@ -601,6 +606,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm12TxtBox.Name = "Sm12TxtBox";
             this.Sm12TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm12TxtBox.TabIndex = 74;
+            this.Sm12TxtBox.TextChanged += new System.EventHandler(this.Sm12TxtBox_TextChanged);
             // 
             // Sm13TxtBox
             // 
@@ -609,6 +615,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm13TxtBox.Name = "Sm13TxtBox";
             this.Sm13TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm13TxtBox.TabIndex = 75;
+            this.Sm13TxtBox.TextChanged += new System.EventHandler(this.Sm13TxtBox_TextChanged);
             // 
             // Sm23TxtBox
             // 
@@ -617,6 +624,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm23TxtBox.Name = "Sm23TxtBox";
             this.Sm23TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm23TxtBox.TabIndex = 78;
+            this.Sm23TxtBox.TextChanged += new System.EventHandler(this.Sm23TxtBox_TextChanged);
             // 
             // Sm22TxtBox
             // 
@@ -625,6 +633,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm22TxtBox.Name = "Sm22TxtBox";
             this.Sm22TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm22TxtBox.TabIndex = 77;
+            this.Sm22TxtBox.TextChanged += new System.EventHandler(this.Sm22TxtBox_TextChanged);
             // 
             // Sm21TxtBox
             // 
@@ -633,6 +642,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm21TxtBox.Name = "Sm21TxtBox";
             this.Sm21TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm21TxtBox.TabIndex = 76;
+            this.Sm21TxtBox.TextChanged += new System.EventHandler(this.Sm21TxtBox_TextChanged);
             // 
             // Sm33TxtBox
             // 
@@ -641,6 +651,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm33TxtBox.Name = "Sm33TxtBox";
             this.Sm33TxtBox.Size = new System.Drawing.Size(42, 20);
             this.Sm33TxtBox.TabIndex = 81;
+            this.Sm33TxtBox.TextChanged += new System.EventHandler(this.Sm33TxtBox_TextChanged);
             // 
             // Sm32TxtBox
             // 
@@ -649,6 +660,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm32TxtBox.Name = "Sm32TxtBox";
             this.Sm32TxtBox.Size = new System.Drawing.Size(43, 20);
             this.Sm32TxtBox.TabIndex = 80;
+            this.Sm32TxtBox.TextChanged += new System.EventHandler(this.Sm32TxtBox_TextChanged);
             // 
             // Sm31TxtBox
             // 
@@ -657,6 +669,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Sm31TxtBox.Name = "Sm31TxtBox";
             this.Sm31TxtBox.Size = new System.Drawing.Size(46, 20);
             this.Sm31TxtBox.TabIndex = 79;
+            this.Sm31TxtBox.TextChanged += new System.EventHandler(this.Sm31TxtBox_TextChanged);
             // 
             // ZeroCropAfterBtn
             // 
@@ -709,7 +722,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label13.Location = new System.Drawing.Point(1107, 341);
+            this.label13.Location = new System.Drawing.Point(1106, 341);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(138, 19);
             this.label13.TabIndex = 84;
@@ -720,7 +733,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label5.Location = new System.Drawing.Point(1130, 56);
+            this.label5.Location = new System.Drawing.Point(1130, 57);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(93, 19);
             this.label5.TabIndex = 88;
@@ -763,7 +776,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.BlackWhiteChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BlackWhiteChkBox.AutoSize = true;
-            this.BlackWhiteChkBox.Location = new System.Drawing.Point(1119, 32);
+            this.BlackWhiteChkBox.Location = new System.Drawing.Point(1120, 31);
             this.BlackWhiteChkBox.Name = "BlackWhiteChkBox";
             this.BlackWhiteChkBox.Size = new System.Drawing.Size(15, 14);
             this.BlackWhiteChkBox.TabIndex = 93;
@@ -797,17 +810,71 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.label8.Location = new System.Drawing.Point(1140, 28);
+            this.label8.Location = new System.Drawing.Point(1141, 27);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(70, 19);
             this.label8.TabIndex = 95;
             this.label8.Text = " режима";
+            // 
+            // label9
+            // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.label9.Location = new System.Drawing.Point(1112, 624);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(127, 19);
+            this.label9.TabIndex = 96;
+            this.label9.Text = "Уменьшить кадр";
+            // 
+            // diminish0СhсkBox
+            // 
+            this.diminish0СhсkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.diminish0СhсkBox.AutoSize = true;
+            this.diminish0СhсkBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.diminish0СhсkBox.Location = new System.Drawing.Point(1107, 649);
+            this.diminish0СhсkBox.Name = "diminish0СhсkBox";
+            this.diminish0СhсkBox.Size = new System.Drawing.Size(53, 19);
+            this.diminish0СhсkBox.TabIndex = 97;
+            this.diminish0СhсkBox.Text = "х1.5";
+            this.diminish0СhсkBox.UseVisualStyleBackColor = true;
+            this.diminish0СhсkBox.CheckedChanged += new System.EventHandler(this.diminish2СhсkBox_CheckedChanged);
+            // 
+            // diminish1СhсkBox
+            // 
+            this.diminish1СhсkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.diminish1СhсkBox.AutoSize = true;
+            this.diminish1СhсkBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.diminish1СhсkBox.Location = new System.Drawing.Point(1156, 649);
+            this.diminish1СhсkBox.Name = "diminish1СhсkBox";
+            this.diminish1СhсkBox.Size = new System.Drawing.Size(41, 19);
+            this.diminish1СhсkBox.TabIndex = 98;
+            this.diminish1СhсkBox.Text = "х2";
+            this.diminish1СhсkBox.UseVisualStyleBackColor = true;
+            this.diminish1СhсkBox.CheckedChanged += new System.EventHandler(this.diminish3СhсkBox_CheckedChanged);
+            // 
+            // diminish2СhсkBox
+            // 
+            this.diminish2СhсkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.diminish2СhсkBox.AutoSize = true;
+            this.diminish2СhсkBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.diminish2СhсkBox.Location = new System.Drawing.Point(1196, 649);
+            this.diminish2СhсkBox.Name = "diminish2СhсkBox";
+            this.diminish2СhсkBox.Size = new System.Drawing.Size(53, 19);
+            this.diminish2СhсkBox.TabIndex = 99;
+            this.diminish2СhсkBox.Text = "х2.5";
+            this.diminish2СhсkBox.UseVisualStyleBackColor = true;
+            this.diminish2СhсkBox.CheckedChanged += new System.EventHandler(this.diminish4СhсkBox_CheckedChanged);
             // 
             // ImgFixingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1243, 869);
+            this.Controls.Add(this.diminish2СhсkBox);
+            this.Controls.Add(this.diminish1СhсkBox);
+            this.Controls.Add(this.diminish0СhсkBox);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.BlackWhiteChkBox);
@@ -956,5 +1023,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Label label6;
         private Label label7;
         private Label label8;
+        private Label label9;
+        private CheckBox diminish0СhсkBox;
+        private CheckBox diminish1СhсkBox;
+        private CheckBox diminish2СhсkBox;
     }
 }

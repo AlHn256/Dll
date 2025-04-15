@@ -3,7 +3,7 @@
     /// <summary>
     /// Класс для создания планов сборки
     /// </summary>
-    public class AssemblyPlan  
+    public class AssemblyPlan
     {
         /// <summary>
         /// Работаем не через файлы, а через массивы Bitmapов
@@ -21,11 +21,11 @@
         /// Удаление дублирующихся изображений
         /// </summary>
         public bool DelFileCopy { get; set; } = true;
-        
+
         /// <summary>
         /// Исправление избражений
         /// </summary>
-        public bool FixImg { get; set; } = false; 
+        public bool FixImg { get; set; } = false;
         /// <summary>
         /// Папка для исправленных кадров
         /// </summary>
@@ -55,11 +55,11 @@
         /// <summary>
         /// Период с которым берутся кадры
         /// </summary>
-        public int Period { get; set; } = 1; 
+        public int Period { get; set; } = 1;
         /// <summary>
         /// Номер кадра с которого начинается сборка
         /// </summary>
-        public int From { get; set; } = 0; 
+        public int From { get; set; } = 0;
         /// <summary>
         /// Номер кадра на котором зканчивается сборка
         /// </summary>
@@ -67,11 +67,11 @@
         /// <summary>
         /// Определяет в чем работают параметры From и To в роцентах или номерах кадров
         /// </summary>
-        public bool Percent { get; set; } = true; 
+        public bool Percent { get; set; } = true;
         /// <summary>
         /// Смещение линии сборки от центра картинки
         /// </summary>
-        public int Delta { get; set; } = 0; 
+        public int Delta { get; set; } = 0;
         /// <summary>
         /// Поиск точек в заданном участке
         /// </summary>
@@ -83,12 +83,12 @@
         /// <summary>
         /// Подсчет скорости
         /// </summary>
-        public bool SpeedCounting { get; set; } = false; 
+        public bool SpeedCounting { get; set; } = false;
         public double Speed { get; set; } = -1;
         /// <summary>
         /// Количество мм в одном пикселе
         /// </summary>
-        public double MillimetersInPixel { get; set; } = 5.5; 
+        public double MillimetersInPixel { get; set; } = 5.5;
         /// <summary>
         /// Милисекунд в одном кадре
         /// </summary>
@@ -96,7 +96,7 @@
         /// <summary>
         /// Склейка изображений
         /// </summary>
-        public bool Stitch { get; set; } = true; 
+        public bool Stitch { get; set; } = true;
         /// <summary>
         /// Автосохранение результирующего изображения
         /// </summary>

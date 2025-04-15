@@ -85,6 +85,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 assemblyPlan = new AssemblyPlan();
             }
 
+            if(false) FixImgChckBox.Enabled = true;
+
             if (fileEdit.IsDirectory(FirstFile))GetImgFiles(new string[] { FirstFile });
             LoadFileList(FirstFile);
             ShowLoadedImgs();
@@ -194,72 +196,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         }
         protected bool GetImgFiles(string[] files)
         {
-            //bool IsFirst = true;
-            //string serchingDir = string.Empty;
-            //if (files == null || files.Length == 0) return false;
-            //if (files.Length == 1 && !string.IsNullOrEmpty(files[0]))
-            //{
-            //    serchingDir = files[0];
-            //    if (!fileEdit.ChkFileDir(serchingDir))
-            //    {
-            //        RTB.Text = "Err File\\Dir not found!!!";
-            //        return false;
-            //    }
-
-            //    if (fileEdit.IsDirectory(serchingDir))
-            //    {
-            //        FileInfo[] fileInfo = fileEdit.SearchFiles(serchingDir);
-            //        if (fileInfo.Length > 1)
-            //        {
-            //            FirstFile = fileInfo[0].FullName;
-            //            FileDirTxtBox.Text = fileInfo[0].FullName;
-            //            SecondFile = fileInfo[1].FullName;
-            //        }
-            //        else if (fileInfo.Length == 1)
-            //        {
-            //            if (IsFirst)
-            //            {
-
-            //                FirstFile = fileInfo[0].FullName;
-            //                FileDirTxtBox.Text = fileInfo[0].FullName;
-            //            }
-            //            else SecondFile = fileInfo[0].FullName;
-            //            IsFirst = !IsFirst;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        serchingDir = Path.GetDirectoryName(serchingDir);
-            //        if (IsFirst)
-            //        {
-
-            //            FirstFile = serchingDir;
-            //            FileDirTxtBox.Text = serchingDir;
-            //        }
-            //        else SecondFile = serchingDir;
-            //        IsFirst = !IsFirst;
-            //    }
-            //}
-
-            //if (files.Length > 1)
-            //{
-            //    serchingDir = Path.GetDirectoryName(files[0]);
-            //    FirstFile = files[0];
-            //    FileDirTxtBox.Text = files[0];
-            //    SecondFile = files[1];
-            //}
-
-
             if (files == null || files.Length == 0) return false;
 
             if (files.Length == 2)
             {
-                //serchingDir = Path.GetDirectoryName(files[0]);
                 FirstFile = files[0];
                 SecondFile = files[1];
                 LoadFileList(FirstFile);
-                
-                //return true;
             }
             else
             {
@@ -267,21 +210,15 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 LoadFileList(files[0]);
                 if (FileList.Count > 1)
                 {
-
                     FirstFile = FileList[0];
                     SecondFile = FileList[1];
                 }
             }
 
-            //if (!string.IsNullOrEmpty(serchingDir))LoadFileList(serchingDir);
-
             if (!string.IsNullOrEmpty(FirstFile))
             {
                 FileDirTxtBox.Text = FirstFile;
                 assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FirstFile);
-
-                //if (fileEdit.IsDirectory(FirstFile)) assemblyPlan.WorkingDirectory = FirstFile;
-                //else assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FirstFile);
 
                 if (assemblyPlan.FixImg)
                 {
@@ -291,9 +228,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 }
                 else assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
             }
-
-            //ShowLoadeImgs();
-            //Assembling.DelRezultImg(null);
 
             return true;
         }
@@ -492,37 +426,37 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
         private void picBox_Display_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-            {
-                Xdn = e.X;
-                Ydn = e.Y;
-                RTB.Text = "Dn X " + Xdn + " Y " + Ydn;
-            }
-            else
-            {
-                SelectSearchArea = false;
-                ShowLoadedImgs();
-            }
+            //if (e.Button == MouseButtons.Right)
+            //{
+            //    Xdn = e.X;
+            //    Ydn = e.Y;
+            //    RTB.Text = "Dn X " + Xdn + " Y " + Ydn;
+            //}
+            //else
+            //{
+            //    SelectSearchArea = false;
+            //    ShowLoadedImgs();
+            //}
         }
 
         private void picBox_Display_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-            {
-                Xup = e.X;
-                Yup = e.Y;
-                //RTB.Text += " Up X " + Xup + " Y " + Yup + "\n";
+            //if (e.Button == MouseButtons.Right)
+            //{
+            //    Xup = e.X;
+            //    Yup = e.Y;
+            //    //RTB.Text += " Up X " + Xup + " Y " + Yup + "\n";
 
-                int dX = Math.Abs(Xdn - Xup);
-                int dY = Math.Abs(Ydn - Yup);
-                var Delta = Math.Sqrt(dY * dY + dX * dX);
+            //    int dX = Math.Abs(Xdn - Xup);
+            //    int dY = Math.Abs(Ydn - Yup);
+            //    var Delta = Math.Sqrt(dY * dY + dX * dX);
 
-                SelectSearchArea = true;
-                MinWight = (int)(Xdn / Zoom); MinHeight = (int)(Ydn / Zoom);
-                MaxWight = (int)(Xup / Zoom); MaxHeight = (int)(Yup / Zoom);
+            //    SelectSearchArea = true;
+            //    MinWight = (int)(Xdn / Zoom); MinHeight = (int)(Ydn / Zoom);
+            //    MaxWight = (int)(Xup / Zoom); MaxHeight = (int)(Yup / Zoom);
 
-                ShowLoadedImgs();
-            }
+            //    ShowLoadedImgs();
+            //}
         }
         
         private void ShowLoadedImgs()
@@ -539,16 +473,20 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if (prevFirstFile != FirstFile || prevSecondFile != SecondFile)
                 {
                     if (FixingFrames != null) FixingFrames.ChangeFrames(FirstFile, SecondFile);
-                    else FixingFrames = new FixFrames(FirstFile, SecondFile);
+                    else FixingFrames = new FixFrames(FirstFile, SecondFile, false);
                 }
 
                 FixingFrames.ChangeSettings(new ImgFixingSettings { Zoom = Zoom });
                 prevFirstFile = FirstFile; prevSecondFile = SecondFile;
 
                 picBox_Display.Image = null;
-                //if(fixFrames.StitchImg()) picBox_Display.BackgroundImage = fixFrames.GetRezult();
-                //if(FixingFrames.StitchTwoImg()) picBox_Display.Image = FixingFrames.GetOriginalFrame();
-                if (FixingFrames.StitchTwoImg()) picBox_Display.Image = FixingFrames.GetRezult();
+
+                if (FixingFrames.StitchTwoImg())
+                {
+                    var img = FixingFrames.GetRezult();
+                    if(img!=null && img.Width !=0 && img.Height!=0) worker_UpdateImg(img);
+                    picBox_Display.Image = FixingFrames.GetRezult();
+                }
                 else RTB.Text = FixingFrames.ErrText;
             }
             else
@@ -614,6 +552,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 return false;
             }
 
+            RTB.Text = "Объединение кадров\n" + Path.GetFileName(FirstFile) + " - " + Path.GetFileName(SecondFile) + "\n";
+            if (FirstFile == SecondFile)
+            {
+                RTB.Text += " - Copy!";
+                return false;
+            }
+
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
             LoadBoders();
             assemblyPlan.BitMap = true;
@@ -621,9 +566,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             assemblyPlan.FixImg = false;
             assemblyPlan.ShowRezult = false;
             assemblyPlan.SaveImgFixingRezultToFile = true;
-
-            RTB.Text = "Объединение кадров\n";
-
+            assemblyPlan.Period = 1;
+            PeriodTxtBox.Text = "1";
 
             Assembling.ClearAll();
             Assembling.BitmapData = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile)};
@@ -691,18 +635,10 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             StitchingBlock.StopProcess = true;
             ImgFixingForm.StopProcess = true;
         }
-        private void SaveThisImgBtn_Click(object sender, EventArgs e) => SaveImg(false);
-        private void SaveBtn_Click(object sender, EventArgs e) => SaveImg();
         private bool SaveImg(bool usinOSV = true)
         {
             fileEdit.ClearInformation();
             string fileName = string.Empty;
-            //if (usinOSV)
-            //{
-            //    Mat rezultImg = Assembling.GetRezultImg();
-            //    fileName = fileEdit.SaveImg(rezultImg);
-            //}
-            //else fileName = fileEdit.SaveImg(null, picBox_Display.Image);
 
             if (string.IsNullOrEmpty(fileName))
             {
@@ -741,14 +677,10 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             else assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
 
             EditingStitchingPlan editingStitchingPlan = new EditingStitchingPlan(assemblyPlan);
-
             editingStitchingPlan.SetDefoltPlan(assemblyPlan.ImgFixingPlan);
-            //editingStitchingPlan.SetDefoltPlan("D:\\Work\\C#\\Dll\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\Fosforit6.oip");
-
             editingStitchingPlan.ShowDialog();
             if (editingStitchingPlan.PlanIsUpDate)
             {
-                // assemblyPlan = editingStitchingPlan.GetAssemblingPlan();
                 if (assemblyPlan == null) return;
 
                 if (assemblyPlan.DefaultParameters)
@@ -804,7 +736,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
             assemblyPlan.Delta = Delta;
         }
-
+        /// <summary>
+        /// Проверка верно ли указаны проценты
+        /// </summary>
         private bool CheckPercents()
         {
             if (assemblyPlan == null) return false;
@@ -824,7 +758,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void UpDateFrom()
         {
             if (assemblyPlan == null) return;
-            //assemblyPlan.DefaultParameters = false;
             int from = 0;
             Int32.TryParse(FromTxtBox.Text, out from);
             FromTxtBox.Text = from.ToString();
@@ -833,18 +766,47 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void UpDateTo()
         {
             if (assemblyPlan == null) return;
-            //assemblyPlan.DefaultParameters = false;
             int to = 100;
             Int32.TryParse(ToTxtBox.Text, out to);
             ToTxtBox.Text = to.ToString();
             assemblyPlan.To = to;
         }
+        /// <summary>
+        /// Включение\отклучение процентного счетчика
+        /// </summary>
         private void label6_Click(object sender, EventArgs e) => PersentInvok();
+        /// <summary>
+        /// Включение\отклучение процентного счетчика
+        /// </summary>
         private void label5_Click(object sender, EventArgs e) => PersentInvok();
+        /// <summary>
+        /// Включение\отклучение процентного счетчика при нажатии в определенную область
+        /// </summary>
         private void MainForm_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.X > 550 && e.X < 566 && e.Y > -15 && e.Y < 80) PersentInvok();
         }
+
+        /// <summary>
+        /// Сохранить результат
+        /// </summary>
+        private void SaveOriginalToolStripMenuItem_Click(object sender, EventArgs e) => SaveImg();
+        /// <summary>
+        /// Сохранить результат из окна
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveWindowImgToolStripMenuItem_Click(object sender, EventArgs e)=>SaveImg(false);
+
+        private void FixImgChckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if(assemblyPlan==null) return;
+            assemblyPlan.FixImg = FixImgChckBox.Checked;
+        }
+
+        /// <summary>
+        /// Смена счетчика кадров с колличественного на процентный
+        /// </summary>
         private void PersentInvok()
         {
             if (assemblyPlan != null)
@@ -902,6 +864,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
 
             Assembling.ChangeAssemblyPlan(assemblyPlan);
+            
             await Assembling.TryAssembleAsync();
             if (Assembling.FinalRezult.IsErr)
             {

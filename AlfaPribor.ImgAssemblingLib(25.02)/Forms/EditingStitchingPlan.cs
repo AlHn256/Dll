@@ -36,8 +36,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         {
             InitializeComponent();
 
-            
-
             if (string.IsNullOrEmpty(assemblingFile))
             {
                 SetErr("Err EditingStitchingPlan.AssemblingFile IsNullOrEmpty!!!");

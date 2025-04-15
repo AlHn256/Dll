@@ -468,7 +468,7 @@ namespace StartTestProject.Forms
                 DefaultParametersCheckBox.Enabled = true;
             }
             SavingImgWBitmapChckBox.Enabled = BitMapChckBox.Checked;
-            PeriodTxtBox.Enabled = !BitMapChckBox.Checked;
+            //PeriodTxtBox.Enabled = !BitMapChckBox.Checked;
             FromTxtBox.Enabled = !BitMapChckBox.Checked;
             ToTxtBox.Enabled = !BitMapChckBox.Checked;
 
@@ -476,7 +476,7 @@ namespace StartTestProject.Forms
             label2.Enabled = !BitMapChckBox.Checked;
             label5.Enabled = !BitMapChckBox.Checked;
             label6.Enabled = !BitMapChckBox.Checked;
-            label7.Enabled = !BitMapChckBox.Checked;
+            //label7.Enabled = !BitMapChckBox.Checked;
 
             FrLb.Enabled = !BitMapChckBox.Checked;
             ToLb.Enabled = !BitMapChckBox.Checked;

@@ -11,20 +11,21 @@ namespace ImgAssemblingLibOpenCV.Models
 {
     public class FixFrames
     {
-        private bool SaveRezultToFile;
-        private string SavingRezultDir;
-        public ImgFixingSettings ImgFixingSettings = new ImgFixingSettings();
         private const string imgDefoltFixingFile = "imgFixingSettings.oip";
-        private string ImgFixingPlan = imgDefoltFixingFile;
+        private string ImgFixingPlan = imgDefoltFixingFile; // Файл с настройками коректировки
+        public ImgFixingSettings ImgFixingSettings = new ImgFixingSettings();  // Настройки для коректировки кадров
         private FileEdit fileEdit = new FileEdit(new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" });
         public event Action<int> ProcessChanged;
         public event Action<string> TextChanged;
-        public bool IsErr { get; set; } = false;
-        public List<string> ErrList { get; set; } = new List<string>();
-        public string ErrText { get; set; } = string.Empty;
-        private Mat OriginalFrame { get; set; }
-        private Mat FixingFrame1 { get; set; }
-        private Mat FixingFrame2 { get; set; }
+        public bool IsErr { get; set; } = false; // Флаг ошибки
+        public List<string> ErrList { get; set; } = new List<string>(); // Список ошибок
+        public string ErrText { get; set; } = string.Empty; // Текст последней ошибки
+        private Mat FixingFrame1 { get; set; } // Фрагмент первого кадра для склейки
+        private Mat FixingFrame2 { get; set; } // Фрагмент второго кадра для склейки
+        private List<string> FileList = new List<string>(); // Список кадров
+        private Mat Rezult { get; set; }
+        private bool SaveRezultToFile; // Метка сохранения результатов
+        private string SavingRezultDir; // Папка для сохранения результатов
 
         public FixFrames()
         {
@@ -48,15 +49,28 @@ namespace ImgAssemblingLibOpenCV.Models
         }
 
         /// <summary>
-        /// 
+        /// Конструктор для склейки изображений из директории
         /// </summary>
         /// <param name="imgFixingSettings">Настройки по которым коректируктся фрагмент</param>
-        /// <param name="file">Фрагмент для корректировки</param>
-        public FixFrames(ImgFixingSettings imgFixingSettings, string file)
+        /// <param name="dir">Директория с кадрами</param>
+        public FixFrames(ImgFixingSettings imgFixingSettings, string directory)
         {
             ImgFixingSettings = imgFixingSettings;
             TryReadSettings();
-            LoadImg(file);
+            LoadImg(directory);
+        }
+
+        /// <summary>
+        /// Конструктор для работы с дополнительным окном
+        /// </summary>
+        /// <param name="imgFixingPlan"></param>
+        /// <param name="directory"></param>
+        public FixFrames(string imgFixingPlan, string directory)
+        {
+
+            if (!string.IsNullOrEmpty(imgFixingPlan)) ImgFixingPlan = imgFixingPlan;
+            if (!string.IsNullOrEmpty(ImgFixingPlan)) TryReadSettings();
+            LoadFileList(directory);
         }
 
         /// <summary>
@@ -64,10 +78,37 @@ namespace ImgAssemblingLibOpenCV.Models
         /// </summary>
         /// <param name="imgFixingPlan">Файл с планом корректировки</param>
         /// <param name="file">Фрагмент для корректировки</param>
-        public FixFrames(string file1, string file2)
+        /// <param name="parm">Параметр нужен что бы отличать конструкторы</param>
+        public FixFrames(string file1, string file2, bool parm)
         {
             FixingFrame1 = new Mat(file1);
             FixingFrame2 = new Mat(file2);
+        }
+
+        /// <summary>
+        /// Загрузка списка кадров из папки
+        /// </summary>
+        /// <param name="serchingDir"></param>
+        /// <returns></returns>
+        private bool LoadFileList(string serchingDir)
+        {
+            if (string.IsNullOrEmpty(serchingDir))return false;
+            var list = fileEdit.SearchFiles(serchingDir);
+            FileList = list.Select(f => f.FullName).ToList();
+            return true;
+        }
+        /// <summary>
+        /// Загрузка одного кадра из файла
+        /// </summary>
+        /// <param name="file">Файл с кадром</param>
+        /// <returns></returns>
+        public bool LoadImg(string file)
+        {
+            if (string.IsNullOrEmpty(file)) return SetErr("File IsNullOrEmpty");
+            if (!File.Exists(file)) return SetErr("File: " + file + " не найден");
+            FixingFrame1 = EditImg(Cv2.ImRead(file));
+
+            return ChkFixingFrame1();
         }
 
         public void ChangeFirstFrame(string file1) => FixingFrame1 = new Mat(file1);
@@ -119,8 +160,6 @@ namespace ImgAssemblingLibOpenCV.Models
             Cv2.Resize(Rezult, Rezult, new OpenCvSharp.Size((int)(Rezult.Width * ImgFixingSettings.Zoom), (int)(Rezult.Height * ImgFixingSettings.Zoom)));
             return true;
         }
-
-        public Bitmap GetOriginalFrame() => BitmapConverter.ToBitmap(FixingFrame1);
         public Bitmap GetRezult() => BitmapConverter.ToBitmap(Rezult);
         private bool SetErr(string errText)
         {
@@ -137,6 +176,10 @@ namespace ImgAssemblingLibOpenCV.Models
         {
             if (TextChanged != null) TextChanged((string)txt);
         }
+        /// <summary>
+        /// Загрузка настроек коректировки
+        /// </summary>
+        /// <param name="loadingFile">Файл с настройками</param>
         public void TryReadSettings(string loadingFile = null)
         {
             if (File.Exists(ImgFixingPlan) || File.Exists(loadingFile))
@@ -150,9 +193,7 @@ namespace ImgAssemblingLibOpenCV.Models
             {
                 try
                 {
-                    //ImgFixingSettings imgFixingSettings;
                     fileEdit.LoadeJson(loadingFile, out ImgFixingSettings);
-                    //SetImgFixingSettings(imgFixingSettings);
                 }
                 catch (IOException e)
                 {
@@ -161,88 +202,6 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             else SetErr("Err TryReadSettings.файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
         }
-
-        //private void SetImgFixingSettingsWD(ImgFixingSettings imgFixingSettings) // для старых версий загрузка плана без настроек дисторсии
-        //{
-        //    ImgFixingSettings = imgFixingSettings;
-
-        //    //bool AutoReloadSave = AutoReloadChkBox.Checked;
-        //    //AutoReloadChkBox.Checked = false;
-        //    //DistChkBox.Checked = false;
-
-        //    //if (imgFixingSettings.Zoom < 1) imgFixingSettings.Zoom = 1;
-        //    //Zoom = imgFixingSettings.Zoom;
-        //    //ZoomLbl.Text = imgFixingSettings.Zoom.ToString();
-        //    //rotation90 = imgFixingSettings.Rotation90;
-        //    //BlackWhiteChkBox.Checked = imgFixingSettings.BlackWhiteMode;
-        //    //CropAfterChkBox.Checked = imgFixingSettings.CropAfterChkBox;
-        //    //XAfterTxtBox.Text = imgFixingSettings.XAfter.ToString();
-        //    //YAfterTxtBox.Text = imgFixingSettings.YAfter.ToString();
-        //    //dXAfterTxtBox.Text = imgFixingSettings.DXAfter.ToString();
-        //    //dYAfterTxtBox.Text = imgFixingSettings.DYAfter.ToString();
-        //    //AutoReloadChkBox.Checked = AutoReloadSave;
-        //}
-        private ImgFixingSettings GetImgFixingSettings() => ImgFixingSettings; // Получить текущие настройки
-        
-        //private ImgFixingSettings GetImgFixingSettings()
-        //{
-        //    DistorSettings distorSettings = new DistorSettings()
-        //    {
-        //        A = A,
-        //        B = B,
-        //        C = C,
-        //        D = D,
-        //        E = E,
-        //        Sm11 = Sm11,
-        //        Sm12 = Sm12,
-        //        Sm13 = Sm13,
-        //        Sm21 = Sm21,
-        //        Sm22 = Sm22,
-        //        Sm23 = Sm23,
-        //        Sm31 = Sm31,
-        //        Sm32 = Sm32,
-        //        Sm33 = Sm33,
-        //    };
-
-        //    int Y = 0, X = 0, dY = 0, dX = 0;
-        //    Int32.TryParse(XAfterTxtBox.Text, out X);
-        //    Int32.TryParse(YAfterTxtBox.Text, out Y);
-        //    Int32.TryParse(dYAfterTxtBox.Text, out dY);
-        //    Int32.TryParse(dXAfterTxtBox.Text, out dX);
-        //    XAfterTxtBox.Text = X.ToString();
-        //    YAfterTxtBox.Text = Y.ToString();
-        //    dYAfterTxtBox.Text = dY.ToString();
-        //    dXAfterTxtBox.Text = dX.ToString();
-
-        //    return new ImgFixingSettings
-        //    {
-        //        Dir = InputDirTxtBox.Text,
-        //        File = InputFileTxtBox.Text,
-        //        Rotation90 = rotation90,
-        //        Zoom = Zoom,
-        //        BlackWhiteMode = BlackWhiteChkBox.Checked,
-
-        //        Distortion = DistChkBox.Checked,
-        //        DistorSettings = distorSettings,
-
-        //        CropAfterChkBox = CropAfterChkBox.Checked,
-        //        XAfter = X,
-        //        YAfter = Y,
-        //        DXAfter = dX,
-        //        DYAfter = dY
-        //    };
-        //}
-        //private Mat EditImg(string file = "")
-        //{
-        //    //if (string.IsNullOrEmpty(file) && !string.IsNullOrEmpty(InputDirTxtBox.Text) && !string.IsNullOrEmpty(InputFileTxtBox.Text))
-        //    //    file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
-        //    if (!File.Exists(file))
-        //    {
-        //        SetErr("Err File: " + file + " не найден!!!");
-        //        return new Mat();
-        //    }
-        //    return EditImg(Cv2.ImRead(file));
-        //}
 
         /// <summary>
         /// Исправление дисторсии и сохранение кадров в отдельную папку
@@ -253,30 +212,39 @@ namespace ImgAssemblingLibOpenCV.Models
         public bool FixImges(object param, string outputDir = "")
         {
             SynchronizationContext context = (SynchronizationContext)param;
+            if(ImgFixingSettings == null) return false;
+            
+            ImgFixingSettings.ShowGrid = false;
+            if (string.IsNullOrEmpty(outputDir))
+            {
+                if (!Directory.Exists(SavingRezultDir)) return false;
+                SavingRezultDir = outputDir;
+            }
 
-            //ShowGridСhckBox.Checked = false;
-            //if (string.IsNullOrEmpty(outputDir))
-            //{
-            //    if (!Directory.Exists(InputDirTxtBox.Text)) return false;
-            //    outputDir = OutputDirTxtBox.Text;
-            //}
+            if (FileList == null) return SetErr("FixImges.FileList == null");
+            if (FileList.Count == 0) return SetErr("FileList.Count == 0");
+            if(!fileEdit.ChkDir(outputDir)) return SetErr("Папка для сохранения результатов"+ outputDir+" не создана");
 
-            //if (!fileEdit.ChkDir(outputDir)) return false;
-            //FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
-
-            //if (fileList == null) return SetErr("ERR FixImges.fileList == null !!!");
-            //for (int i = 0; i < fileList.Length; i++)
-            //{
-            //    string outputFileNumber = outputDir + Path.DirectorySeparatorChar + fileList[i].Name;
-            //    EditImg(fileList[i].FullName).Save(outputFileNumber);
-            //    context.Send(OnProgressChanged, i * 100 / fileList.Length);
-            //    context.Send(OnTextChanged, "Imges Fixing " + i * 100 / fileList.Length + " %");
-            //}
+            int FileListCount = FileList.Count();
+            for (int i = 0; i < FileListCount; i++)
+            {
+                string outputFile = outputDir + Path.DirectorySeparatorChar + Path.GetFileName(FileList[i]);
+                EditImg(FileList[i]).Save(outputFile);
+                context.Send(OnProgressChanged, i * 100 / FileListCount);
+                context.Send(OnTextChanged, "Imges Fixing " + i * 100 / FileListCount + " %");
+            }
 
             context.Send(OnProgressChanged, 100);
             context.Send(OnTextChanged, "Imges Fixing 100 %");
             return IsErr;
         }
+
+        /// <summary>
+        /// Коректировка кадров из массива
+        /// </summary>
+        /// <param name="param">Контекст синхронизации</param>
+        /// <param name="dataArray">Массив кадров для коректировки</param>
+        /// <returns></returns>
 
         public Bitmap[] FixImges(object param, Bitmap[] dataArray)
         {
@@ -288,7 +256,7 @@ namespace ImgAssemblingLibOpenCV.Models
 
             bool sinchoniztioIsOn = param == null ? false : true;
             SynchronizationContext context = (SynchronizationContext)param;
-            //ShowGridСhckBox.Checked = false;
+            
             bool fileSaving = false;
             if (SaveRezultToFile)
             {
@@ -322,14 +290,6 @@ namespace ImgAssemblingLibOpenCV.Models
             return bitMapList.ToArray();
         }
 
-        public bool LoadImg(string file)
-        {
-            if (string.IsNullOrEmpty(file)) return SetErr("File IsNullOrEmpty");
-            if (!File.Exists(file)) return SetErr("File: " + file + " не найден");
-            FixingFrame1 = EditImg(Cv2.ImRead(file));
-
-            return ChkFixingFrame1();
-        }
         public Bitmap EditImg(Bitmap bitmap)
         {
             if (bitmap == null)
@@ -372,19 +332,35 @@ namespace ImgAssemblingLibOpenCV.Models
             return MatToBitmap(mat);
         }
 
-        public bool CheckFixingImg(string imgFixingDir = "")
+        public bool CheckFixingImg(string inputDir, string outputDir)
         {
-            return false;
-            //if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
-            //if (!Directory.Exists(imgFixingDir)) return false;
+            if (string.IsNullOrEmpty(outputDir)) return SetErr("outputDir IsNullOrEmpty");
+            if (string.IsNullOrEmpty(inputDir)) return SetErr("inputDir IsNullOrEmpty");
+            if (!Directory.Exists(inputDir)) return SetErr("inputDir " + inputDir + " !Exists");
+            if (!Directory.Exists(outputDir)) return SetErr("outputDir " + outputDir + " !Exists");
 
-            //FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            //for (int i = 0; i < fileList.Length; i++)
-            //    if (!File.Exists(imgFixingDir + Path.DirectorySeparatorChar + fileList[i].Name)) return false;
-            //return true;
+            FileInfo[] inputFileList = fileEdit.SearchFiles(inputDir);
+            FileInfo[] outputFileList = fileEdit.SearchFiles(outputDir);
+
+            if (inputFileList.Count() != outputFileList.Count()) return false;
+
+            for (int i = 0; i < inputFileList.Length; i++)
+                if (!File.Exists(outputDir + Path.DirectorySeparatorChar + inputFileList[i].Name)) return false;
+            return true;
         }
 
-        private Mat Rezult {  get; set; }   
+        public bool CheckFixingImg(string outputDir)
+        {
+            
+            if (string.IsNullOrEmpty(outputDir)) return SetErr("outputDir IsNullOrEmpty");
+            if (!Directory.Exists(outputDir)) return SetErr("outputDir "+ outputDir + " !Exists");
+
+            FileInfo[] fileList = fileEdit.SearchFiles(outputDir);
+            for (int i = 0; i < fileList.Length; i++)
+                if (!File.Exists(outputDir + Path.DirectorySeparatorChar + fileList[i].Name)) return false;
+            return true;
+        }
+
         /// <summary>
         /// Редактирование изображения в зависимости от настроенных параметров
         /// </summary>
@@ -392,6 +368,10 @@ namespace ImgAssemblingLibOpenCV.Models
         /// <returns></returns>
         private Mat EditImg(Mat img)
         {
+            if (Rezult == null) Rezult = new Mat();
+
+            if(ImgFixingSettings.Diminish!=1) Cv2.Resize(img, img, new OpenCvSharp.Size(img.Width / ImgFixingSettings.Diminish, img.Height / ImgFixingSettings.Diminish));
+
             if (ImgFixingSettings.Zoom > 1)
             {
                 int Width = img.Width, Height = img.Height, x1 = (int)(Width * (ImgFixingSettings.Zoom - 1) / 2), y1 = (int)(Height * (ImgFixingSettings.Zoom - 1) / 2);
@@ -409,11 +389,11 @@ namespace ImgAssemblingLibOpenCV.Models
             else if (ImgFixingSettings.Rotation90 == 3) Cv2.Rotate(img, img, RotateFlags.Rotate90Counterclockwise);
 
             if (Rezult == null) Rezult = new Mat();
-            
+
             if (ImgFixingSettings.Distortion)
             {
                 double[] distCoeffs = new double[] { ImgFixingSettings.DistorSettings.A, ImgFixingSettings.DistorSettings.B, ImgFixingSettings.DistorSettings.C, ImgFixingSettings.DistorSettings.D, ImgFixingSettings.DistorSettings.E };
-                InputArray _cameraMatrix = InputArray.Create<double> (new double[,]
+                InputArray _cameraMatrix = InputArray.Create<double>(new double[,]
                     {
                         { ImgFixingSettings.DistorSettings.Sm11, ImgFixingSettings.DistorSettings.Sm12, ImgFixingSettings.DistorSettings.Sm13 },
                         { ImgFixingSettings.DistorSettings.Sm21, ImgFixingSettings.DistorSettings.Sm22, ImgFixingSettings.DistorSettings.Sm23 },
@@ -455,6 +435,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 Cv2.Line(Rezult, 0, Rezult.Height / n, Rezult.Width, Rezult.Height / n, Scalar.Red, 1);
                 Cv2.Line(Rezult, 0, Rezult.Height - Rezult.Height / n, Rezult.Width, Rezult.Height - Rezult.Height / n, Scalar.Red, 1);
             }
+
             return Rezult;
         }
 

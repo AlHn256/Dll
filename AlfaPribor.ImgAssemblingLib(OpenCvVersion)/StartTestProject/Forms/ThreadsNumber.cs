@@ -19,10 +19,11 @@ namespace StartTestProject.Forms
         public event Action<string> AddErrEvent;
         public event Action<string> AddLogEvent;
         public void TriggerAddLog(object txt) => AddLogEvent?.Invoke((string)txt);
-        public void TriggerAddErr(object txt) => AddLogEvent?.Invoke((string)txt);
+        public void TriggerAddErr(object txt) => AddErrEvent?.Invoke((string)txt);
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
         public List<string> ErrList { get; set; }
+        private List<string> messagList = new List<string>();
         public ThreadsNumber(int threads = 1)
         {
             InitializeComponent();
@@ -98,6 +99,20 @@ namespace StartTestProject.Forms
                         if (i == 11) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\941_1_1AutoOut";
                         if (i == 12) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\941_1_1JPG";
                         if (i == 13) assemblyPlan.WorkingDirectory = "E:\\ImageArchive\\941_1_1AutoJPG";
+                        if (i == 14) assemblyPlan.WorkingDirectory = "D:\\Panorama\\Test\\11954\\0";
+                        if (i == 15) assemblyPlan.WorkingDirectory = "D:\\Panorama\\Test\\11954\\4";
+                        if (i == 16) assemblyPlan.WorkingDirectory = "D:\\Panorama\\Test\\11954\\7";
+                        if (i == 17) assemblyPlan.WorkingDirectory = "D:\\Panorama\\Test\\12076\\0";
+                        if (i == 18) assemblyPlan.WorkingDirectory = "D:\\Panorama\\Test\\12085\\0";
+                        if (i == 19) assemblyPlan.WorkingDirectory = "D:\\Panorama\\Test\\12085\\1";
+                        if(i>13&&i<20)
+                        {
+                            assemblyPlan.FixImg = true;
+                            assemblyPlan.ShowRezult = true;
+                            string cam_id = Convert.ToString(assemblyPlan.WorkingDirectory.ElementAt(assemblyPlan.WorkingDirectory.Length - 1));
+                            
+                            assemblyPlan.ImgFixingPlan = "D:\\Work\\C#\\Dll\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\bin\\Debug\\14067_" + cam_id + "x2.5+D.oip";
+                        }
                     }
 
                     assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
@@ -198,8 +213,12 @@ namespace StartTestProject.Forms
                 }
             }
         }
+
+
+        List<string> StGramm = new List<string>();
         private async Task<bool> StartAssembling(string AssemlingFile)
         {
+            ClearErr();
             try
             {
                 Assembling assembling = new Assembling(AssemlingFile);
@@ -216,10 +235,42 @@ namespace StartTestProject.Forms
                 if (assembling.IsErr) return SetErr(assembling.ErrText);
 
                 FinalResult finalResult = await assembling.TryAssembleAsync();
-                if (finalResult.IsErr) return SetErr(assembling.ErrText);
+                if (finalResult.IsErr)
+                {
+                    StGramm.Add(AssemlingFile +" - "+assembling.ErrText);
+                    messagList.Add("Err " + assembling.ErrText);
+                    SetErr(assembling.ErrText);
+                }
+                else
+                {
+                    StGramm.Add(AssemlingFile + " - Rezult saved to " + assembling.GetRezultFileName());
+                    messagList.Add("Rezult saved to " + assembling.GetRezultFileName());
+                    ShowMessage("Rezult saved to " + assembling.GetRezultFileName());
+                }
             }
             catch (Exception ex) { return SetErr(ex.Message); }
+
+            StGramm.Clear();   
+            ClearErr();
+            //var sdf = StGramm;
             return true;
+        }
+
+        private void ClearErr()
+        {
+            Label label;
+            List<Control> controlList = new List<Control>();
+            foreach (Control c in this.Controls) controlList.Add(c);
+            foreach (Control c in controlList)
+                if (c is Label)
+                {
+                    label = (Label)c;
+                    if (label.Name == "ErrLab")
+                    {
+                        label.Text = string.Empty;
+                        return;
+                    }
+                }
         }
 
         private Bitmap[] LoadeBitmap(string file, int N = 0)

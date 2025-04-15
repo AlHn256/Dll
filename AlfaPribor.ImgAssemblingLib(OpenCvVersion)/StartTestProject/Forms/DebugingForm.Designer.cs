@@ -41,13 +41,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.ShowPointsBtn = new System.Windows.Forms.Button();
             this.StitchImgsBtn = new System.Windows.Forms.Button();
             this.AllPointsChkBox = new System.Windows.Forms.CheckBox();
-            this.SaveBtn = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.StopBtn = new System.Windows.Forms.Button();
             this.progressBarLabel = new System.Windows.Forms.Label();
-            this.SaveThisImgBtn = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveOriginalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveWindowImgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFileCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deletePlanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteResultesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,8 +65,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.RndBtn = new System.Windows.Forms.Button();
             this.OpenDirDtn = new System.Windows.Forms.Button();
             this.UseBitmapChckBox = new System.Windows.Forms.CheckBox();
-            this.сохранитьОригиналToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.сохрнитьИзображениеВОкнеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FixImgChckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_Display)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -85,23 +84,25 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // TestBtn
             // 
             this.TestBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.TestBtn.Location = new System.Drawing.Point(1643, 49);
+            this.TestBtn.Location = new System.Drawing.Point(1690, 49);
             this.TestBtn.Name = "TestBtn";
-            this.TestBtn.Size = new System.Drawing.Size(82, 23);
+            this.TestBtn.Size = new System.Drawing.Size(35, 23);
             this.TestBtn.TabIndex = 3;
             this.TestBtn.Text = "Match Pic By Sift";
             this.TestBtn.UseVisualStyleBackColor = true;
+            this.TestBtn.Visible = false;
             this.TestBtn.Click += new System.EventHandler(this.TestBtn_Click);
             // 
             // Test2Btn
             // 
             this.Test2Btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Test2Btn.Location = new System.Drawing.Point(1643, 26);
+            this.Test2Btn.Location = new System.Drawing.Point(1674, 26);
             this.Test2Btn.Name = "Test2Btn";
-            this.Test2Btn.Size = new System.Drawing.Size(82, 21);
+            this.Test2Btn.Size = new System.Drawing.Size(51, 21);
             this.Test2Btn.TabIndex = 4;
             this.Test2Btn.Text = "Match Pic v2";
             this.Test2Btn.UseVisualStyleBackColor = true;
+            this.Test2Btn.Visible = false;
             // 
             // PeriodTxtBox
             // 
@@ -134,17 +135,17 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.Location = new System.Drawing.Point(301, 50);
+            this.label4.Location = new System.Drawing.Point(92, 54);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(40, 15);
+            this.label4.Size = new System.Drawing.Size(82, 15);
             this.label4.TabIndex = 14;
-            this.label4.Text = "Zoom";
+            this.label4.Text = "Увеличение";
             // 
             // ZoomLabel
             // 
             this.ZoomLabel.AutoSize = true;
             this.ZoomLabel.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ZoomLabel.Location = new System.Drawing.Point(340, 51);
+            this.ZoomLabel.Location = new System.Drawing.Point(193, 54);
             this.ZoomLabel.Name = "ZoomLabel";
             this.ZoomLabel.Size = new System.Drawing.Size(13, 15);
             this.ZoomLabel.TabIndex = 15;
@@ -153,22 +154,22 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // ShowPointsBtn
             // 
             this.ShowPointsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShowPointsBtn.Location = new System.Drawing.Point(1566, 26);
+            this.ShowPointsBtn.Location = new System.Drawing.Point(1458, 26);
             this.ShowPointsBtn.Name = "ShowPointsBtn";
-            this.ShowPointsBtn.Size = new System.Drawing.Size(74, 21);
+            this.ShowPointsBtn.Size = new System.Drawing.Size(159, 21);
             this.ShowPointsBtn.TabIndex = 16;
-            this.ShowPointsBtn.Text = "Show Points";
+            this.ShowPointsBtn.Text = "Показать точки";
             this.ShowPointsBtn.UseVisualStyleBackColor = true;
             this.ShowPointsBtn.Click += new System.EventHandler(this.ShowPointsBtn_Click);
             // 
             // StitchImgsBtn
             // 
             this.StitchImgsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.StitchImgsBtn.Location = new System.Drawing.Point(1566, 49);
+            this.StitchImgsBtn.Location = new System.Drawing.Point(1458, 49);
             this.StitchImgsBtn.Name = "StitchImgsBtn";
-            this.StitchImgsBtn.Size = new System.Drawing.Size(74, 23);
+            this.StitchImgsBtn.Size = new System.Drawing.Size(159, 23);
             this.StitchImgsBtn.TabIndex = 22;
-            this.StitchImgsBtn.Text = "Join Imgs";
+            this.StitchImgsBtn.Text = "Объеденить изображения";
             this.StitchImgsBtn.UseVisualStyleBackColor = true;
             this.StitchImgsBtn.Click += new System.EventHandler(this.JoinImgs);
             // 
@@ -176,22 +177,12 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.AllPointsChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AllPointsChkBox.AutoSize = true;
-            this.AllPointsChkBox.Location = new System.Drawing.Point(1460, 30);
+            this.AllPointsChkBox.Location = new System.Drawing.Point(1629, 28);
             this.AllPointsChkBox.Name = "AllPointsChkBox";
-            this.AllPointsChkBox.Size = new System.Drawing.Size(69, 17);
+            this.AllPointsChkBox.Size = new System.Drawing.Size(76, 17);
             this.AllPointsChkBox.TabIndex = 23;
-            this.AllPointsChkBox.Text = "All Points";
+            this.AllPointsChkBox.Text = "Все точки";
             this.AllPointsChkBox.UseVisualStyleBackColor = true;
-            // 
-            // SaveBtn
-            // 
-            this.SaveBtn.Location = new System.Drawing.Point(157, 48);
-            this.SaveBtn.Name = "SaveBtn";
-            this.SaveBtn.Size = new System.Drawing.Size(45, 23);
-            this.SaveBtn.TabIndex = 24;
-            this.SaveBtn.Text = "Save Rezult";
-            this.SaveBtn.UseVisualStyleBackColor = true;
-            this.SaveBtn.Click += new System.EventHandler(this.SaveBtn_Click);
             // 
             // progressBar
             // 
@@ -225,16 +216,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.progressBarLabel.TabIndex = 28;
             this.progressBarLabel.Text = "Point";
             // 
-            // SaveThisImgBtn
-            // 
-            this.SaveThisImgBtn.Location = new System.Drawing.Point(202, 48);
-            this.SaveThisImgBtn.Name = "SaveThisImgBtn";
-            this.SaveThisImgBtn.Size = new System.Drawing.Size(32, 23);
-            this.SaveThisImgBtn.TabIndex = 29;
-            this.SaveThisImgBtn.Text = "this";
-            this.SaveThisImgBtn.UseVisualStyleBackColor = true;
-            this.SaveThisImgBtn.Click += new System.EventHandler(this.SaveThisImgBtn_Click);
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -249,8 +230,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // menuToolStripMenuItem
             // 
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.сохранитьОригиналToolStripMenuItem,
-            this.сохрнитьИзображениеВОкнеToolStripMenuItem,
+            this.SaveOriginalToolStripMenuItem,
+            this.SaveWindowImgToolStripMenuItem,
             this.deleteFileCopyToolStripMenuItem,
             this.deletePlanToolStripMenuItem,
             this.deleteResultesToolStripMenuItem,
@@ -259,31 +240,45 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.menuToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.menuToolStripMenuItem.Text = "Menu";
             // 
+            // SaveOriginalToolStripMenuItem
+            // 
+            this.SaveOriginalToolStripMenuItem.Name = "SaveOriginalToolStripMenuItem";
+            this.SaveOriginalToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.SaveOriginalToolStripMenuItem.Text = "Сохранить оригинал";
+            this.SaveOriginalToolStripMenuItem.Click += new System.EventHandler(this.SaveOriginalToolStripMenuItem_Click);
+            // 
+            // SaveWindowImgToolStripMenuItem
+            // 
+            this.SaveWindowImgToolStripMenuItem.Name = "SaveWindowImgToolStripMenuItem";
+            this.SaveWindowImgToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.SaveWindowImgToolStripMenuItem.Text = "Сохрнить изображение в окне";
+            this.SaveWindowImgToolStripMenuItem.Click += new System.EventHandler(this.SaveWindowImgToolStripMenuItem_Click);
+            // 
             // deleteFileCopyToolStripMenuItem
             // 
             this.deleteFileCopyToolStripMenuItem.Name = "deleteFileCopyToolStripMenuItem";
-            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.deleteFileCopyToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.deleteFileCopyToolStripMenuItem.Text = "Bmp в Jpeg";
             this.deleteFileCopyToolStripMenuItem.Click += new System.EventHandler(this.deleteFileCopyToolStripMenuItem_Click);
             // 
             // deletePlanToolStripMenuItem
             // 
             this.deletePlanToolStripMenuItem.Name = "deletePlanToolStripMenuItem";
-            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.deletePlanToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.deletePlanToolStripMenuItem.Text = "Удалить план сборки";
             this.deletePlanToolStripMenuItem.Click += new System.EventHandler(this.deletePlanToolStripMenuItem_Click);
             // 
             // deleteResultesToolStripMenuItem
             // 
             this.deleteResultesToolStripMenuItem.Name = "deleteResultesToolStripMenuItem";
-            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.deleteResultesToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.deleteResultesToolStripMenuItem.Text = "Удалить результаты";
             this.deleteResultesToolStripMenuItem.Click += new System.EventHandler(this.deleteResultesToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.exitToolStripMenuItem.Text = "Выход";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -349,21 +344,21 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             // TestImgFixingBtn
             // 
-            this.TestImgFixingBtn.Location = new System.Drawing.Point(9, 48);
+            this.TestImgFixingBtn.Location = new System.Drawing.Point(227, 50);
             this.TestImgFixingBtn.Name = "TestImgFixingBtn";
-            this.TestImgFixingBtn.Size = new System.Drawing.Size(60, 23);
+            this.TestImgFixingBtn.Size = new System.Drawing.Size(144, 23);
             this.TestImgFixingBtn.TabIndex = 37;
-            this.TestImgFixingBtn.Text = "Edit plan";
+            this.TestImgFixingBtn.Text = "Исправить план сборки";
             this.TestImgFixingBtn.UseVisualStyleBackColor = true;
             this.TestImgFixingBtn.Click += new System.EventHandler(this.TestImgFixingBtn_Click);
             // 
             // StitchingByPlanBtn
             // 
-            this.StitchingByPlanBtn.Location = new System.Drawing.Point(69, 48);
+            this.StitchingByPlanBtn.Location = new System.Drawing.Point(384, 50);
             this.StitchingByPlanBtn.Name = "StitchingByPlanBtn";
             this.StitchingByPlanBtn.Size = new System.Drawing.Size(88, 23);
             this.StitchingByPlanBtn.TabIndex = 38;
-            this.StitchingByPlanBtn.Text = "Start";
+            this.StitchingByPlanBtn.Text = "Старт";
             this.StitchingByPlanBtn.UseVisualStyleBackColor = true;
             this.StitchingByPlanBtn.Click += new System.EventHandler(this.StartAssembling);
             // 
@@ -380,23 +375,25 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // GetSpeedBtn
             // 
             this.GetSpeedBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.GetSpeedBtn.Location = new System.Drawing.Point(1456, 49);
+            this.GetSpeedBtn.Location = new System.Drawing.Point(1645, 48);
             this.GetSpeedBtn.Name = "GetSpeedBtn";
             this.GetSpeedBtn.Size = new System.Drawing.Size(67, 23);
             this.GetSpeedBtn.TabIndex = 40;
             this.GetSpeedBtn.Text = "Get Speed";
             this.GetSpeedBtn.UseVisualStyleBackColor = true;
+            this.GetSpeedBtn.Visible = false;
             this.GetSpeedBtn.Click += new System.EventHandler(this.GetSpeedBtn_Click);
             // 
             // RndBtn
             // 
             this.RndBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RndBtn.Location = new System.Drawing.Point(1525, 49);
+            this.RndBtn.Location = new System.Drawing.Point(1687, 46);
             this.RndBtn.Name = "RndBtn";
             this.RndBtn.Size = new System.Drawing.Size(38, 23);
             this.RndBtn.TabIndex = 41;
             this.RndBtn.Text = "Rnd";
             this.RndBtn.UseVisualStyleBackColor = true;
+            this.RndBtn.Visible = false;
             this.RndBtn.Click += new System.EventHandler(this.Random_Click);
             // 
             // OpenDirDtn
@@ -412,7 +409,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // UseBitmapChckBox
             // 
             this.UseBitmapChckBox.AutoSize = true;
-            this.UseBitmapChckBox.Location = new System.Drawing.Point(372, 50);
+            this.UseBitmapChckBox.Location = new System.Drawing.Point(9, 54);
             this.UseBitmapChckBox.Name = "UseBitmapChckBox";
             this.UseBitmapChckBox.Size = new System.Drawing.Size(80, 17);
             this.UseBitmapChckBox.TabIndex = 44;
@@ -420,17 +417,18 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.UseBitmapChckBox.UseVisualStyleBackColor = true;
             this.UseBitmapChckBox.CheckedChanged += new System.EventHandler(this.UseBitmapChckBox_CheckedChanged);
             // 
-            // сохранитьОригиналToolStripMenuItem
+            // FixImgChckBox
             // 
-            this.сохранитьОригиналToolStripMenuItem.Name = "сохранитьОригиналToolStripMenuItem";
-            this.сохранитьОригиналToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.сохранитьОригиналToolStripMenuItem.Text = "Сохранить оригинал";
-            // 
-            // сохрнитьИзображениеВОкнеToolStripMenuItem
-            // 
-            this.сохрнитьИзображениеВОкнеToolStripMenuItem.Name = "сохрнитьИзображениеВОкнеToolStripMenuItem";
-            this.сохрнитьИзображениеВОкнеToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.сохрнитьИзображениеВОкнеToolStripMenuItem.Text = "Сохрнить изображение в окне";
+            this.FixImgChckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.FixImgChckBox.AutoSize = true;
+            this.FixImgChckBox.Enabled = false;
+            this.FixImgChckBox.Location = new System.Drawing.Point(1460, 7);
+            this.FixImgChckBox.Name = "FixImgChckBox";
+            this.FixImgChckBox.Size = new System.Drawing.Size(200, 17);
+            this.FixImgChckBox.TabIndex = 45;
+            this.FixImgChckBox.Text = "Включить исправление дисторсии";
+            this.FixImgChckBox.UseVisualStyleBackColor = true;
+            this.FixImgChckBox.CheckedChanged += new System.EventHandler(this.FixImgChckBox_CheckedChanged);
             // 
             // DebugingForm
             // 
@@ -438,6 +436,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1734, 802);
+            this.Controls.Add(this.FixImgChckBox);
             this.Controls.Add(this.UseBitmapChckBox);
             this.Controls.Add(this.OpenDirDtn);
             this.Controls.Add(this.RndBtn);
@@ -451,11 +450,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Controls.Add(this.FrLb);
             this.Controls.Add(this.FromTxtBox);
             this.Controls.Add(this.ToTxtBox);
-            this.Controls.Add(this.SaveThisImgBtn);
             this.Controls.Add(this.progressBarLabel);
             this.Controls.Add(this.StopBtn);
             this.Controls.Add(this.progressBar);
-            this.Controls.Add(this.SaveBtn);
             this.Controls.Add(this.AllPointsChkBox);
             this.Controls.Add(this.StitchImgsBtn);
             this.Controls.Add(this.ShowPointsBtn);
@@ -493,11 +490,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Button ShowPointsBtn;
         private Button StitchImgsBtn;
         private CheckBox AllPointsChkBox;
-        private Button SaveBtn;
         private ProgressBar progressBar;
         private Button StopBtn;
         private Label progressBarLabel;
-        private Button SaveThisImgBtn;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem menuToolStripMenuItem;
         private ToolStripMenuItem deletePlanToolStripMenuItem;
@@ -518,7 +513,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private Button Zoom1Btn;
         private Button OpenDirDtn;
         private CheckBox UseBitmapChckBox;
-        private ToolStripMenuItem сохранитьОригиналToolStripMenuItem;
-        private ToolStripMenuItem сохрнитьИзображениеВОкнеToolStripMenuItem;
+        private ToolStripMenuItem SaveOriginalToolStripMenuItem;
+        private ToolStripMenuItem SaveWindowImgToolStripMenuItem;
+        private CheckBox FixImgChckBox;
     }
 }

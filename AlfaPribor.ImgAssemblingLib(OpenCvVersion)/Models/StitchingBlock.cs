@@ -113,6 +113,7 @@ namespace ImgAssemblingLibOpenCV.Models
             else SelectedFiles.Clear();
 
             int i = 0, Width = 0, Height = 0;
+            if (period < 1) period = 1;
             for (i = From; i < bitMapArray.Length; i = i + period)
             {
                 Mat mat = BitmapConverter.ToMat(bitMapArray[i]);
@@ -335,7 +336,7 @@ namespace ImgAssemblingLibOpenCV.Models
                     }
                 }
 
-                if (contextIsOn && i%5 == 0)
+                if (contextIsOn && i%2 == 0)
                 {
                     context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
                     context.Send(OnTextChanged, "Finding Key Points " + i * 100 / SelectedFiles.Count + " %");
@@ -1181,11 +1182,6 @@ namespace ImgAssemblingLibOpenCV.Models
             // Сборка картинки по частям
             for (int i = 0; i < SelectedFiles.Count - 1; i++)
             {
-                if(i == SelectedFiles.Count - 2)
-                {
-
-                }
-
                 if (StopProcess)
                 {
                     SetErr("Сборка кадров приостановлена пользователем!");
@@ -1265,8 +1261,11 @@ namespace ImgAssemblingLibOpenCV.Models
                 }
                 if (rezult.Width == 0 || rezult.Height == 0)
                 {
-                    SetErr("Итоговая картинка не собрана. Id кадра с ошибкой " + SelectedFiles[i].Id + " i - "+i+" !!!");
-                    break;
+                    SetErr("Итоговая картинка не собрана (Width||Height == 0). Id последего кадра " + SelectedFiles[i].Id + " i - "+i+" !!!");
+                    if (context != null) context.Send(OnProgressChanged, 100);
+                    if (context != null) context.Send(OnTextChanged, "Err  rezultImg = 0. Ошибка на "+ SelectedFiles[i].Id+" кадре!!!");
+                    return rezult;
+                    
                 }
             }
 

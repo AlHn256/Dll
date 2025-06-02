@@ -31,8 +31,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void InitializeComponent()
         {
             this.picBox_Display = new System.Windows.Forms.PictureBox();
-            this.TestBtn = new System.Windows.Forms.Button();
-            this.Test2Btn = new System.Windows.Forms.Button();
             this.PeriodTxtBox = new System.Windows.Forms.TextBox();
             this.RTB = new System.Windows.Forms.RichTextBox();
             this.FileDirTxtBox = new System.Windows.Forms.TextBox();
@@ -80,29 +78,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.picBox_Display.Size = new System.Drawing.Size(1712, 688);
             this.picBox_Display.TabIndex = 1;
             this.picBox_Display.TabStop = false;
-            // 
-            // TestBtn
-            // 
-            this.TestBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.TestBtn.Location = new System.Drawing.Point(1690, 49);
-            this.TestBtn.Name = "TestBtn";
-            this.TestBtn.Size = new System.Drawing.Size(35, 23);
-            this.TestBtn.TabIndex = 3;
-            this.TestBtn.Text = "Match Pic By Sift";
-            this.TestBtn.UseVisualStyleBackColor = true;
-            this.TestBtn.Visible = false;
-            this.TestBtn.Click += new System.EventHandler(this.TestBtn_Click);
-            // 
-            // Test2Btn
-            // 
-            this.Test2Btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Test2Btn.Location = new System.Drawing.Point(1674, 26);
-            this.Test2Btn.Name = "Test2Btn";
-            this.Test2Btn.Size = new System.Drawing.Size(51, 21);
-            this.Test2Btn.TabIndex = 4;
-            this.Test2Btn.Text = "Match Pic v2";
-            this.Test2Btn.UseVisualStyleBackColor = true;
-            this.Test2Btn.Visible = false;
             // 
             // PeriodTxtBox
             // 
@@ -183,6 +158,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.AllPointsChkBox.TabIndex = 23;
             this.AllPointsChkBox.Text = "Все точки";
             this.AllPointsChkBox.UseVisualStyleBackColor = true;
+            this.AllPointsChkBox.CheckedChanged += new System.EventHandler(this.AllPointsChkBox_CheckedChanged);
             // 
             // progressBar
             // 
@@ -421,7 +397,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.FixImgChckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.FixImgChckBox.AutoSize = true;
-            this.FixImgChckBox.Enabled = false;
             this.FixImgChckBox.Location = new System.Drawing.Point(1460, 7);
             this.FixImgChckBox.Name = "FixImgChckBox";
             this.FixImgChckBox.Size = new System.Drawing.Size(200, 17);
@@ -461,8 +436,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Controls.Add(this.FileDirTxtBox);
             this.Controls.Add(this.RTB);
             this.Controls.Add(this.PeriodTxtBox);
-            this.Controls.Add(this.Test2Btn);
-            this.Controls.Add(this.TestBtn);
             this.Controls.Add(this.picBox_Display);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -480,8 +453,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
         #endregion
         private PictureBox picBox_Display;
-        private Button TestBtn;
-        private Button Test2Btn;
         private TextBox PeriodTxtBox;
         private RichTextBox RTB;
         private TextBox FileDirTxtBox;

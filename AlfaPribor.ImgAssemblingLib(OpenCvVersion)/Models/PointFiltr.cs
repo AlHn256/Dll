@@ -9,7 +9,6 @@ namespace ImgAssemblingLibOpenCV.Models
     {
         public List<Vector> PointList { get; set; }
         public EnumDirection Direction { get; set; }
-        //private bool IsPanaram { get; set; }
         public bool IsErr { get; set; } = false;
         public string ErrText { get; set; } = string.Empty;
         public EnumErrCode ErrCode { get; set; }=EnumErrCode.NoErr;
@@ -41,23 +40,48 @@ namespace ImgAssemblingLibOpenCV.Models
             }
         }
 
-        // отсев лишних точек, определение направления склейки изображения
-        public List<Vector> PointScreening()
+        /// <summary> отсев лишних точек, определение направления склейки изображения </summary>
+        public List<Vector> PointFiltering()
+        {
+            //var gdfsd = (from x in PointList where x.Direction == EnumDirection.Down select new { x.Direction, x.Delta, x.CoDirection, x.Identity }).OrderBy(y => y.Identity).ToList();
+            //return PointList.OrderBy(x => x.Identity).Take(5).ToList();
+            //return PointList.OrderBy(x => x.Identity).ToList();
+            //List<Vector> PointListCopy = PointList.Select(s => new Vector(s)).ToList();
+            List<Vector> PointListCopy = new List<Vector>();
+            PointStatistiq pointStatistiq = new PointStatistiq(PointList);
+            if (pointStatistiq.T0005 >= 5) PointList = PointList.Where(x => x.CoDirection < 0.005).OrderBy(x => x.CoDirection).ToList();
+            else if (pointStatistiq.T001 >= 10) PointList = PointList.Where(x => x.CoDirection < 0.01).OrderBy(x => x.CoDirection).ToList();
+            else if (pointStatistiq.T005 >= 20) PointList = PointList.Where(x => x.CoDirection < 0.05).OrderBy(x => x.CoDirection).ToList();
+            else if (pointStatistiq.T02 < 5 || pointStatistiq.F01 > 15 || pointStatistiq.F05 > 2 || PointList.Count < 3)
+            {
+                if (pointStatistiq.T02 < 5) SetErr("Err Filter1.не достаточно подходящих ключевых точек F02 !!!", EnumErrCode.NotEnoughKeyPointsF02);
+                else if (pointStatistiq.F01 > 15) SetErr("Err Filter1.превышено количество точек F01 !!!", EnumErrCode.F01PointsExceed);
+                else if (pointStatistiq.F05 > 2) SetErr("Err Filter1.превышено количество точек F05 !!!", EnumErrCode.F05PointsExceed);
+                else if (PointList.Count < 3) SetErr("Err Filter1.не достаточно подходящих ключевых точек !!!", EnumErrCode.NotEnoughKeyPoints);
+                PointList = PointListCopy;
+            }
+            else PointList = PointList.Where(x => x.CoDirection < 0.05).OrderBy(x => x.CoDirection).ToList();
+
+            return PointList;
+        }
+
+        /// <summary>Дополнительная фильтрация точек</summary>
+        public List<Vector> AdditionalFilter()
         {
             if (PointList == null || PointList.Count == 0) return new List<Vector>();
             Dictionary<EnumDirection, int> EnumList = new Dictionary<EnumDirection, int>();
             foreach (EnumDirection value in EnumDirection.GetValues(typeof(EnumDirection))) EnumList.Add(value, 0);
-            foreach (var point in PointList)EnumList[point.Direction]++;
+            foreach (var point in PointList) EnumList[point.Direction]++;
             EnumDirection direction = EnumList.Where(x => x.Value == EnumList.Max(y => y.Value)).Select(z => z.Key).FirstOrDefault();
 
             int ver = EnumList[direction] * 100 / PointList.Count;// Вероятность определения направления движения
-            
-            PointList = PointList.Where(x=>x.Direction == direction).ToList();
+
+            PointList = PointList.Where(x => x.Direction == direction).ToList();
 
             Double DeltaMin = PointList.Min(x => x.Delta), DeltaMax = PointList.Max(x => x.Delta);
             List<QualifyingTable> qualifyingList = new List<QualifyingTable>();
             double from = 0, to = 0;
-            int SepNumb = PointList.Count > 20 ? 10 : 5; 
+            int SepNumb = PointList.Count > 20 ? 10 : 5;
             for (int i = 0; i < 6; i++)
             {
                 to = DeltaMin + i * (DeltaMax - DeltaMin) / 5;
@@ -84,7 +108,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 return new List<Vector>();
             }
 
-            rezult = rezult.Where(x => x.Direction == direction ).OrderBy(x => x.CoDirection).ToList();
+            rezult = rezult.Where(x => x.Direction == direction).OrderBy(x => x.CoDirection).ToList();
 
             if (rezult.Count() > 4) // Если точек много то запускаем дополнительную фильтрацию по сонаправленности 
             {
@@ -112,33 +136,6 @@ namespace ImgAssemblingLibOpenCV.Models
             }
 
             return rezult;
-        }
-
-        // Дополнительная фильтрация точек
-        public List<Vector> PointFiltering()
-        {
-            //var gdfsd = (from x in PointList where x.Direction == EnumDirection.Down select new { x.Direction, x.Delta, x.CoDirection, x.Identity }).OrderBy(y => y.Identity).ToList();
-            //return PointList.OrderBy(x => x.Identity).Take(5).ToList();
-            //return PointList.OrderBy(x => x.Identity).ToList();
-
-            //List<Vector> PointListCopy = PointList.Select(s => new Vector(s)).ToList();
-            List<Vector> PointListCopy = new List<Vector>();
-
-            PointStatistiq pointStatistiq = new PointStatistiq(PointList);
-            if (pointStatistiq.T0005 >= 5) PointList = PointList.Where(x => x.CoDirection < 0.005).OrderBy(x => x.CoDirection).ToList();
-            else if (pointStatistiq.T001 >= 10) PointList = PointList.Where(x => x.CoDirection < 0.01).OrderBy(x => x.CoDirection).ToList();
-            else if (pointStatistiq.T005 >= 20) PointList = PointList.Where(x => x.CoDirection < 0.05).OrderBy(x => x.CoDirection).ToList();
-            else if (pointStatistiq.T02 < 5 || pointStatistiq.F01 > 15 || pointStatistiq.F05 > 2 || PointList.Count < 3)
-            {
-                if (pointStatistiq.T02 < 5) SetErr("Err Filter1.не достаточно подходящих ключевых точек F02 !!!", EnumErrCode.NotEnoughKeyPointsF02);
-                else if (pointStatistiq.F01 > 15) SetErr("Err Filter1.превышено количество точек F01 !!!", EnumErrCode.F01PointsExceed);
-                else if (pointStatistiq.F05 > 2) SetErr("Err Filter1.превышено количество точек F05 !!!", EnumErrCode.F05PointsExceed);
-                else if (PointList.Count < 3) SetErr("Err Filter1.не достаточно подходящих ключевых точек !!!", EnumErrCode.NotEnoughKeyPoints);
-                PointList = PointListCopy;
-            }
-            else PointList = PointList.Where(x => x.CoDirection < 0.05).OrderBy(x => x.CoDirection).ToList();
-
-            return PointList;
         }
     }
 }

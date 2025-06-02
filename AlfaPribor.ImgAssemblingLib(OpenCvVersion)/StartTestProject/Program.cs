@@ -14,8 +14,9 @@ namespace StartTestProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new DebugingForm());
             //Application.Run(new HidenForm());
+            
+            Application.Run(new DebugingForm());
             //Application.Run(new TestingForm());
             //Application.Run(new AutoTest());
         }

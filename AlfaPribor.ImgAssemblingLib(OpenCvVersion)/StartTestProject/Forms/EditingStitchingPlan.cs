@@ -514,9 +514,15 @@ namespace StartTestProject.Forms
 
             ImgFixingForm imgFixingForm = new ImgFixingForm(DefoltImgFixingPlan, AssemblyPlan.WorkingDirectory);
             imgFixingForm.ShowDialog();
+
             if (AssemblyPlan == null) return;
-            AssemblyPlan.FixingImgDirectory = imgFixingForm.GetImgFixingPlan();
-            if(!string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory))ImgFixingPlanTxtBox.Text = AssemblyPlan.FixingImgDirectory;
+            string fixPlan = imgFixingForm.GetImgFixingPlan();
+            if (!string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory))
+            {
+                AssemblyPlan.FixingImgDirectory = fixPlan;
+                ImgFixingPlanTxtBox.Text = fixPlan;
+                DefoltImgFixingPlan = fixPlan;
+            }
         }
 
         private void AdditionalSettingsBtn_Click(object sender, EventArgs e)

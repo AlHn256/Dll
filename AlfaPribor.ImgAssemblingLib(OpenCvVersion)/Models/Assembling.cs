@@ -81,7 +81,13 @@ namespace ImgAssemblingLibOpenCV.Models
         }
         /// <summary> Замена плана сборки</summary>
         /// <param name="assemblyPlan">Новый план</param>
-        public void ChangeAssemblyPlan(AssemblyPlan assemblyPlan) => AssemblyPlan = assemblyPlan;
+        public void ChangeAssemblyPlan(AssemblyPlan assemblyPlan)
+        {
+            ClearAll();
+            if (assemblyPlan == null) SetErr("AssemblyPlan is null");
+            AssemblyPlan = assemblyPlan;
+        }
+
         public void DelRezultImg(Mat rezultImg) => RezultImg = rezultImg;
         public Mat GetRezultImg() => RezultImg;
         public string GetRezultFileName() => SavedFileName;
@@ -146,51 +152,7 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             return true;
         }
-        /// <summary>
-        /// Сборка кадров с подробной записью результатов
-        /// </summary>
-        /// <returns>FinalResult Подробный отчет о результатах сборки</returns>
-        public FinalResult TryAssemble()
-        {
-            try
-            {
-                StartAssembling();
-                if (RezultImg == null)
-                {
-                    return FinalRezult = new FinalResult()
-                    {
-                        Speed = 0,
-                        MatRezult = null,
-                        BitRezult = null,
-                        IsErr = IsErr,
-                        IsCriticalErr = IsCriticalErr,
-                        ErrText = ErrText,
-                        ErrList = ErrList
-                    };
-                }
-                else return FinalRezult = new FinalResult()
-                {
-                    Speed = AssemblyPlan.Speed,
-                    MatRezult = RezultImg,
-                    BitRezult = (RezultImg.Width != 0 && RezultImg.Height != 0) ? BitmapConverter.ToBitmap(RezultImg) : null,
-                    IsErr = IsErr,
-                    IsCriticalErr = IsCriticalErr,
-                    ErrText = ErrText,
-                    ErrList = ErrList
-                };
-            }
-            catch (Exception ex)
-            {
-                SetCriticalErr(ex.Message);
-                return FinalRezult = new FinalResult()
-                {
-                    IsErr = IsErr,
-                    IsCriticalErr = IsCriticalErr,
-                    ErrText = ErrText + "Ex.Message " + ex.Message,
-                    ErrList = ErrList
-                };
-            }
-        }
+
         /// <summary>
         /// Сборка кадров с подробной записью результатов (Асинхронная версия)
         /// </summary>
@@ -236,7 +198,6 @@ namespace ImgAssemblingLibOpenCV.Models
                 };
             }
         }
-
         /// <summary>  Запуск сборки изображения </summary>
         public bool StartAssembling()
         {
@@ -342,13 +303,9 @@ namespace ImgAssemblingLibOpenCV.Models
                     if (string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory)) ImgFixingDir = AssemblyPlan.WorkingDirectory + "AutoOut";
                     else ImgFixingDir = AssemblyPlan.FixingImgDirectory;
 
-                    //ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
-                    FixFrames FixFrames = new FixFrames(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
-
-                    if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = FixFrames.GetImgFixingPlan();
                     if (contectIsOn) _context.Send(OnRTBAddInfo, " Checking old files ");
                     TriggerAddLog(AssemblingId + " Checking old files");
-                    if (AssemblyPlan.ChekFixImg && FixFrames.CheckFixingImg(AssemblyPlan.WorkingDirectory, ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
+                    if (AssemblyPlan.ChekFixImg && CheckFixingImg(AssemblyPlan.WorkingDirectory, ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
                     {
                         AssemblyPlan.StitchingDirectory = ImgFixingDir;
                         if (contectIsOn) _context.Send(OnRTBAddInfo, " - Using old files\n");
@@ -364,6 +321,10 @@ namespace ImgAssemblingLibOpenCV.Models
                             TriggerAddLog(AssemblingId + " Old files not founded");
                             FinalRezult.ChekFixImgRezult = "Исправленные файлы не найдены!!!";
                         }
+
+                        //ImgFixingForm imgFixingForm = new ImgFixingForm(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
+                        FixFrames FixFrames = new FixFrames(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
+                        //if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = FixFrames.GetImgFixingPlan();
 
                         FixFrames.ProcessChanged += worker_ProcessChang;
                         FixFrames.TextChanged += worker_TextChang;
@@ -458,7 +419,7 @@ namespace ImgAssemblingLibOpenCV.Models
             stopwatch.Restart();
             return !IsErr;
         }
-        /// <summary>  Запуск сборки изображения </summary>
+        /// <summary>  Запуск сборки изображения (асинхронная версия) </summary>
         public async Task<bool> StartAssemblingAsync()
         {
             FinalRezult = new FinalResult();
@@ -564,12 +525,12 @@ namespace ImgAssemblingLibOpenCV.Models
                     if (string.IsNullOrEmpty(AssemblyPlan.FixingImgDirectory)) ImgFixingDir = AssemblyPlan.WorkingDirectory + "AutoOut";
                     else ImgFixingDir = AssemblyPlan.FixingImgDirectory;
 
-                    FixFrames FixFrames = new FixFrames(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
+                    //FixFrames FixFrames = new FixFrames(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
+                    //if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = FixFrames.GetImgFixingPlan();
 
-                    if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = FixFrames.GetImgFixingPlan();
                     if (contectIsOn) _context.Send(OnRTBAddInfo, " Checking old files ");
                     TriggerAddLog(AssemblingId + " Checking old files");
-                    if (AssemblyPlan.ChekFixImg && FixFrames.CheckFixingImg(AssemblyPlan.WorkingDirectory, ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
+                    if (AssemblyPlan.ChekFixImg && CheckFixingImg(AssemblyPlan.WorkingDirectory, ImgFixingDir)) // Провереряем существуют ли уже исправленные кадры
                     {
                         AssemblyPlan.StitchingDirectory = ImgFixingDir;
                         if (contectIsOn) _context.Send(OnRTBAddInfo, " - Using old files\n");
@@ -585,6 +546,9 @@ namespace ImgAssemblingLibOpenCV.Models
                             TriggerAddLog(AssemblingId + " Old files not founded");
                             FinalRezult.ChekFixImgRezult = "Исправленные файлы не найдены!!!";
                         }
+
+                        FixFrames FixFrames = new FixFrames(AssemblyPlan.ImgFixingPlan, AssemblyPlan.WorkingDirectory);
+                        //if (string.IsNullOrEmpty(AssemblyPlan.ImgFixingPlan)) AssemblyPlan.ImgFixingPlan = FixFrames.GetImgFixingPlan();
 
                         FixFrames.ProcessChanged += worker_ProcessChang;
                         FixFrames.TextChanged += worker_TextChang;
@@ -682,8 +646,9 @@ namespace ImgAssemblingLibOpenCV.Models
             stopwatch.Restart();
             return !IsErr;
         }
+        /// <summary>  Запрос скорости </summary>
         public double GetSpeed() => AssemblyPlan.Speed;
-        /// <summary> Отправка сообщения об затраченном времени на операцию</summary>
+        /// <summary> Сообщения о затраченном времени на операцию</summary>
         private void SendTime(string text, TimeSpan ts)
         {
             string txt = String.Format("{0:00}:{1:00}:{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
@@ -811,6 +776,21 @@ namespace ImgAssemblingLibOpenCV.Models
             }
             else return SetErr("Err StitchingBlock = null !!!");
         }
+
+
+        public bool CheckFixingImg(string inputDir, string outputDir)
+        {
+            if (string.IsNullOrEmpty(outputDir) || string.IsNullOrEmpty(inputDir)) return false;
+            if (!Directory.Exists(inputDir) || !Directory.Exists(outputDir)) return false;
+
+            FileInfo[] inputFileList = fileEdit.SearchFiles(inputDir);
+            FileInfo[] outputFileList = fileEdit.SearchFiles(outputDir);
+            if (inputFileList.Length != outputFileList.Length) return false;
+            for (int i = 0; i < inputFileList.Length; i++)
+                if (!File.Exists(outputDir + Path.DirectorySeparatorChar + inputFileList[i].Name)) return false;
+            return true;
+        }
+
         /// <summary> Очистка всех записей с предыдущей сборки</summary>
         public void ClearAll()
         {

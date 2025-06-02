@@ -13,6 +13,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
     //unblok
     public partial class ImgFixingForm : Form
     {
+        #region Params
+        
         private FixFrames FixFrames = new FixFrames();
         private FileEdit fileEdit = new FileEdit(new string[] { "*.jpeg", "*.jpg", "*.png", "*.bmp" });
         private ImgFixingSettings ImgFixingSettings = new ImgFixingSettings();
@@ -22,6 +24,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private bool SaveRezultToFile;
         private string SavingRezultDir;
         public event Action<int> ProcessChanged;
+        private Bitmap LoadedBitmapFrame { get; set; }
         public bool IsErr { get; set; } = false;
         public static bool StopProcess = false;
         public string ErrText { get; set; } = string.Empty;
@@ -30,7 +33,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private int MidleHeightPoint { get; set; } = 0;
         private bool diminshIn = false;
         private readonly List<bool> dimList = new List<bool>() { false, false, false };
-
+        private string prevDir = string.Empty;
+        #endregion
         /// <summary>
         /// Конструктор для стандартной работы с окном и файлами 
         /// </summary>
@@ -61,17 +65,17 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         /// <param name="imgFixingPlan"></param>
         /// <param name="saveRezultToFile"></param>
         /// <param name="fixingImgDirectory"></param>
-        public ImgFixingForm(string imgFixingPlan, bool saveRezultToFile = false, string fixingImgDirectory = "")
-        {
-            InitializeComponent();
-            if (!string.IsNullOrEmpty(imgFixingPlan))
-            {
-                ImgFixingPlan = imgFixingPlan;
-                TryReadSettings();
-                SaveRezultToFile = saveRezultToFile;
-                SavingRezultDir = fixingImgDirectory;
-            }
-        }
+        //public ImgFixingForm(string imgFixingPlan, bool saveRezultToFile = false, string fixingImgDirectory = "")
+        //{
+        //    InitializeComponent();
+        //    if (!string.IsNullOrEmpty(imgFixingPlan))
+        //    {
+        //        ImgFixingPlan = imgFixingPlan;
+        //        TryReadSettings();
+        //        SaveRezultToFile = saveRezultToFile;
+        //        SavingRezultDir = fixingImgDirectory;
+        //    }
+        //}
         // Тестовая версия конструктора
         public ImgFixingForm(string imgFixingPlan, bool test = false)
         {
@@ -79,6 +83,12 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (!string.IsNullOrEmpty(imgFixingPlan)) ImgFixingPlan = imgFixingPlan;
             TryReadSettings();
         }
+
+        /// <summary>
+        /// Установка ошибки
+        /// </summary>
+        /// <param name="errText">Текст ошибки</param>
+        /// <returns></returns>
         private bool SetErr(string errText)
         {
             IsErr = true;
@@ -104,7 +114,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (files == null) return;
             if (files.Length == 0) return;
             if (files.Length == 1) InputDirTxtBox.Text = Path.GetDirectoryName(files[0]);
-            FixFrames.ChangeFirstFrame(files[0]);
+            //FixFrames.ChangeFirstFrame(files[0]);
+            //ZeroCropBefor();
             InputFileTxtBox.Text = Path.GetFileName(files[0]);
         }
         /// <summary> Загрузка кадров плюс параметров для их исправления</summary>
@@ -140,11 +151,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 Sm33TxtBox.Text = ImgFixingSettings.DistorSettings.Sm33.ToString();
             }
 
-            if(!LoadFileList())return;
-            OpenCvReloadImg();
+            AutoReloadChkBox.Checked = true;
             BlockOn();
+            OpenCvReloadImg();
         }
-        /// <summary> Блокировка \ разблокировка доп параметров </summary>
+        /// <summary> Блокировка \ разблокировка доп параметров настройки дисторсии</summary>
         private void BlockOn() => Block(false);
         private void UnBlock() => Block(true);
         private void Block(bool block)
@@ -191,13 +202,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if (FileNumber > FileList.Count - 1) FileNumber = 0;
                 InputDirTxtBox.Text = Path.GetDirectoryName(FileList[FileNumber]);
                 InputFileTxtBox.Text = Path.GetFileName(FileList[FileNumber]);
-                // if (AutoReloadChkBox.Checked) OpenCvReloadImg();
             }
-
-            //if (AutoReloadChkBox.Checked) OpenCvReloadImg();
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
         /// <summary>
         /// Разблокировка дополнительных параметров
         /// </summary>
@@ -206,36 +215,57 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (RezultRTB.Text.IndexOf("unblok") != -1 || RezultRTB.Text.IndexOf("Unblok") != -1 ||
                 RezultRTB.Text.IndexOf("гтидщл") != -1 || RezultRTB.Text.IndexOf("Гтидщл") != -1) UnBlock();
         }
-        private bool LoadFileList(string serchingDir = null)
+
+        /// <summary>
+        /// Загрузка списка изображений для редактирования
+        /// </summary>
+        /// <param name="serchingDir">Папка с изображениями</param>
+        /// <returns></returns>
+        private FileInfo[] LoadFileList(string serchingDir = null)
         {
-            if (string.IsNullOrEmpty(serchingDir) && string.IsNullOrEmpty(InputDirTxtBox.Text)) return false;
-
+            FileInfo[] list = new FileInfo[0];
+            if (string.IsNullOrEmpty(serchingDir) && string.IsNullOrEmpty(InputDirTxtBox.Text))
+            {
+                SetErr("InputDirTxtBox не заполнен!!!");
+                return list;
+            }
             if (string.IsNullOrEmpty(serchingDir)) serchingDir = InputDirTxtBox.Text;
-            var list = fileEdit.SearchFiles(serchingDir);
-            if (!Directory.Exists(serchingDir)) return SetErr("Такой папки "+ serchingDir + " не существует");
-            if (list.Length == 0) return SetErr("Файлы для редактирования не найдены");
+            if (!Directory.Exists(serchingDir))
+            {
+                SetErr("Такой папки " + serchingDir + " не существует");
+                return list;
+            }
+            list = fileEdit.SearchFiles(serchingDir);
+            if (list.Length == 0)
+            {
+                SetErr("Файлы для редактирования не найдены");
+                FileList.Clear();
+                return list;
+            }
+            
             FileList = list.Select(f => f.FullName).ToList();
-
-            return true;
+            return list;
         }
 
         private void ABtnUp_Click(object sender, EventArgs e) => ChangeA(true);
         private void ABtnDn_Click(object sender, EventArgs e) => ChangeA(false);
         private void ChangeA(bool increase)
         {
-            double A = 0;
-            double.TryParse(ATxtBox.Text, out A);
+            double.TryParse(ATxtBox.Text, out double A);
             if (increase) ImgFixingSettings.DistorSettings.A = Math.Round(A + 0.01, 2);
             else ImgFixingSettings.DistorSettings.A = Math.Round(A - 0.01, 2);
-            ATxtBox.Text = ImgFixingSettings.DistorSettings.A.ToString();
-            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+
+            if(ATxtBox.Text == ImgFixingSettings.DistorSettings.A.ToString())
+            {
+                if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+            }
+            else ATxtBox.Text = ImgFixingSettings.DistorSettings.A.ToString();
         }
         private void CBtnUp_Click(object sender, EventArgs e) => ChangeC(true);
         private void CBtnDn_Click(object sender, EventArgs e) => ChangeC(false);
         private void ChangeC(bool increase)
         {
-            double C = 0;
-            double.TryParse(CTxtBox.Text, out C);
+            double.TryParse(CTxtBox.Text, out double C);
             if (increase) ImgFixingSettings.DistorSettings.C = Math.Round(C + 0.01, 2);
             else ImgFixingSettings.DistorSettings.C = Math.Round(C - 0.01, 2);
             CTxtBox.Text = ImgFixingSettings.DistorSettings.C.ToString();
@@ -263,7 +293,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
 
             ShowGridСhckBox.Checked = false;
-      
+
             //if (!Directory.Exists(OutputDirTxtBox.Text)) return;
             //var sdf = FileList;
             //FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
@@ -279,35 +309,39 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 FixFrames.EditImg(file).Save(outputFileNumber);
             }
         }
-        public bool FixImges(object param, string outputDir = "")
-        {
-            SynchronizationContext context = (SynchronizationContext)param;
-            ShowGridСhckBox.Checked = false;
-            if (string.IsNullOrEmpty(outputDir))
-            {
-                if (!Directory.Exists(InputDirTxtBox.Text)) return false;
-                outputDir = OutputDirTxtBox.Text;
-            }
 
-            if (!fileEdit.ChkDir(outputDir)) return false;
-            FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
 
-            if (fileList == null) return SetErr("ERR FixImges.fileList == null !!!");
-            for (int i = 0; i < fileList.Length; i++)
-            {
-                string outputFileNumber = outputDir + Path.DirectorySeparatorChar + fileList[i].Name;
-                FixFrames.EditImg(fileList[i].FullName).Save(outputFileNumber);
-                //EditImg(fileList[i].FullName).SaveImage(outputFileNumber);
-                context.Send(OnProgressChanged, i * 100 / fileList.Length);
-                context.Send(OnTextChanged, "Imges Fixing " + i * 100 / fileList.Length + " %");
-            }
+        //public bool FixImges(object param, string outputDir = "")
+        //{
+        //    SynchronizationContext context = (SynchronizationContext)param;
+        //    ShowGridСhckBox.Checked = false;
+        //    if (string.IsNullOrEmpty(outputDir))
+        //    {
+        //        if (!Directory.Exists(InputDirTxtBox.Text)) return false;
+        //        outputDir = OutputDirTxtBox.Text;
+        //    }
 
-            context.Send(OnProgressChanged, 100);
-            context.Send(OnTextChanged, "Imges Fixing 100 %");
-            return IsErr;
-        }
+        //    if (!fileEdit.ChkDir(outputDir)) return false;
+        //    FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
+
+        //    if (fileList == null) return SetErr("ERR FixImges.fileList == null !!!");
+        //    for (int i = 0; i < fileList.Length; i++)
+        //    {
+        //        string outputFileNumber = outputDir + Path.DirectorySeparatorChar + fileList[i].Name;
+        //        FixFrames.EditImg(fileList[i].FullName).Save(outputFileNumber);
+        //        //EditImg(fileList[i].FullName).SaveImage(outputFileNumber);
+        //        context.Send(OnProgressChanged, i * 100 / fileList.Length);
+        //        context.Send(OnTextChanged, "Imges Fixing " + i * 100 / fileList.Length + " %");
+        //    }
+
+        //    context.Send(OnProgressChanged, 100);
+        //    context.Send(OnTextChanged, "Imges Fixing 100 %");
+        //    return IsErr;
+        //}
+
+
         /// <summary>
-        /// Исправлени кадров
+        /// Исправление кадров
         /// </summary>
         /// <param name="param">Параметр синхронизации</param>
         /// <param name="dataArray">Набор кадров для коррекции</param>
@@ -355,16 +389,16 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
             return bitMapList.ToArray();
         }
-        public bool CheckFixingImg(string imgFixingDir = "")
-        {
-            if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
-            if (!Directory.Exists(imgFixingDir)) return false;
+        //public bool CheckFixingImg(string imgFixingDir = "")
+        //{
+        //    if (string.IsNullOrEmpty(imgFixingDir)) imgFixingDir = OutputDirTxtBox.Text;
+        //    if (!Directory.Exists(imgFixingDir)) return false;
 
-            FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            for (int i = 0; i < fileList.Length; i++)
-                if (!File.Exists(imgFixingDir + Path.DirectorySeparatorChar + fileList[i].Name)) return false;
-            return true;
-        }
+        //    FileInfo[] fileList = fileEdit.SearchFiles(InputDirTxtBox.Text);
+        //    for (int i = 0; i < fileList.Length; i++)
+        //        if (!File.Exists(imgFixingDir + Path.DirectorySeparatorChar + fileList[i].Name)) return false;
+        //    return true;
+        //}
         private void panel1_MouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta > 0) ChangZoom(true);
@@ -380,41 +414,49 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 ImgFixingSettings.Zoom -= 0.01;
                 if (ImgFixingSettings.Zoom < 1) ImgFixingSettings.Zoom = 1;
             }
+
+            bool AutoReloadSave = AutoReloadChkBox.Checked;
+            AutoReloadChkBox.Checked = false;
             ZoomLbl.Text = ImgFixingSettings.Zoom.ToString();
             ZeroCropAfter();
             SetSm13Sm23();
+            AutoReloadChkBox.Checked = AutoReloadSave;
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         }
         private void InputDirTxtBox_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(InputDirTxtBox.Text)) return;
-            if (!Directory.Exists(InputDirTxtBox.Text)) return;
-            var files = fileEdit.SearchFiles(InputDirTxtBox.Text);
-            if (files[0] != null)
-            {
-                InputFileTxtBox.Text = files[0].Name;
-                pictureBox1.BackgroundImage = Image.FromFile(files[0].FullName);
-            }
-            OutputDirTxtBox.Text = InputDirTxtBox.Text.FirstOf(Path.DirectorySeparatorChar.ToString()) + Path.DirectorySeparatorChar + InputDirTxtBox.Text.LastOf('\\') + "Out";
-            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
-        }
+            if (string.IsNullOrEmpty(InputDirTxtBox.Text) || !Directory.Exists(InputDirTxtBox.Text)) return;
+            //if (!Directory.Exists(InputDirTxtBox.Text)) return;
 
-        private string prevDir = string.Empty;
-        private void InputFileTxtBox_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(InputDirTxtBox.Text) || string.IsNullOrEmpty(InputFileTxtBox.Text)) return;
-            string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
-            if (!File.Exists(file))
-            {
-                SetErr("File: " + file + " не найден");
-                return;
-            }
-            FixFrames.ChangeFirstFrame(file);
-
-            if (prevDir != InputDirTxtBox.Text) LoadFileList();
+            if (prevDir == InputDirTxtBox.Text) return;
             prevDir = InputDirTxtBox.Text;
 
-            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+            LoadFileList();
+            //fileEdit.SearchFiles(InputDirTxtBox.Text);
+            //FileList = files.Select(f => f.FullName).ToList();
+            //FileList = fileEdit.SearchFiles(InputDirTxtBox.Text).ToList();
+            OutputDirTxtBox.Text = InputDirTxtBox.Text.FirstOf(Path.DirectorySeparatorChar.ToString()) + Path.DirectorySeparatorChar + InputDirTxtBox.Text.LastOf('\\') + "Out";
+
+            if (FileList == null) return;
+            if (FileList[0] == null) return;
+            
+            InputFileTxtBox.Text = Path.GetFileName(FileList[0]);
+            //pictureBox1.BackgroundImage = Image.FromFile(files[0].FullName);
+            //if (AutoReloadChkBox.Checked)
+            //OpenCvReloadImg();
+        }
+
+        
+        private void InputFileTxtBox_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(InputDirTxtBox.Text) || string.IsNullOrEmpty(InputFileTxtBox.Text) || FixFrames == null) return;
+            string file = fileEdit.DirFile(InputDirTxtBox.Text, InputFileTxtBox.Text);
+            if (File.Exists(file))
+            {
+                FixFrames.ChangeFirstFrame(file);
+                OpenCvReloadImg();
+            }
+            else SetErr("File: " + file + " не найден");
         }
 
         private void ATxtBox_TextChanged(object sender, EventArgs e)
@@ -550,7 +592,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
         private void BBtnDn_Click(object sender, EventArgs e)
         {
-            double.TryParse(BTxtBox.Text,  out double B);
+            double.TryParse(BTxtBox.Text, out double B);
             ImgFixingSettings.DistorSettings.B = Math.Round(B - 0.01, 2);
             BTxtBox.Text = ImgFixingSettings.DistorSettings.B.ToString();
             if (AutoReloadChkBox.Checked) OpenCvReloadImg();
@@ -587,18 +629,43 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         //    if (AutoReloadChkBox.Checked) OpenCvReloadImg();
         //}
 
+        /// <summary> Сброс настроек предварительной обрезки кадра </summary>
+        private void ZeroCropBeforBtn_Click(object sender, EventArgs e) => ZeroCropBefor();
+            
+        private void ZeroCropBefor() {
+            bool AutoReloadSave = AutoReloadChkBox.Checked;
+            AutoReloadChkBox.Checked = false;
+
+            if (LoadedBitmapFrame == null)
+            {
+                XBeforTxtBox.Text = "0";
+                dXBeforTxtBox.Text = "0";
+                YBeforTxtBox.Text = "0";
+                dYBeforTxtBox.Text = "0";
+            }
+            else
+            {
+                XBeforTxtBox.Text = "0";
+                dXBeforTxtBox.Text = LoadedBitmapFrame.Width.ToString();
+                YBeforTxtBox.Text = "0";
+                dYBeforTxtBox.Text = LoadedBitmapFrame.Height.ToString();
+            }
+
+            AutoReloadChkBox.Checked = AutoReloadSave;
+            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+
+            ZeroCropAfter();
+        }
         private void DistZeroBtn_Click(object sender, EventArgs e) => DistZero();
 
-        /// <summary>
-        /// Обнулить параметры дисторсии
-        /// </summary>
+        /// <summary>Сброс настроек дисторсии </summary>
         private void DistZero()
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
 
-            ImgFixingSettings.Zoom = 1;
-            ZoomLbl.Text = "1";
+            //ImgFixingSettings.Zoom = 1;
+            //ZoomLbl.Text = "1";
 
             ImgFixingSettings.DistorSettings.A = 0;
             ImgFixingSettings.DistorSettings.B = 0;
@@ -625,8 +692,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Sm22TxtBox.Text = ImgFixingSettings.DistorSettings.Sm22.ToString();
             Sm12TxtBox.Text = ImgFixingSettings.DistorSettings.Sm12.ToString();
             Sm21TxtBox.Text = ImgFixingSettings.DistorSettings.Sm21.ToString();
-            Sm31TxtBox.Text = ImgFixingSettings.DistorSettings.Sm31.ToString(); 
-            Sm32TxtBox.Text = ImgFixingSettings.DistorSettings.Sm32.ToString(); 
+            Sm31TxtBox.Text = ImgFixingSettings.DistorSettings.Sm31.ToString();
+            Sm32TxtBox.Text = ImgFixingSettings.DistorSettings.Sm32.ToString();
             Sm33TxtBox.Text = ImgFixingSettings.DistorSettings.Sm33.ToString();
 
             AutoReloadChkBox.Checked = AutoReloadSave;
@@ -634,18 +701,26 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         }
         private void SetSm13Sm23()
         {
-            Sm13TxtBox.Text = MidleWidthPoint.ToString();   
-            Sm23TxtBox.Text = MidleHeightPoint.ToString();
-            ImgFixingSettings.DistorSettings.Sm13 = MidleWidthPoint;
-            ImgFixingSettings.DistorSettings.Sm23 = MidleHeightPoint;
+            bool AutoReloadSave = AutoReloadChkBox.Checked;
+            AutoReloadChkBox.Checked = false;
+            ImgFixingSettings.DistorSettings.Sm13 = MidleWidthPoint * ImgFixingSettings.Zoom;
+            ImgFixingSettings.DistorSettings.Sm23 = MidleHeightPoint * ImgFixingSettings.Zoom;
+
+            Sm13TxtBox.Text = ImgFixingSettings.DistorSettings.Sm13.ToString();
+            Sm23TxtBox.Text = ImgFixingSettings.DistorSettings.Sm23.ToString();
+            AutoReloadChkBox.Checked = AutoReloadSave;
         }
         private void ZeroCropAfterBtn_Click(object sender, EventArgs e) => ZeroCropAfter();
+
+        /// <summary>
+        /// Сброс настроек обрезки кадра после всех других обработок
+        /// </summary>
         private void ZeroCropAfter()
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
-            XAfterTxtBox.Text =  "0";
-            YAfterTxtBox.Text =  "0";
+            XAfterTxtBox.Text = "0";
+            YAfterTxtBox.Text = "0";
             dXAfterTxtBox.Text = "0";
             dYAfterTxtBox.Text = "0";
             AutoReloadChkBox.Checked = AutoReloadSave;
@@ -667,7 +742,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             try
             {
                 UpdateSettings();
-                if (await fileEdit.SaveJsonAsync(file, ImgFixingSettings,true)) RezultRTB.Text = "Settings save in " + file;
+                ImgFixingSettings.ShowGrid = false;
+                if (await fileEdit.SaveJsonAsync(file, ImgFixingSettings, true)) RezultRTB.Text = "Settings save in " + file;
                 ImgFixingPlan = file;
             }
             catch (Exception ex)
@@ -690,12 +766,11 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    ImgFixingPlan = openFileDialog.FileName;
-                    TryReadSettings(openFileDialog.FileName);
-                    //if (!string.IsNullOrEmpty(ImgFixingPlan)) SaveSetting(ImgFixingPlan);
-                    //var sdf = ImgFixingSettings;
-                    //UpdateForm();
-                    OpenCvReloadImg(true);
+                    if(TryReadSettings(openFileDialog.FileName))
+                    {
+                        ImgFixingPlan = openFileDialog.FileName;
+                        OpenCvReloadImg(true);
+                    }
                 }
             }
         }
@@ -704,32 +779,34 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         /// Пробуем прочитать настройки из файла
         /// </summary>
         /// <param name="loadingFile">Файл с настройками</param>
-        public void TryReadSettings(string loadingFile = null)
+        public bool TryReadSettings(string loadingFile = null)
         {
             if (File.Exists(ImgFixingPlan) || File.Exists(loadingFile))
             {
                 if (string.IsNullOrEmpty(loadingFile)) loadingFile = ImgFixingPlan;
                 else if (!File.Exists(loadingFile)) loadingFile = ImgFixingPlan;
             }
-            else SetErr("Err Файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
+            else return SetErr("Err Файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
 
             if (File.Exists(loadingFile))
             {
                 try
                 {
                     fileEdit.LoadeJson(loadingFile, out ImgFixingSettings);
+                    ImgFixingSettings.ShowGrid = false;
                     SetImgFixingSettings(ImgFixingSettings);
                 }
                 catch (IOException e)
                 {
-                    SetErr("The file could not be read: " + e.Message + "!!!\n");
+                    return SetErr("The file could not be read: " + e.Message + "!!!\n");
                 }
             }
-            else SetErr("Err TryReadSettings.файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
+            else return SetErr("Err TryReadSettings.файл загрузки не найден!!!\n Загруженны настройки поумолчанию.");
+            return true;
         }
         public void SetImgFixingSettings(ImgFixingSettings imgFixingSettings)
         {
-            //bool AutoReloadSave = AutoReloadChkBox.Checked;
+            
             AutoReloadChkBox.Checked = false;
 
             SetImgFixingSettingsWD(imgFixingSettings);
@@ -760,17 +837,28 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
 
             AutoReloadChkBox.Checked = imgFixingSettings.AutoReload;
         }
-        private void SetImgFixingSettingsWD(ImgFixingSettings imgFixingSettings) // для старых версий загрузка плана без настроек дисторсии
+       
+        /// <summary>
+        /// обновление настроек без дисторсии
+        /// </summary>
+        /// <param name="imgFixingSettings"></param>
+        private void SetImgFixingSettingsWD(ImgFixingSettings imgFixingSettings)
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked;
             AutoReloadChkBox.Checked = false;
             DistChkBox.Checked = false;
 
             if (imgFixingSettings.Zoom < 1) imgFixingSettings.Zoom = 1;
-            //Zoom = imgFixingSettings.Zoom;
             ZoomLbl.Text = imgFixingSettings.Zoom.ToString();
             rotation90 = imgFixingSettings.Rotation90;
             BlackWhiteChkBox.Checked = imgFixingSettings.BlackWhiteMode;
+
+            CropBeforChkBox.Checked = imgFixingSettings.CropBeforChkBox;
+            XBeforTxtBox.Text = imgFixingSettings.XBefor.ToString();
+            YBeforTxtBox.Text = imgFixingSettings.YBefor.ToString();
+            dXBeforTxtBox.Text = imgFixingSettings.DXBefor.ToString();
+            dYBeforTxtBox.Text = imgFixingSettings.DYBefor.ToString();
+
             CropAfterChkBox.Checked = imgFixingSettings.CropAfterChkBox;
             XAfterTxtBox.Text = imgFixingSettings.XAfter.ToString();
             YAfterTxtBox.Text = imgFixingSettings.YAfter.ToString();
@@ -778,6 +866,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             dYAfterTxtBox.Text = imgFixingSettings.DYAfter.ToString();
             AutoReloadChkBox.Checked = AutoReloadSave;
         }
+
         private void RBtnUpDn_Click(object sender, EventArgs e) { Rotation90(false); ZeroCropAfter(); SetSm13Sm23(); }
         private void RBtnUp90_Click(object sender, EventArgs e) { Rotation90(true); ZeroCropAfter(); SetSm13Sm23(); }
         private void RBtnUp001_Click(object sender, EventArgs e) => Rotation(100);
@@ -809,6 +898,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void Rotation(int N)
         {
             bool AutoReloadSave = AutoReloadChkBox.Checked; // Нужно для того что бы картинки лишний раз не ребуталась
+            AutoReloadChkBox.Checked = false;
             Sm21TxtBox.Text = (ImgFixingSettings.DistorSettings.Sm21 + N).ToString();
             Sm12TxtBox.Text = (ImgFixingSettings.DistorSettings.Sm12 - N).ToString();
             AutoReloadChkBox.Checked = AutoReloadSave;
@@ -824,6 +914,12 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void UpdateForm()
         {
             AutoReloadChkBox.Checked = false;
+
+            CropBeforChkBox.Checked = ImgFixingSettings.CropBeforChkBox;
+            XBeforTxtBox.Text = ImgFixingSettings.XBefor.ToString();
+            YBeforTxtBox.Text = ImgFixingSettings.YBefor.ToString();
+            dXBeforTxtBox.Text = ImgFixingSettings.DXBefor.ToString();
+            dYBeforTxtBox.Text = ImgFixingSettings.DYBefor.ToString();
 
             BlackWhiteChkBox.Checked = ImgFixingSettings.BlackWhiteMode;
             ZoomLbl.Text = ImgFixingSettings.Zoom.ToString();
@@ -843,12 +939,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Sm31TxtBox.Text = ImgFixingSettings.DistorSettings.Sm31.ToString();
             Sm32TxtBox.Text = ImgFixingSettings.DistorSettings.Sm32.ToString();
             Sm33TxtBox.Text = ImgFixingSettings.DistorSettings.Sm33.ToString();
-
-            CropAfterChkBox.Checked = ImgFixingSettings.CropAfterChkBox;
-            XAfterTxtBox.Text = ImgFixingSettings.XAfter.ToString();
-            YAfterTxtBox.Text = ImgFixingSettings.YAfter.ToString();
-            dXAfterTxtBox.Text = ImgFixingSettings.DXAfter.ToString();
-            dYAfterTxtBox.Text = ImgFixingSettings.DYAfter.ToString();
 
             switch (ImgFixingSettings.Diminish)
             {
@@ -873,6 +963,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                     diminish2СhсkBox.Checked = false;
                     break;
             }
+
+            CropAfterChkBox.Checked = ImgFixingSettings.CropAfterChkBox;
+            XAfterTxtBox.Text = ImgFixingSettings.XAfter.ToString();
+            YAfterTxtBox.Text = ImgFixingSettings.YAfter.ToString();
+            dXAfterTxtBox.Text = ImgFixingSettings.DXAfter.ToString();
+            dYAfterTxtBox.Text = ImgFixingSettings.DYAfter.ToString();
+
             ShowGridСhckBox.Checked = ImgFixingSettings.ShowGrid;
             AutoReloadChkBox.Checked = ImgFixingSettings.AutoReload;
         }
@@ -881,9 +978,18 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         {
             ImgFixingSettings.BlackWhiteMode = BlackWhiteChkBox.Checked;
 
+            ImgFixingSettings.CropBeforChkBox = CropBeforChkBox.Checked;
+            int.TryParse(XBeforTxtBox.Text, out int param);
+            ImgFixingSettings.XBefor = param;
+            int.TryParse(YBeforTxtBox.Text, out param);
+            ImgFixingSettings.YBefor = param;
+            int.TryParse(dXBeforTxtBox.Text, out param);
+            ImgFixingSettings.DXBefor = param;
+            int.TryParse(dYBeforTxtBox.Text, out param);
+            ImgFixingSettings.DYBefor = param;
+
             double.TryParse(ZoomLbl.Text, out double doublParam);
             ImgFixingSettings.Zoom = doublParam;
-
             ImgFixingSettings.Distortion = DistChkBox.Checked;
 
             double.TryParse(ATxtBox.Text, out doublParam);
@@ -916,7 +1022,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             ImgFixingSettings.DistorSettings.Sm33 = doublParam;
 
             ImgFixingSettings.CropAfterChkBox = CropAfterChkBox.Checked;
-            int.TryParse(XAfterTxtBox.Text, out int param);
+            int.TryParse(XAfterTxtBox.Text, out param);
             ImgFixingSettings.XAfter = param;
             int.TryParse(YAfterTxtBox.Text, out param);
             ImgFixingSettings.YAfter = param;
@@ -935,7 +1041,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ApplyBtn_Click_1(object sender, EventArgs e)=>OpenCvReloadImg();
-
+        
         /// <summary>
         /// Перезагрузка картинки в форме
         /// </summary>
@@ -956,12 +1062,68 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 return;
             }
 
-            var bitmapFrame  = FixFrames.EditImg(ImgFixingSettings, file);
-
+            LoadedBitmapFrame = (Bitmap)Bitmap.FromFile(file);
+            
+            FindMidlePoint();
+            pictureBox1.BackgroundImage = FixFrames.EditImg(ImgFixingSettings, file);
             UpdateForm();
-            pictureBox1.BackgroundImage = bitmapFrame;
-            MidleWidthPoint = bitmapFrame.Width/ 2;
-            MidleHeightPoint = bitmapFrame.Height/ 2;
+        }
+
+        private void ChkBorder()
+        {
+            if (LoadedBitmapFrame == null) return;
+            int Y = ImgFixingSettings.YBefor, X = ImgFixingSettings.XBefor, dY = ImgFixingSettings.DYBefor, dX = ImgFixingSettings.DXBefor;
+
+            if (Y < 0) Y = 0; 
+            if (X < 0) X = 0;
+            if (Y > LoadedBitmapFrame.Height - 1) Y = LoadedBitmapFrame.Height / 2;
+            if (X > LoadedBitmapFrame.Width - 1) X = LoadedBitmapFrame.Width / 2;
+
+            if (dY <= 0) dY = LoadedBitmapFrame.Height; 
+            if (dX <= 0) dX = LoadedBitmapFrame.Width;
+            if (Y + dY > LoadedBitmapFrame.Height) dY = LoadedBitmapFrame.Height - Y;
+            if (X + dX > LoadedBitmapFrame.Width) dX = LoadedBitmapFrame.Width - X;
+
+            if (Y != ImgFixingSettings.YBefor)
+            {
+                ImgFixingSettings.YBefor = Y;
+                YBeforTxtBox.Text = Y.ToString();
+            }
+
+            if(X != ImgFixingSettings.XBefor)
+            {
+                ImgFixingSettings.XBefor = X;
+                XBeforTxtBox.Text = X.ToString();
+            }
+
+            if (dY != ImgFixingSettings.DYBefor)
+            {
+                ImgFixingSettings.DYBefor = dY;
+                dYBeforTxtBox.Text = dY.ToString();
+            }
+
+            if (dX != ImgFixingSettings.DXBefor)
+            {
+                ImgFixingSettings.DXBefor = dX;
+                dXBeforTxtBox.Text = dX.ToString();
+            }
+        }
+
+        private void FindMidlePoint()
+        {
+            if (LoadedBitmapFrame == null) return;
+            if (CropBeforChkBox.Checked && DistChkBox.Checked)
+            {
+                MidleWidthPoint = (int)(ImgFixingSettings.DXBefor / 2 / ImgFixingSettings.Diminish);
+                MidleHeightPoint = (int)(ImgFixingSettings.DYBefor / 2 / ImgFixingSettings.Diminish);
+            }
+            else
+            {
+                MidleWidthPoint = (int)(LoadedBitmapFrame.Width / 2 / ImgFixingSettings.Diminish);
+                MidleHeightPoint = (int)(LoadedBitmapFrame.Height / 2 / ImgFixingSettings.Diminish);
+            }
+
+            if (DistChkBox.Checked)SetSm13Sm23();
         }
 
         private void diminish2СhсkBox_CheckedChanged(object sender, EventArgs e) => DiminishСhсkBox(0);
@@ -970,49 +1132,69 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void DiminishСhсkBox(int number)
         {
             if (diminshIn) return;
-            else
-            {
-                diminshIn = true;
 
-                for (int i = 0; i < dimList.Count(); i++)
+            diminshIn = true;
+            for (int i = 0; i < dimList.Count(); i++)
+            {
+                if (i != number) dimList[i] = false;
+                else
                 {
-                    if (i != number) dimList[i] = false;
-                    else
+                    switch (number)
                     {
-                        switch (number)
-                        {
-                            case 0:
-                                dimList[0] = diminish0СhсkBox.Checked;
-                                if(diminish0СhсkBox.Checked) ImgFixingSettings.Diminish = 1.5;
-                                else ImgFixingSettings.Diminish = 1;
-                                break;
-                            case 1:
-                                dimList[1] = diminish1СhсkBox.Checked;
-                                if (diminish1СhсkBox.Checked) ImgFixingSettings.Diminish = 2;
-                                else ImgFixingSettings.Diminish = 1;
-                                
-                                break; 
-                            case 2:
-                                dimList[2] = diminish2СhсkBox.Checked;
-                                if (diminish2СhсkBox.Checked) ImgFixingSettings.Diminish = 2.5;
-                                else ImgFixingSettings.Diminish = 1;
-                                break;
-                            default: 
-                                ImgFixingSettings.Diminish = 1;
-                                break;
-                        }
+                        case 0:
+                            dimList[0] = diminish0СhсkBox.Checked;
+                            if (diminish0СhсkBox.Checked) ImgFixingSettings.Diminish = 1.5;
+                            else ImgFixingSettings.Diminish = 1;
+                            break;
+                        case 1:
+                            dimList[1] = diminish1СhсkBox.Checked;
+                            if (diminish1СhсkBox.Checked) ImgFixingSettings.Diminish = 2;
+                            else ImgFixingSettings.Diminish = 1;
+                            break;
+                        case 2:
+                            dimList[2] = diminish2СhсkBox.Checked;
+                            if (diminish2СhсkBox.Checked) ImgFixingSettings.Diminish = 2.5;
+                            else ImgFixingSettings.Diminish = 1;
+                            break;
+                        default:
+                            ImgFixingSettings.Diminish = 1;
+                            break;
                     }
                 }
-
-                diminish0СhсkBox.Checked = dimList[0];
-                diminish1СhсkBox.Checked = dimList[1];
-                diminish2СhсkBox.Checked = dimList[2];
-                //OpenCvReloadImg();
-                ZeroCropAfter();
-                diminshIn = false;
             }
+
+            diminish0СhсkBox.Checked = dimList[0];
+            diminish1СhсkBox.Checked = dimList[1];
+            diminish2СhсkBox.Checked = dimList[2];
+            ZeroCropAfter();
+            diminshIn = false;
         }
 
+        private bool CropSession = false;
+        private void CropBefor(TextBox textBox, EventArgs e)
+        {
+            if (CropSession) return;
+            else CropSession = true;
+
+            if (string.IsNullOrEmpty(textBox.Text)) return;
+            Int32.TryParse(textBox.Text, out int N);
+
+            if (textBox.Name == "XBeforTxtBox") ImgFixingSettings.XBefor = N;
+            else if (textBox.Name == "dXBeforTxtBox") ImgFixingSettings.DXBefor = N;
+            else if (textBox.Name == "YBeforTxtBox") ImgFixingSettings.YBefor = N;
+            else if (textBox.Name == "dYBeforTxtBox") ImgFixingSettings.DYBefor = N;
+
+            ChkBorder();
+            FindMidlePoint();
+            if (AutoReloadChkBox.Checked) OpenCvReloadImg();
+
+            CropSession = false;
+        }
+
+        private void XBeforTxtBox_TextChanged(object sender, EventArgs e) => CropBefor((TextBox)sender, e);
+        private void dXBeforTxtBox_TextChanged(object sender, EventArgs e)=> CropBefor((TextBox)sender, e);
+        private void YBeforTxtBox_TextChanged(object sender, EventArgs e) => CropBefor((TextBox)sender, e);
+        private void dYBeforTxtBox_TextChanged(object sender, EventArgs e) => CropBefor((TextBox)sender, e);
         public string GetImgFixingPlan() => ImgFixingPlan;
     }
 }

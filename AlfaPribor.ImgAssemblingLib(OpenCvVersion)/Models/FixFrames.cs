@@ -48,17 +48,17 @@ namespace ImgAssemblingLibOpenCV.Models
             }
         }
 
-        /// <summary>
-        /// Конструктор для склейки изображений из директории
-        /// </summary>
-        /// <param name="imgFixingSettings">Настройки по которым коректируктся фрагмент</param>
-        /// <param name="dir">Директория с кадрами</param>
-        public FixFrames(ImgFixingSettings imgFixingSettings, string directory)
-        {
-            ImgFixingSettings = imgFixingSettings;
-            TryReadSettings();
-            LoadImg(directory);
-        }
+        ///// <summary>
+        ///// Конструктор для склейки изображений из директории
+        ///// </summary>
+        ///// <param name="imgFixingSettings">Настройки по которым коректируктся фрагмент</param>
+        ///// <param name="dir">Директория с кадрами</param>
+        //public FixFrames(ImgFixingSettings imgFixingSettings, string directory)
+        //{
+        //    ImgFixingSettings = imgFixingSettings;
+        //    TryReadSettings();
+        //    LoadImg(directory);
+        //}
 
         /// <summary>
         /// Конструктор для работы с дополнительным окном
@@ -83,6 +83,12 @@ namespace ImgAssemblingLibOpenCV.Models
         {
             FixingFrame1 = new Mat(file1);
             FixingFrame2 = new Mat(file2);
+        }
+
+        public FixFrames(Mat file1, Mat file2)
+        {
+            FixingFrame1 = file1;
+            FixingFrame2 = file2;
         }
 
         /// <summary>
@@ -124,8 +130,14 @@ namespace ImgAssemblingLibOpenCV.Models
         /// Склейка двух изображений для DebugForm
         /// </summary>
         /// <returns></returns>
-        public bool StitchTwoImg()
+        public bool StitchTwoImg(bool useEdit = false)
         {
+            if (useEdit)
+            {
+                FixingFrame1 = EditImg(FixingFrame1);
+                FixingFrame2 = EditImg(FixingFrame2);
+            }
+            
 
             bool IsGorizontal = true;
             if (Rezult == null) Rezult = new Mat();
@@ -156,10 +168,11 @@ namespace ImgAssemblingLibOpenCV.Models
             //}
             //else RTB.Text = "Область поиска точек отключена";
            
-            if (ImgFixingSettings.Zoom == 0) ImgFixingSettings.Zoom = 1;
-            Cv2.Resize(Rezult, Rezult, new OpenCvSharp.Size((int)(Rezult.Width * ImgFixingSettings.Zoom), (int)(Rezult.Height * ImgFixingSettings.Zoom)));
+            //if (ImgFixingSettings.Zoom == 0) ImgFixingSettings.Zoom = 1;
+            //Cv2.Resize(Rezult, Rezult, new OpenCvSharp.Size((int)(Rezult.Width * ImgFixingSettings.Zoom), (int)(Rezult.Height * ImgFixingSettings.Zoom)));
             return true;
         }
+
         public Bitmap GetRezult() => BitmapConverter.ToBitmap(Rezult);
         private bool SetErr(string errText)
         {
@@ -328,37 +341,33 @@ namespace ImgAssemblingLibOpenCV.Models
                 SetErr("FixingFrame1 = null");
                 return null;
             }
-            var mat = EditImg(FixingFrame1);
-            return MatToBitmap(mat);
-        }
-
-        public bool CheckFixingImg(string inputDir, string outputDir)
-        {
-            if (string.IsNullOrEmpty(outputDir)) return SetErr("outputDir IsNullOrEmpty");
-            if (string.IsNullOrEmpty(inputDir)) return SetErr("inputDir IsNullOrEmpty");
-            if (!Directory.Exists(inputDir)) return SetErr("inputDir " + inputDir + " !Exists");
-            if (!Directory.Exists(outputDir)) return SetErr("outputDir " + outputDir + " !Exists");
-
-            FileInfo[] inputFileList = fileEdit.SearchFiles(inputDir);
-            FileInfo[] outputFileList = fileEdit.SearchFiles(outputDir);
-
-            if (inputFileList.Count() != outputFileList.Count()) return false;
-
-            for (int i = 0; i < inputFileList.Length; i++)
-                if (!File.Exists(outputDir + Path.DirectorySeparatorChar + inputFileList[i].Name)) return false;
-            return true;
-        }
-
-        public bool CheckFixingImg(string outputDir)
-        {
             
-            if (string.IsNullOrEmpty(outputDir)) return SetErr("outputDir IsNullOrEmpty");
-            if (!Directory.Exists(outputDir)) return SetErr("outputDir "+ outputDir + " !Exists");
+            return MatToBitmap(EditImg(FixingFrame1));
+        }
 
-            FileInfo[] fileList = fileEdit.SearchFiles(outputDir);
-            for (int i = 0; i < fileList.Length; i++)
-                if (!File.Exists(outputDir + Path.DirectorySeparatorChar + fileList[i].Name)) return false;
-            return true;
+        /// <summary>
+        /// Проверка границ перед обрезкой кадра
+        /// </summary>
+        /// <param name="img"></param>
+        private void ChkBorder(Mat img)
+        {
+            if (img.Width == 0 || img.Height == 0) return;
+            int Y = ImgFixingSettings.YBefor, X = ImgFixingSettings.XBefor, dY = ImgFixingSettings.DYBefor, dX = ImgFixingSettings.DXBefor;
+
+            if (Y < 0) Y = 0;
+            if (X < 0) X = 0;
+            if (Y > img.Height - 1) Y = img.Height / 2;
+            if (X > img.Width - 1) X = img.Width / 2;
+
+            if (dY <= 0) dY = img.Height;
+            if (dX <= 0) dX = img.Width;
+            if (Y + dY > img.Height) dY = img.Height - Y;
+            if (X + dX > img.Width) dX = img.Width - X;
+
+            ImgFixingSettings.YBefor = Y;
+            ImgFixingSettings.XBefor = X;
+            ImgFixingSettings.DYBefor = dY;
+            ImgFixingSettings.DXBefor = dX;
         }
 
         /// <summary>
@@ -368,10 +377,17 @@ namespace ImgAssemblingLibOpenCV.Models
         /// <returns></returns>
         private Mat EditImg(Mat img)
         {
-            if (Rezult == null) Rezult = new Mat();
+            if (ImgFixingSettings.CropBeforChkBox && (img.Width!= (ImgFixingSettings.DXBefor - ImgFixingSettings.XBefor )|| img.Height != (ImgFixingSettings.DYBefor - ImgFixingSettings.DYBefor)))
+            {
+                ChkBorder(img);
+                Rect rect;
+                if (ImgFixingSettings.DYBefor != 0 || ImgFixingSettings.DXBefor != 0) rect = new Rect(ImgFixingSettings.XBefor, ImgFixingSettings.YBefor, ImgFixingSettings.DXBefor, ImgFixingSettings.DYBefor);
+                else rect = new Rect(ImgFixingSettings.XBefor, ImgFixingSettings.YBefor, img.Width - ImgFixingSettings.XBefor, img.Height - ImgFixingSettings.YBefor);
+                Mat newImg = new Mat(img, rect);
+                img = newImg;
+            }
 
-            if(ImgFixingSettings.Diminish!=1) Cv2.Resize(img, img, new OpenCvSharp.Size(img.Width / ImgFixingSettings.Diminish, img.Height / ImgFixingSettings.Diminish));
-
+            if (ImgFixingSettings.Diminish!=1) Cv2.Resize(img, img, new OpenCvSharp.Size(img.Width / ImgFixingSettings.Diminish, img.Height / ImgFixingSettings.Diminish));
             if (ImgFixingSettings.Zoom > 1)
             {
                 int Width = img.Width, Height = img.Height, x1 = (int)(Width * (ImgFixingSettings.Zoom - 1) / 2), y1 = (int)(Height * (ImgFixingSettings.Zoom - 1) / 2);
@@ -389,7 +405,6 @@ namespace ImgAssemblingLibOpenCV.Models
             else if (ImgFixingSettings.Rotation90 == 3) Cv2.Rotate(img, img, RotateFlags.Rotate90Counterclockwise);
 
             if (Rezult == null) Rezult = new Mat();
-
             if (ImgFixingSettings.Distortion)
             {
                 double[] distCoeffs = new double[] { ImgFixingSettings.DistorSettings.A, ImgFixingSettings.DistorSettings.B, ImgFixingSettings.DistorSettings.C, ImgFixingSettings.DistorSettings.D, ImgFixingSettings.DistorSettings.E };
@@ -495,77 +510,33 @@ namespace ImgAssemblingLibOpenCV.Models
             }
         }
 
-        //public Mat MatchPicBySurf(Mat matSrc, Mat matTo, double threshold = 40)
+        //public bool DawnScal(string href, double multiple)
         //{
-        //    using (Mat matSrcRet = new Mat())
-        //    using (Mat matToRet = new Mat())
+        //    if(string.IsNullOrEmpty(href)) return false;
+        //    if(fileEdit.IsDirectory(href))
         //    {
-        //        KeyPoint[] keyPointsSrc, keyPointsTo;
-        //        using (var surf = SURF.Create(threshold, 4, 3, true, true))
-        //        {
-        //            surf.DetectAndCompute(matSrc, null, out keyPointsSrc, matSrcRet);
-        //            surf.DetectAndCompute(matTo, null, out keyPointsTo, matToRet);
-        //        }
-
-        //        using (var flnMatcher = new FlannBasedMatcher())
-        //        {
-        //            var matches = flnMatcher.Match(matSrcRet, matToRet);
-        //            // Находим минимальное и максимальное расстояние
-        //            double minDistance = 1000;// Обратное приближение
-        //            double maxDistance = 0;
-        //            for (int i = 0; i < matSrcRet.Rows; i++)
-        //            {
-        //                double distance = matches[i].Distance;
-        //                if (distance > maxDistance) maxDistance = distance;
-        //                if (distance < minDistance) minDistance = distance;
-        //            }
-        //            RTB.Text = $"max distance : {maxDistance}\n";
-        //            RTB.Text += $"min distance : {minDistance}";
-
-        //            var pointsSrc = new List<Point2f>();
-        //            var pointsDst = new List<Point2f>();
-        //            //Выбираем лучшие точки соответствия
-        //            var goodMatches = new List<DMatch>();
-        //            for (int i = 0; i < matSrcRet.Rows; i++)
-        //            {
-        //                double distance = matches[i].Distance;
-        //                var sdfsdf = Math.Max(minDistance * 2, 0.02);
-        //                if (distance < Math.Max(minDistance * 2, 0.02))
-        //                {
-        //                    pointsSrc.Add(keyPointsSrc[matches[i].QueryIdx].Pt);
-        //                    pointsDst.Add(keyPointsTo[matches[i].TrainIdx].Pt);
-        //                    //Если расстояние меньше диапазона, вставляем новый DMatch
-        //                    goodMatches.Add(matches[i]);
-        //                }
-        //            }
-        //            var outMat = new Mat();
-
-        //            //Алгоритм RANSAC фильтрует совпадающие результаты
-        //            var pSrc = pointsSrc.ConvertAll(Point2fToPoint2d);
-        //            var pDst = pointsDst.ConvertAll(Point2fToPoint2d);
-        //            var outMask = new Mat();
-        //            if (pSrc != null && pDst != null)
-        //            {
-        //                // Если исходный результат сопоставления пуст, пропустите шаг фильтрации
-        //                if (pSrc.Count > 3 && pDst.Count > 3)
-        //                    Cv2.FindHomography(pSrc, pDst, HomographyMethods.Ransac, mask: outMask);
-        //                // Применять фильтрацию только в том случае, если количество совпадающих точек, обработанных RANSAC, превышает 10. В противном случае используйте исходные результаты совпадающих точек (если точек совпадения слишком мало, после обработки RANSAC вы можете получить результат 0 совпадающих точек) .
-        //                if (outMask.Rows > 100)
-        //                {
-        //                    byte[] maskBytes = new byte[outMask.Rows * outMask.Cols];
-        //                    outMask.GetArray(out maskBytes);
-        //                    Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, outMat, matchesMask: maskBytes, flags: DrawMatchesFlags.NotDrawSinglePoints);
-        //                }
-        //                else
-        //                    Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, outMat, flags: DrawMatchesFlags.NotDrawSinglePoints);
-        //            }
-
-        //            Cv2.Resize(outMat, outMat, new OpenCvSharp.Size((int)(outMat.Width * Zoom), (int)(outMat.Height * Zoom)));
-        //            return outMat;
-        //        }
+        //        if (!Directory.Exists(href)) return false;
+        //        FileInfo[] fileList = fileEdit.SearchFiles(href);
+        //        DawnScal(fileList[0], multiple);
         //    }
+        //    else return DawnScal(new FileInfo(href), multiple);
+
+        //    return true;
         //}
 
+        //public bool DawnScal(FileInfo file, double multiple)
+        //{
+        //    if (!File.Exists(file.FullName)) return false;
+        //    Mat img = new Mat(file.FullName);
+        //    Cv2.Resize(img, img, new OpenCvSharp.Size(img.Width / multiple, img.Height / multiple));
+        //    string dir = Path.GetDirectoryName(file.FullName);
+        //    var dir3 = file.Directory;
+        //    string dir2 = file.Directory.Name;
+            
+        //    string newhref = dir + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file.FullName) + ".x" + multiple.ToString() + file.Extension;
+        //    img.SaveImage(newhref);
+        //    return true;
+        //}
 
         private Bitmap MatToBitmap(Mat mat)
         {

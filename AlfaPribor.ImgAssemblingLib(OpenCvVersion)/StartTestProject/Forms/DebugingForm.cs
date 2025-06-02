@@ -85,8 +85,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 assemblyPlan = new AssemblyPlan();
             }
 
-            if(false) FixImgChckBox.Enabled = true;
-
             if (fileEdit.IsDirectory(FirstFile))GetImgFiles(new string[] { FirstFile });
             LoadFileList(FirstFile);
             ShowLoadedImgs();
@@ -387,6 +385,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         //}
         private void panel1_MouseWheel(object sender, MouseEventArgs e)
         {
+            //Zoom = 1;
             if (e.Delta > 0) zoom(true);
             else zoom(false);
         }
@@ -420,8 +419,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                     return;
                 }
             }
-            
-            ShowLoadedImgs();
+
+           //ShowLoadedImgs();
         }
 
         private void picBox_Display_MouseDown(object sender, MouseEventArgs e)
@@ -476,12 +475,13 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                     else FixingFrames = new FixFrames(FirstFile, SecondFile, false);
                 }
 
-                FixingFrames.ChangeSettings(new ImgFixingSettings { Zoom = Zoom });
-                prevFirstFile = FirstFile; prevSecondFile = SecondFile;
-
+                if (FixImgChckBox.Checked) FixingFrames.TryReadSettings(assemblyPlan.ImgFixingPlan);
+                else FixingFrames.ChangeSettings(new ImgFixingSettings { Zoom = Zoom });
+                prevFirstFile = FirstFile; 
+                prevSecondFile = SecondFile;
                 picBox_Display.Image = null;
 
-                if (FixingFrames.StitchTwoImg())
+                if (FixingFrames.StitchTwoImg(FixImgChckBox.Checked))
                 {
                     var img = FixingFrames.GetRezult();
                     if(img!=null && img.Width !=0 && img.Height!=0) worker_UpdateImg(img);
@@ -496,7 +496,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if (!File.Exists(SecondFile)) RTB.Text += "Second File :" + SecondFile + " не найден!!!\n";
             }
         }
-
+        /// <summary> Показать ключевые точки </summary>
         private void ShowPointsBtn_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(FirstFile)) FirstFile = FileDirTxtBox.Text;
@@ -504,6 +504,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             ShowPoints();
         }
 
+        /// <summary> Показать ключевые точки </summary>
         public void ShowPoints()
         {
             if (string.IsNullOrEmpty(FirstFile) || string.IsNullOrEmpty(SecondFile)) return;
@@ -516,24 +517,33 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             assemblyPln.MaxHeight = MaxHeight;
             assemblyPln.MinWight = MinWight;
             assemblyPln.MaxWight = MaxWight;
+            assemblyPln.FixImg = FixImgChckBox.Checked;
 
             StitchingBlock stitchingBlock = new StitchingBlock(assemblyPln);
             stitchingBlock.TextChanged += rtbText_AddInfo;
             stitchingBlock.ChangBitmapImg += worker_UpdateImg;
             stitchingBlock.AllPointsChkBox = AllPointsChkBox.Checked;
             stitchingBlock.GetVectorListStringVersion(FirstFile, SecondFile, true);
-            //stitchingBlock.GetVectorList(FirstFile, SecondFile, true);
-
             if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
+
+            //if (AllPointsChkBox.Checked)
+            //{
+            //    rezultImg = stitchingBlock.RunORB(FirstFile, SecondFile);
+            //    worker_UpdateImg();
+            //}
+            //else
+            //{
+            //    stitchingBlock.TextChanged += rtbText_AddInfo;
+            //    stitchingBlock.ChangBitmapImg += worker_UpdateImg;
+            //    stitchingBlock.AllPointsChkBox = AllPointsChkBox.Checked;
+            //    stitchingBlock.GetVectorListStringVersion(FirstFile, SecondFile, true);
+            //    if (stitchingBlock.IsErr) RTB.Text += stitchingBlock.ErrText;
+            //}
         }
 
-        /// <summary>
-        /// Объединение двух кадров
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <summary> Объединение двух кадров </summary>
         private async void JoinImgs(object sender, EventArgs e) => await JoinImgs();
-
+        /// <summary> Объединение двух кадров </summary>
         private async Task<bool> JoinImgs()
         {
             if (string.IsNullOrEmpty(FirstFile) || string.IsNullOrEmpty(SecondFile))
@@ -560,18 +570,18 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
 
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
-            LoadBoders();
+            LoadBorders();
             assemblyPlan.BitMap = true;
             assemblyPlan.Stitch = true;
-            assemblyPlan.FixImg = false;
+
+            if (FixImgChckBox.Checked && !string.IsNullOrEmpty(assemblyPlan.ImgFixingPlan)) assemblyPlan.FixImg = true;
+            else assemblyPlan.FixImg = false;
+
             assemblyPlan.ShowRezult = false;
             assemblyPlan.SaveImgFixingRezultToFile = true;
-            assemblyPlan.Period = 1;
             PeriodTxtBox.Text = "1";
-
-            Assembling.ClearAll();
-            Assembling.BitmapData = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile)};
             Assembling.ChangeAssemblyPlan(assemblyPlan);
+            Assembling.BitmapData = new Bitmap[] { new Bitmap(FirstFile), new Bitmap(SecondFile) };
 
             if (await Assembling.StartAssemblingAsync())// Запуск сборки изображения
             {
@@ -585,7 +595,10 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 return false;
             }
         }
-
+        /// <summary>
+        /// Установка progressBar
+        /// </summary>
+        /// <param name="progress">Новое значение progressBar</param>
         private void worker_ProcessChang(int progress)
         {
             if (progress < 0) progressBar.Value = 0;
@@ -595,50 +608,34 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void worker_TextChang(string text) => progressBarLabel.Text = text;
         private void rtbText_AddInfo(string text)=>RTB.Text += text;
         private void rtbText_UpDateInfo(string text) => RTB.Text = text;
-        private void worker_UpdateImg(Bitmap img)
+        /// <summary>
+        /// обновление рисунка
+        /// </summary>
+        /// <param name="img">новое изображение</param>
+        private void worker_UpdateImg(Bitmap img = null)
         {
-            if (img == null) return;
-            rezultImg = img;
+            if (img == null && rezultImg == null) return;
+            if (img == null) img = rezultImg;
+            else rezultImg = img;
+            if (Zoom > 5) Zoom = 1;
             Size newSize = new Size((int)(img.Width * Zoom), (int)(img.Height * Zoom));
             picBox_Display.Image = new Bitmap(img, newSize);
         }
 
-        //private void worker_UpdateImg(Mat img)
-        //{
-        //    if (img.Width == 0 && img.Height == 0)
-        //    {
-        //        picBox_Display.Image = null;
-        //        return;
-        //    }
-
-        //    if (img.Height * Zoom > picBox_Display.Height)
-        //    {
-        //        Zoom = Math.Round((decimal)(picBox_Display.Height * 0.9) / (decimal)img.Height, 2);
-        //        if (Zoom < 0.1) Zoom = 0.1;
-        //        ZoomLabel.Text = Zoom.ToString();
-        //    }
-
-        //    if (img.Width * Zoom > picBox_Display.Width)
-        //    {
-        //        Zoom = Math.Round((decimal)(picBox_Display.Width * 0.9) / (decimal)img.Width, 2);
-        //        if (Zoom < 0.1) Zoom = 0.1;
-        //        ZoomLabel.Text = Zoom.ToString();
-        //    }
-
-        //    Mat rezult = new Mat();
-        //    if (SelectSearchArea) Cv2.Rectangle(img, new OpenCvSharp.Point((int)MinWight, (int)MinHeight), new OpenCvSharp.Point((int)MaxWight, (int)MaxHeight), Scalar.Red, 2);
-        //    Cv2.Resize(img, rezult, new OpenCvSharp.Size((int)(img.Width * Zoom), (int)(img.Height * Zoom)));
-        //    picBox_Display.Image = BitmapConverter.ToBitmap(rezult);
-        //}
-        private void StopBtn_Click(object sender, EventArgs e)
-        {
-            StitchingBlock.StopProcess = true;
-            ImgFixingForm.StopProcess = true;
-        }
+        /// <summary> Остановка сборки </summary>
+        private void StopBtn_Click(object sender, EventArgs e) => StopAssembling();
         private bool SaveImg(bool usinOSV = true)
         {
             fileEdit.ClearInformation();
             string fileName = string.Empty;
+
+            // было
+            //if (usinOSV)
+            //{
+            //    Mat rezultImg = Assembling.GetRezultImg();
+            //    fileName = fileEdit.SaveImg(rezultImg);
+            //}
+            //else fileName = fileEdit.SaveImg(null, picBox_Display.Image);
 
             if (string.IsNullOrEmpty(fileName))
             {
@@ -651,7 +648,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 return true;
             }
         }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)=>this.Close();
         private void deleteResultesToolStripMenuItem_Click(object sender, EventArgs e) => fileEdit.DeleteResultes("Result");
         private void deletePlanToolStripMenuItem_Click(object sender, EventArgs e)
@@ -718,7 +714,8 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
         }
 
-        private void LoadBoders()
+        /// <summary> Загрузка границ сборки кадров </summary>
+        private void LoadBorders()
         {
             if (assemblyPlan == null) return;
             if (assemblyPlan.Percent) CheckPercents();
@@ -736,9 +733,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
             assemblyPlan.Delta = Delta;
         }
-        /// <summary>
-        /// Проверка верно ли указаны проценты
-        /// </summary>
+        /// <summary> Проверка процентов </summary>
         private bool CheckPercents()
         {
             if (assemblyPlan == null) return false;
@@ -758,8 +753,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void UpDateFrom()
         {
             if (assemblyPlan == null) return;
-            int from = 0;
-            Int32.TryParse(FromTxtBox.Text, out from);
+            Int32.TryParse(FromTxtBox.Text, out int from);
             FromTxtBox.Text = from.ToString();
             assemblyPlan.From = from;
         }
@@ -771,31 +765,19 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             ToTxtBox.Text = to.ToString();
             assemblyPlan.To = to;
         }
-        /// <summary>
-        /// Включение\отклучение процентного счетчика
-        /// </summary>
+        /// <summary> Включение\отклучение процентного счетчика </summary>
         private void label6_Click(object sender, EventArgs e) => PersentInvok();
-        /// <summary>
-        /// Включение\отклучение процентного счетчика
-        /// </summary>
+        /// <summary> Включение\отклучение процентного счетчика  </summary>
         private void label5_Click(object sender, EventArgs e) => PersentInvok();
-        /// <summary>
-        /// Включение\отклучение процентного счетчика при нажатии в определенную область
-        /// </summary>
+        /// <summary> Включение\отклучение процентного счетчика при нажатии в определенную область </summary>
         private void MainForm_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.X > 550 && e.X < 566 && e.Y > -15 && e.Y < 80) PersentInvok();
         }
 
-        /// <summary>
-        /// Сохранить результат
-        /// </summary>
+        /// <summary> Сохранить результат </summary>
         private void SaveOriginalToolStripMenuItem_Click(object sender, EventArgs e) => SaveImg();
-        /// <summary>
-        /// Сохранить результат из окна
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <summary> Сохранить результат из окна </summary>
         private void SaveWindowImgToolStripMenuItem_Click(object sender, EventArgs e)=>SaveImg(false);
 
         private void FixImgChckBox_CheckedChanged(object sender, EventArgs e)
@@ -816,26 +798,32 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 label6.Visible = assemblyPlan.Percent;
             }
         }
-
+        /// <summary> Показать все ключевые точки </summary>
+        private void AllPointsChkBox_CheckedChanged(object sender, EventArgs e) => ShowPoints();
         private void UseBitmapChckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (assemblyPlan != null) assemblyPlan.BitMap = UseBitmapChckBox.Checked;
         }
+        /// <summary> настройка переиода кадров </summary>
         private void UpDatePeriod()
         {
             if (assemblyPlan == null) return;
-            //assemblyPlan.DefaultParameters = false;
-            int period = 1;
-            Int32.TryParse(PeriodTxtBox.Text, out period);
+            Int32.TryParse(PeriodTxtBox.Text, out int period);
+            if(period < 1) period = 1;
             PeriodTxtBox.Text = period.ToString();
             assemblyPlan.Period = period;
         }
         private void FromTxtBox_TextChanged(object sender, EventArgs e) => UpDateFrom();
         private void ToTxtBox_TextChanged(object sender, EventArgs e) => UpDateTo();
         private void PeriodTxtBox_TextChanged(object sender, EventArgs e) => UpDatePeriod();
+        /// <summary>  Запуск сборки  </summary>
         private async void StartAssembling(object sender, EventArgs e) => await StartAssembling(true);
+        /// <summary>  Запуск сборки  </summary>
         private async Task<bool> StartAssembling(bool loadBoders = false)
         {
+            StopAssembling();
+            RTB.Text = string.Empty;
+
             if (string.IsNullOrEmpty(FileDirTxtBox.Text))
             {
                 RTB.Text = "Err File1TxtBox.Text IsNullOrEmpty!!!";
@@ -843,28 +831,21 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             }
 
             if (assemblyPlan == null) assemblyPlan = new AssemblyPlan();
-
-            if (loadBoders) LoadBoders();
+            if (loadBoders) LoadBorders();
             else if (!fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
             else assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
             assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
-            //assemblyPlan.BitMap = false;
-            assemblyPlan.ShowRezult = true;
 
-            if (assemblyPlan.BitMap)
+            Assembling.ChangeAssemblyPlan(assemblyPlan);
+            if (Assembling.AssemblyPlan.BitMap)
             {
                 FileInfo[] fileList = fileEdit.SearchFiles(assemblyPlan.WorkingDirectory);
                 if (fileList.Length == 0) return false;
                 Bitmap[] dataArray = fileList.Select(x => { return new Bitmap(x.FullName); }).ToArray();
                 Assembling.BitmapData = dataArray;
-                //Assembling.SaveImgFixingRezultToFile = SavingImgWBitmapChckBox.Checked;
             }
+            if (Assembling.AssemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
 
-            assemblyPlan.SpeedCounting = false;
-            if (assemblyPlan.SpeedCounting) Assembling.CalculationSpeedDespiteErrors = true;
-
-            Assembling.ChangeAssemblyPlan(assemblyPlan);
-            
             await Assembling.TryAssembleAsync();
             if (Assembling.FinalRezult.IsErr)
             {
@@ -877,10 +858,17 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 _Log.DebugPrint("Сборка завершена!");
             }
 
-            worker_UpdateImg(Assembling.FinalRezult.BitRezult);
-            //var sdf = Assembling.GetRezultImg();
-
+            if (Assembling.FinalRezult.BitRezult == null) picBox_Display.Image = null;
+            else worker_UpdateImg(Assembling.FinalRezult.BitRezult);
             return !Assembling.FinalRezult.IsErr;
+        }
+        /// <summary> Остановка сборки </summary>
+        private void StopAssembling()
+        {
+            progressBar.Value = 0;
+            progressBarLabel.Text = "0";
+            StitchingBlock.StopProcess = false;
+            ImgFixingForm.StopProcess = false;
         }
 
         private async void GetSpeedBtn_Click(object sender, EventArgs e)
@@ -893,7 +881,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if(assemblyPlan==null) assemblyPlan= new AssemblyPlan();
 
             RTB.Text = string.Empty;
-            LoadBoders();
+            LoadBorders();
             assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
             assemblyPlan.DelFileCopy = false;
             assemblyPlan.FixImg = false;
@@ -907,7 +895,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             Assembling.CalculationSpeedDespiteErrors = true;
             await Assembling.StartAssemblingAsync();
         }
-
         private class SpeedStat
         {
             public int Fr { get; set; }
@@ -927,7 +914,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             if (FileList.Count == 0) LoadFileList(FileDirTxtBox.Text);
             if (FileList.Count != 0)
             {
-                LoadBoders();
+                LoadBorders();
                 assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
                 assemblyPlan.From = 0;
                 assemblyPlan.To = 100;
@@ -949,7 +936,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 for (int i = 0; i < 25; i++)
                 {
                     int fr = random.Next(FileList.Count - 25), to = fr + random.Next(10, 24);
-                    LoadBoders();
+                    LoadBorders();
                     assemblyPlan.Percent = false;
                     assemblyPlan.From = fr;
                     assemblyPlan.To = to;
@@ -971,7 +958,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private void OpenDirDtn_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(FileDirTxtBox.Text)) return;
-
             if(!fileEdit.OpenFileDir(FileDirTxtBox.Text)) RTB.Text = fileEdit.ErrText;
         }
     }

@@ -95,6 +95,7 @@ namespace StartTestProject.Forms
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
         }
+
         void ImgFixingPlanTxtBox_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -158,7 +159,6 @@ namespace StartTestProject.Forms
             AssemblyPlan.FixingImgDirectory = FixingImgDirectoryTxtBox.Text;
             AssemblyPlan.ImgFixingPlan = ImgFixingPlanTxtBox.Text;
             AssemblyPlan.ChekFixImg = ChekFixedImgsChckBox.Checked;
-
             AssemblyPlan.FindKeyPoints = FindKeyPointsСhckBox.Checked;
             AssemblyPlan.AdditionalFilter = AdditionalFilterChckBox.Checked;
 

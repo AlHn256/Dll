@@ -370,6 +370,24 @@ namespace ImgAssemblingLibOpenCV.Models
             ImgFixingSettings.DXBefor = dX;
         }
 
+        public static void BlendImages(Mat background, Mat foreground, double alpha = 0.7)
+        {
+            int x = (background.Width - foreground.Width) / 2;
+            int y = (background.Height - foreground.Height) / 2;
+
+            Rect roi = new Rect(x, y, foreground.Width+x, foreground.Height+y);
+            Mat backgroundRoi = new Mat(background, roi);
+            Mat Rezult = new Mat();
+            
+
+            Cv2.AddWeighted(backgroundRoi, 1.0 - alpha, foreground, alpha, 0, Rezult);
+
+            backgroundRoi.SaveImage("D:\\img\\backgroundRoi.jpg");
+            foreground.SaveImage("D:\\img\\foreground.jpg");
+            Rezult.SaveImage("D:\\img\\Rezult.jpg");
+        }
+
+
         /// <summary>
         /// Редактирование изображения в зависимости от настроенных параметров
         /// </summary>
@@ -392,10 +410,22 @@ namespace ImgAssemblingLibOpenCV.Models
             {
                 int Width = img.Width, Height = img.Height, x1 = (int)(Width * (ImgFixingSettings.Zoom - 1) / 2), y1 = (int)(Height * (ImgFixingSettings.Zoom - 1) / 2);
                 Mat blackImg = new Mat((int)(Height * ImgFixingSettings.Zoom), (int)(Width * ImgFixingSettings.Zoom), MatType.CV_8UC3, new Scalar(0, 0, 0));
+                img.SaveImage("D:\\img\\img.jpg");
 
                 Mat roi = blackImg[y1, y1 + Height, x1, x1 + Width];
                 Cv2.Resize(img, img, new OpenCvSharp.Size(roi.Width, roi.Height));
-                Cv2.CopyTo(img, roi);
+
+                img.SaveImage("D:\\img\\resize.jpg");
+                roi.SaveImage("D:\\img\\roi.jpg");
+                blackImg.SaveImage("D:\\img\\blackImg.jpg");
+
+                //Cv2.CopyTo(img, roi);
+                //BlendImages(blackImg, img, 1);
+
+                //img.SaveImage("D:\\img\\resize2.jpg");
+                //roi.SaveImage("D:\\img\\roi2.jpg");
+                //blackImg.SaveImage("D:\\img\\blackImg2.jpg");
+
                 img = blackImg;
             }
 

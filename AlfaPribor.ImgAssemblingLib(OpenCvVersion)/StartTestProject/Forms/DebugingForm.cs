@@ -173,12 +173,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
                 if(console.Length>5) console= console.Substring(console.Length-5);
             }
         }
-        private void TestBtn_Click(object sender, EventArgs e) 
-        {
-            //Mat matSrc = new Mat(FileDirTxtBox.Text);
-            //Mat matTo = new Mat(SecondFile);
-            //picBox_Display.Image = BitmapConverter.ToBitmap(MatchPicBySift(matSrc, matTo));
-        }
         private void FileDirTxtBox_TextChanged(object sender, EventArgs e)
         {
             if(FileDirTxtBox.Text != FirstFile)GetImgFiles(new string[1] { FileDirTxtBox.Text });
@@ -518,8 +512,9 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             assemblyPln.MinWight = MinWight;
             assemblyPln.MaxWight = MaxWight;
             assemblyPln.FixImg = FixImgChckBox.Checked;
+            
 
-            StitchingBlock stitchingBlock = new StitchingBlock(assemblyPln);
+            StitchingBlock stitchingBlock = new StitchingBlock(assemblyPln , NewEnjChkBox.Checked);
             stitchingBlock.TextChanged += rtbText_AddInfo;
             stitchingBlock.ChangBitmapImg += worker_UpdateImg;
             stitchingBlock.AllPointsChkBox = AllPointsChkBox.Checked;
@@ -835,6 +830,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             else if (!fileEdit.IsDirectory(FileDirTxtBox.Text)) assemblyPlan.WorkingDirectory = Path.GetDirectoryName(FileDirTxtBox.Text);
             else assemblyPlan.WorkingDirectory = FileDirTxtBox.Text;
             assemblyPlan.StitchingDirectory = assemblyPlan.WorkingDirectory;
+            assemblyPlan.NewEngin = NewEnjChkBox.Checked;
 
             Assembling.ChangeAssemblyPlan(assemblyPlan);
             if (Assembling.AssemblyPlan.BitMap)

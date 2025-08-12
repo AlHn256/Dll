@@ -5,9 +5,9 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Drawing;
 using OpenCvSharp.Extensions;
+using System.Diagnostics;
 
 namespace ImgAssemblingLibOpenCV.Models
 {
@@ -15,9 +15,10 @@ namespace ImgAssemblingLibOpenCV.Models
     {
         #region params
         private bool WorkingWBitmap { get; set; } = true; // Работа с блоком битмапов, а не с файлами
+        public bool NewEngin { get; set; } 
         private double[] Precision = new double[] { 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 5, 10, 20, 50, 100, 200, 300 };// Таблица точности ключевых точек
-        private int minShift = 10; // минимально смещение картинок которое допускается из за погрешности определения ключевых точек
-        private const int MinSufficientNumberOfPoints = 5; // минимальное и максимальное необходимое количество ключевых точек 
+        private const int minShift = Vector.PixelError * 2; // минимально смещение картинок которое допускается из за погрешности
+        private const int MinSufficientNumberOfPoints = 5; // минимальное необходимое количество ключевых точек 
         private bool averageShift { get; set; } = false; // Вычисляемое смещение заменяется на среднее(иногда бывает полезно нпример для того что бы избавится от столбов)
         private bool Percent { get; set; } = false;
         private int From { get; set; } = 0;
@@ -82,7 +83,7 @@ namespace ImgAssemblingLibOpenCV.Models
             int i = 0, Width = 0, Height = 0;
             for (i = From; i < bitMapArray.Length; i++)
             {
-                Mat mat = OpenCvSharp.Extensions.BitmapConverter.ToMat(bitMapArray[i]);
+                Mat mat = BitmapConverter.ToMat(bitMapArray[i]);
                 if (i == 0)
                 {
                     Width = mat.Width;
@@ -142,6 +143,7 @@ namespace ImgAssemblingLibOpenCV.Models
             //    SelectedFiles.Add(new SelectedFiles() { Id = i, FullName = fileList[fileList.Length - 1].FullName });
         }
         public StitchingBlock(AssemblyPlan assemblyPlan):this(assemblyPlan.StitchingDirectory, assemblyPlan.AdditionalFilter, assemblyPlan.Percent, assemblyPlan.From, assemblyPlan.To, assemblyPlan.Period, assemblyPlan.SelectSearchArea, assemblyPlan.MinHeight, assemblyPlan.MaxHeight, assemblyPlan.MinWight, assemblyPlan.MaxWight){ }
+        public StitchingBlock(AssemblyPlan assemblyPlan, bool newEngin) : this(assemblyPlan.StitchingDirectory, assemblyPlan.AdditionalFilter, assemblyPlan.Percent, assemblyPlan.From, assemblyPlan.To, assemblyPlan.Period, assemblyPlan.SelectSearchArea, assemblyPlan.MinHeight, assemblyPlan.MaxHeight, assemblyPlan.MinWight, assemblyPlan.MaxWight) { NewEngin = newEngin; }
         public StitchingBlock(string file, bool additionalFilter,bool percent = true, int from = 0, int to = 100, int period = 1, bool selectSearchArea = false,float minHeight =0,float maxHeight = 0,float minWight=0,float maxWight=0)
         {
 
@@ -213,10 +215,6 @@ namespace ImgAssemblingLibOpenCV.Models
 
             AdditionalFilter = additionalFilter;
         }
-        public void OnChangedImg(object i)
-        {
-            if (ChangImg != null) ChangImg((Mat)i);
-        }
 
         public void OnChangedBitmapImg(object i)
         {
@@ -236,12 +234,35 @@ namespace ImgAssemblingLibOpenCV.Models
         private bool СuttingOnChangDirection { get; set; } = false;
         private bool ResearchIsOn { get; set; } = true;
 
+
+
+
+
+
+        //// Timing
+        List<Timing> TimeList = new List<Timing>();
+        private class Timing
+        {
+            public TimeSpan FSt { get; set; }
+            public TimeSpan SSt { get; set; }
+            public TimeSpan SSt01 { get; set; }
+            public TimeSpan SSt02 { get; set; }
+            public TimeSpan SSt03 { get; set; }
+            public TimeSpan DSt {get;set;}
+            public TimeSpan Sum {get;set;}
+        }
+
+
         /// <summary>
         /// Поиск ключевых точек на кадрах
         /// </summary>
         /// <param name="param">Параметр синхронизации</param>
         public void FindKeyPoints(object param)
         {
+            //// Timing
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             StopProcess = false;
             EraseError();
             List<EnumDirection?> directionsList = new List<EnumDirection?>();
@@ -250,8 +271,19 @@ namespace ImgAssemblingLibOpenCV.Models
             SelectedFiles firstSelectedFiles = new SelectedFiles(), secondSelectedFiles = new SelectedFiles();
             int copy = -1, shiftErr = -1, shiftErrNumber = 0, notMatchDirectionsN = 0;
             bool minShiftDetectionIsON = false;
+
+            //// Timing
+            TimeSpan ts = stopwatch.Elapsed;
+            TimeSpan tSum = TimeSpan.Zero;
+            Timing timing = new Timing();
+
             for (int i = 0; i < SelectedFiles.Count; i++)
             {
+                ////// Timing
+                //TimeSpan ts = stopwatch.Elapsed;
+                //TimeSpan tSum = TimeSpan.Zero;
+                //Timing timing = new Timing();
+
                 if (StopProcess)
                 {
                     if (contextIsOn) context.Send(OnTextChanged, "Stop Process");
@@ -266,10 +298,32 @@ namespace ImgAssemblingLibOpenCV.Models
                 firstSelectedFiles.StitchingFile = secondSelectedFiles.FullName;
                 if (WorkingWBitmap) firstSelectedFiles.Hint = "Stitching Imgs " + firstSelectedFiles.Id + " - " + secondSelectedFiles.Id;
                 else firstSelectedFiles.Hint = "Stitching Imgs " + Path.GetFileNameWithoutExtension(firstSelectedFiles.FullName) + " - " + Path.GetFileName(secondSelectedFiles.FullName);
-
                 IsErr = false;
+
+
+
+                ////// Timing
+                //ts = stopwatch.Elapsed;
+                //tSum += ts;
+                //timing.FSt = ts;
+                //stopwatch.Restart();
+                 
+
+
                 // Получаем список векторов по ключевым точкам
                 List<Vector> VectorList = WorkingWBitmap ? GetVectorList(firstSelectedFiles.Mat, secondSelectedFiles.Mat) : GetVectorList(firstSelectedFiles.FullName, secondSelectedFiles.FullName);
+
+
+
+                ////// Timing
+                //ts = stopwatch.Elapsed;
+                //tSum += ts;
+                //timing.SSt = ts;
+                //stopwatch.Restart();
+
+
+
+
                 if (IsErr || VectorList.Count == 0)
                 {
                     copy = i - 1;
@@ -326,20 +380,29 @@ namespace ImgAssemblingLibOpenCV.Models
                                 {
                                     SelectedFiles = SelectedFiles.Take(i-2).ToList();
                                 }
-
                                 break;
                             }
                         }
                         else notMatchDirectionsN = 0;
                     }
                 }
-
                 if (contextIsOn && i%2 == 0)
                 {
                     context.Send(OnProgressChanged, i * 100 / SelectedFiles.Count);
                     context.Send(OnTextChanged, "Finding Key Points " + i * 100 / SelectedFiles.Count + " %");
                 }
+
+                ////// Timing
+                //ts = stopwatch.Elapsed;
+                //tSum += ts;
+                //timing.DSt = ts;
+                //timing.Sum = tSum;
+                //stopwatch.Restart();
+                //TimeList.Add(timing);
             }
+
+            //// Timing
+            ts = stopwatch.Elapsed;
 
             Direction = GetAverageDirection(SelectedFiles.Where(x=>x.ErrCode!=EnumErrCode.Copy).Select(x => x.Direction).ToList());
             if (contextIsOn)
@@ -355,11 +418,11 @@ namespace ImgAssemblingLibOpenCV.Models
         {
             ResearchLine  researchLine = new ResearchLine(SelectedFiles, Direction);
             bool research = researchLine.StartResearch();
-
             bool SlowMotion = researchLine.SlowMotion;
             bool ReverseMotion = researchLine.TrainStop;
             bool TrainStop = researchLine.ReverseMotion;
         }
+
         public class ResearchPoint
         {
             public double AverageShift { get; set; }
@@ -377,6 +440,7 @@ namespace ImgAssemblingLibOpenCV.Models
             public string FullName { get; set; }
             public string StatusInformation { get; set; }
         }
+
         public class ResearchLine
         {
             public bool IgnoreCopies { get; set; } = true; // Не учитывать копии кадров
@@ -859,6 +923,8 @@ namespace ImgAssemblingLibOpenCV.Models
         /// <returns></returns>
         public List<Vector> GetVectorList(string file1, string file2, bool makeFotoRezult = false) => GetVectorList(new Mat(file1), new Mat(file2), makeFotoRezult);
 
+        public List<int> PressisionList =  new List<int>();
+
         /// <summary>
         /// Получаем список векторов смещения одной картинки относительно второй
         /// </summary>
@@ -868,6 +934,13 @@ namespace ImgAssemblingLibOpenCV.Models
         /// <returns></returns>
         public List<Vector> GetVectorList(Mat matSrc, Mat matTo, bool makeFotoRezult = false)
         {
+            // Timing
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            TimeSpan ts = stopwatch.Elapsed;
+            TimeSpan tSum = TimeSpan.Zero;
+            Timing timing = new Timing();
+
             List<Vector> goodPointList = new List<Vector>();
             List<DMatch> goodMatches = new List<DMatch>();
 
@@ -890,7 +963,11 @@ namespace ImgAssemblingLibOpenCV.Models
                         return goodPointList;
                     }
 
-                    if (matches[0].Length == 2) goodPointList = GetVectors(matches, keyPointsSrc, keyPointsTo, out goodMatches);
+                    if (matches[0].Length == 2)
+                    {
+                        goodPointList = GetVectors(matches, keyPointsSrc, keyPointsTo, out goodMatches);
+                        PressisionList.Add(Prezision);
+                    }
                     else
                     {
                         SetErr("Err StitchImgsByPointsImgs.matches[0].Length != 2 !!!", EnumErrCode.Err);
@@ -909,20 +986,30 @@ namespace ImgAssemblingLibOpenCV.Models
                     VectorInfo vectorInfo = GetAverages(goodPointList);
                     goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
 
+                    ts = stopwatch.Elapsed;
                     string text = goodPointList.Count + " points found " + (Math.Abs(vectorInfo.AverageYShift) < Math.Abs(vectorInfo.AverageXShift) ? Math.Round(vectorInfo.AverageXShift, 2) : Math.Round(vectorInfo.AverageYShift, 2)).ToString() +
-                          " " + vectorInfo.Direction + " Shift \n";
-
+                          " " + vectorInfo.Direction + " Shift Time " + String.Format("{0:00}:{1:00}", ts.Seconds, ts.Milliseconds / 10) + "\n";
                     int i = 0;
-                    foreach (Vector point in goodPointList) text += "P " + i++ + " Sh " + Math.Round(point.Delta, 2) + " " + point.Direction + " Shift " + point.Delta +  " Identity " + Math.Round(point.Identity, 2) + " CoDirection " + Math.Round(point.CoDirection, 2) + " dX " + Math.Round(point.dX, 2) + " dY " + Math.Round(point.Yfr, 2) + "\n";
+                    foreach (Vector point in goodPointList)text += "P " + i++ + " Sh " + Math.Round(point.Delta, 2) + " " + point.Direction + " Shift " + point.Delta +  " Identity " + Math.Round(point.Identity, 2) + " CoDirection " + Math.Round(point.CoDirection, 2) + " dX " + Math.Round(point.dX, 2) + " dY " + Math.Round(point.Yfr, 2) + "\n";
 
                     OnTextChanged(text);
                     Mat RezultImg = new Mat();
                     Cv2.DrawMatches(matSrc, keyPointsSrc, matTo, keyPointsTo, goodMatches, RezultImg, flags: drawMatchesFlags);
                     OnChangedBitmapImg(BitmapConverter.ToBitmap(RezultImg));
                 }
+
+                // Timing
+                //ts = stopwatch.Elapsed;
+                //tSum += ts;
+                //timing.SSt03 = ts;
+                //timing.Sum = tSum;
+                //stopwatch.Restart();
+                //TimeList.Add(timing);
             }
+
             return goodPointList;
         }
+
         /// <summary>
         /// Получение изображения пар ключевых точек с помощью ORB
         /// </summary>
@@ -959,6 +1046,7 @@ namespace ImgAssemblingLibOpenCV.Models
         //        }
         //    }
         //}
+
         internal Mat Stitch(object param, int Delta = 0)// Сборка кадров в один
         {
             StopProcess = false;
@@ -1069,7 +1157,6 @@ namespace ImgAssemblingLibOpenCV.Models
                     if (context != null) context.Send(OnProgressChanged, 100);
                     if (context != null) context.Send(OnTextChanged, "Err  rezultImg = 0. Ошибка на "+ SelectedFiles[i].Id+" кадре!!!");
                     return rezult;
-                    
                 }
             }
 
@@ -1112,7 +1199,6 @@ namespace ImgAssemblingLibOpenCV.Models
                     }
                     else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
                 }
-
                 else if (FramePosition == EnumFramePosition.Midle)
                 {
                     int d2 = h2 - shift + Delta;
@@ -1124,7 +1210,6 @@ namespace ImgAssemblingLibOpenCV.Models
                     }
                     else SetErr("Err JoinImg.В одном из кадров превышена граница изображения!!!");
                 }
-
                 else if (FramePosition == EnumFramePosition.Last)
                 {
                     int d1 = h2 - shift + Delta;
@@ -1221,12 +1306,7 @@ namespace ImgAssemblingLibOpenCV.Models
                 List<int> intsD2 = new List<int>();
                 for(int i =0; i< SelectedFiles.Count; i++)
                 {
-                    if(i == SelectedFiles.Count-1)
-                    {
-                        lastElem = w2 - (int)SelectedFiles[i].AverageShift + Delta - 1;   
-                        //int d1 = w2 - shift + Delta - 1;
-                        //int d2 = shift - Delta - 1;
-                    }
+                    if(i == SelectedFiles.Count-1)lastElem = w2 - (int)SelectedFiles[i].AverageShift + Delta - 1;   
                     else
                     {
                     int d2 = w2 - (int)SelectedFiles[i].AverageShift + Delta;
@@ -1234,16 +1314,7 @@ namespace ImgAssemblingLibOpenCV.Models
                     }
                 }
 
-                //foreach (var elem in SelectedFiles)
-                //{
-                //    int d2 = w2 - (int)elem.AverageShift + Delta;
-                //    intsD2.Add(d2);
-                //    intsD3.Add(d2 + (int)elem.AverageShift - 1);
-                //    int lastElem = (int)elem.AverageShift - Delta - 1;
-                //}
-
                 int minD2 = intsD2.Min();
-                int maxD2 = intsD2.Max();
 
                 if (minD2 < 0 || lastElem < 0 || lastElem > w2)
                 {
@@ -1336,6 +1407,9 @@ namespace ImgAssemblingLibOpenCV.Models
             SelectedFiles = TempSelectedFiles;
         }
 
+        public int Prezision = 0;
+
+
         /// <summary> Поиск соноправленных векторов по парным ключевым точкам </summary>
         /// <param name="matches">матрица парных точек</param>
         /// <param name="keyPointsSrc">Ключевые точки с первого кадра</param>
@@ -1352,17 +1426,25 @@ namespace ImgAssemblingLibOpenCV.Models
                 return goodPointList;
             }
 
-            if (AllPointsChkBox)
+            if (AllPointsChkBox)  // for all points
             {
                 for (int j = 0; j < matches.Length; j++)
                 {
                     var match = matches[j][0];
-
                     Vector vector = new Vector(match.QueryIdx, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
                     goodPointList.Add(vector);
                     goodMatches.Add(matches[j][0]);
-
                 }
+
+                //for (int j = 0; j < matches.Length; j++)
+                //{
+                //    var match = matches[j][0];
+                //    if (matches[j][0].Distance < 0.2 * matches[j][1].Distance)
+                //    {
+                //        goodPointList.Add(new Vector(match.QueryIdx, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y));
+                //        goodMatches.Add(matches[j][0]);
+                //    }
+                //}
 
                 //var sdf1 = matches.Select(x => x[0]).ToList();
                 //var sdf2 = matches.Select(x => x[1]).ToList();
@@ -1371,107 +1453,137 @@ namespace ImgAssemblingLibOpenCV.Models
                 //var gdsf1 = goodmatches.Select(x => x[0]).ToList();
                 //var gdsf2 = goodmatches.Select(x => x[1]).ToArray();
 
-                //var mingoodmatches = matches.OrderBy(x => (x[0].Distance / x[1].Distance)).Take(30).ToArray();
-                //var mgdsf1 = mingoodmatches.Select(x => x[0]).ToList();
-                //var mgdsf2 = mingoodmatches.Select(x => x[1]).ToArray();
+
 
                 //for (int j = 0; j < mingoodmatches.Length; j++)
                 //{
-                //    var match = matches[j][0];
-                //    if (matches[j][0].Distance < 0.2 * matches[j][1].Distance)
-                //    {
-                //        Vector vector = new Vector(match.QueryIdx, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
-                //        goodPointList.Add(vector);
-                //        goodMatches.Add(matches[j][0]);
-                //    }
+                //    var match = mingoodmatches[j][0];
+
+                //    Vector vector = new Vector(match.QueryIdx, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
+                //    goodPointList.Add(vector);
+                //    goodMatches.Add(matches[j][0]);
                 //}
 
-               return goodPointList;
-            }
-
-            int i = 0, n = 0;
-            if (SelectSearchArea && matches.Length > 30) // Отсееваем точки если выбран определенный сектор
-            {
-                double minHeight = MinHeight, maxHeight = MaxHeight, delta = Math.Abs(MinHeight - MaxHeight);
-                var matches2 = matches.Where(x => keyPointsSrc[x[0].QueryIdx].Pt.Y > minHeight && keyPointsSrc[x[0].QueryIdx].Pt.Y < maxHeight && keyPointsTo[x[0].TrainIdx].Pt.Y > minHeight - 5 && keyPointsTo[x[0].TrainIdx].Pt.Y < maxHeight + 5).ToArray();
-
-                if (delta < 10) delta = 10;
-                minHeight -= delta / 2; maxHeight += delta / 2;
-                while (matches2.Length < 20)
-                {
-                    if (n++ > 10) break;
-                    if (minHeight < 0) minHeight = 0;
-                    matches2 = matches.Where(x => keyPointsSrc[x[0].QueryIdx].Pt.Y > minHeight && keyPointsSrc[x[0].QueryIdx].Pt.Y < maxHeight && keyPointsTo[x[0].TrainIdx].Pt.Y > minHeight - 5 && keyPointsTo[x[0].TrainIdx].Pt.Y < maxHeight + 5).ToArray();
-                    minHeight -= delta / 2; maxHeight += delta / 2;
-                }
-                if (matches2.Length >= 20) matches = matches2;
-            }
-
-            if (matches.Length == 0)
-            {
-                SetErr("Не найдены подходящие точки", EnumErrCode.PointsNotFound);
                 return goodPointList;
             }
-
-            double Precisious = 0;
-            for (i = 0; i < Precision.Length; i++) // Понижая точность ищим достаточное колличество ключевых точек
+            if (NewEngin)
             {
-                Precisious = Precision[i];
-                goodMatches = new List<DMatch>();
-                goodPointList = new List<Vector>();
-                int SamePoints = 0;
-                for (int j = 0; j < matches.Length; j++)
+                //var mingoodmatches = matches.OrderBy(x => (x[0].Distance / x[1].Distance)).Take(30).ToArray();
+                goodMatches = matches.OrderBy(x => (x[0].Distance / x[1].Distance)).Take(20).Select(x => x[0]).ToList();
+                int isCopy = 0;
+                int ErrorLimits = 0;
+
+                foreach (var elem in goodMatches)
                 {
-                    var match = matches[j][0];
-                    if (matches[j][0].Distance < Precisious * matches[j][1].Distance)
+                    Vector vector = new Vector(elem.QueryIdx, keyPointsSrc[elem.QueryIdx].Pt.X, keyPointsSrc[elem.QueryIdx].Pt.Y, keyPointsTo[elem.TrainIdx].Pt.X, keyPointsTo[elem.TrainIdx].Pt.Y);
+                    if (vector.inErrorLimits) ErrorLimits++;
+                    if (vector.isSamePoint)
                     {
-                        Vector vector = new Vector(match.QueryIdx, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
-                        if (AllPointsChkBox || !vector.isSamePoint)
+                        isCopy++;
+                        if (isCopy > 10)
                         {
-                            goodPointList.Add(vector);
-                            goodMatches.Add(matches[j][0]);
+                            goodMatches.Clear();
+                            SetErr("COPY", EnumErrCode.Copy);
+                            return new List<Vector>();
                         }
-                        else if (vector.isSamePoint) SamePoints++;
+                        continue;
                     }
 
-                    //goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
-                    //if (SelectSearchArea)
-                    //{
-                    //    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight && keyPointsTo[match.TrainIdx].Pt.Y < MaxHeight + 5 && keyPointsTo[match.TrainIdx].Pt.Y > MinHeight - 5)
-                    //    //if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight)
-                    //    //if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight && keyPointsSrc[match.QueryIdx].Pt.X > MinWight && keyPointsSrc[match.QueryIdx].Pt.X < MaxWight)
-                    //    {
-                    //        Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
-                    //        if (AllPointsChkBox || !vector.isSamePoint)
-                    //        {
-                    //            goodPointList.Add(vector);
-                    //            goodMatches.Add(matches[j][0]);
-                    //        }
-                    //        else if (vector.isSamePoint) SamePoints++;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance)
-                    //    {
-                    //        Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
-                    //        if (AllPointsChkBox || !vector.isSamePoint)
-                    //        {
-                    //            goodPointList.Add(vector);
-                    //            goodMatches.Add(matches[j][0]);
-                    //        }
-                    //        else if (vector.isSamePoint) SamePoints++;
-                    //    }
-                    //}
+                    goodPointList.Add(vector);
                 }
-                if (SamePoints >= matches.Length * 0.9)
+            }
+            else
+            {
+                int i = 0, n = 0;
+                if (SelectSearchArea && matches.Length > 30) // Отсееваем точки если выбран определенный сектор
                 {
-                    SetErr("COPY", EnumErrCode.Copy);
+                    double minHeight = MinHeight, maxHeight = MaxHeight, delta = Math.Abs(MinHeight - MaxHeight);
+                    var matches2 = matches.Where(x => keyPointsSrc[x[0].QueryIdx].Pt.Y > minHeight && keyPointsSrc[x[0].QueryIdx].Pt.Y < maxHeight && keyPointsTo[x[0].TrainIdx].Pt.Y > minHeight - 5 && keyPointsTo[x[0].TrainIdx].Pt.Y < maxHeight + 5).ToArray();
+
+                    if (delta < 10) delta = 10;
+                    minHeight -= delta / 2; maxHeight += delta / 2;
+                    while (matches2.Length < 20)
+                    {
+                        if (n++ > 10) break;
+                        if (minHeight < 0) minHeight = 0;
+                        matches2 = matches.Where(x => keyPointsSrc[x[0].QueryIdx].Pt.Y > minHeight && keyPointsSrc[x[0].QueryIdx].Pt.Y < maxHeight && keyPointsTo[x[0].TrainIdx].Pt.Y > minHeight - 5 && keyPointsTo[x[0].TrainIdx].Pt.Y < maxHeight + 5).ToArray();
+                        minHeight -= delta / 2; maxHeight += delta / 2;
+                    }
+                    if (matches2.Length >= 20) matches = matches2;
+                }
+                if (matches.Length == 0)
+                {
+                    SetErr("Не найдены подходящие точки", EnumErrCode.PointsNotFound);
                     return goodPointList;
                 }
-                if (matches.Length == goodPointList.Count) break;
-                if (SelectSearchArea && goodPointList.Count > MinSufficientNumberOfPoints/2 && !AllPointsChkBox) break;
-                if (goodPointList.Count > MinSufficientNumberOfPoints && !AllPointsChkBox) break;
+
+                double Precisious = 0;
+                for (i = 0; i < Precision.Length; i++) // Понижая точность ищим достаточное колличество ключевых точек
+                {
+                    Precisious = Precision[i];
+                    goodMatches = new List<DMatch>();
+                    goodPointList = new List<Vector>();
+                    int SamePoints = 0;
+                    for (int j = 0; j < matches.Length; j++)
+                    {
+                        var match = matches[j][0];
+                        if (matches[j][0].Distance < Precisious * matches[j][1].Distance)
+                        {
+                            Vector vector = new Vector(match.QueryIdx, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
+                            if (AllPointsChkBox || !vector.isSamePoint)
+                            {
+                                goodPointList.Add(vector);
+                                goodMatches.Add(matches[j][0]);
+                            }
+                            else if (vector.isSamePoint) SamePoints++;
+                        }
+
+                        //goodMatches = goodMatches.Where(x => goodPointList.Any(y => y.MatchesId == x.QueryIdx)).ToList();
+                        //if (SelectSearchArea)
+                        //{
+                        //    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight && keyPointsTo[match.TrainIdx].Pt.Y < MaxHeight + 5 && keyPointsTo[match.TrainIdx].Pt.Y > MinHeight - 5)
+                        //    //if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight)
+                        //    //if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance && keyPointsSrc[match.QueryIdx].Pt.Y > MinHeight && keyPointsSrc[match.QueryIdx].Pt.Y < MaxHeight && keyPointsSrc[match.QueryIdx].Pt.X > MinWight && keyPointsSrc[match.QueryIdx].Pt.X < MaxWight)
+                        //    {
+                        //        Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
+                        //        if (AllPointsChkBox || !vector.isSamePoint)
+                        //        {
+                        //            goodPointList.Add(vector);
+                        //            goodMatches.Add(matches[j][0]);
+                        //        }
+                        //        else if (vector.isSamePoint) SamePoints++;
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    if (matches[j][0].Distance < Precision[i] * matches[j][1].Distance)
+                        //    {
+                        //        Vector vector = new Vector(j, keyPointsSrc[match.QueryIdx].Pt.X, keyPointsSrc[match.QueryIdx].Pt.Y, keyPointsTo[match.TrainIdx].Pt.X, keyPointsTo[match.TrainIdx].Pt.Y);
+                        //        if (AllPointsChkBox || !vector.isSamePoint)
+                        //        {
+                        //            goodPointList.Add(vector);
+                        //            goodMatches.Add(matches[j][0]);
+                        //        }
+                        //        else if (vector.isSamePoint) SamePoints++;
+                        //    }
+                        //}
+                    }
+                    if (SamePoints >= matches.Length * 0.9)
+                    {
+                        SetErr("COPY", EnumErrCode.Copy);
+                        return goodPointList;
+                    }
+                    if (matches.Length == goodPointList.Count) break;
+                    if (SelectSearchArea && goodPointList.Count > MinSufficientNumberOfPoints / 2 && !AllPointsChkBox) break;
+                    if (goodPointList.Count > MinSufficientNumberOfPoints && !AllPointsChkBox) break;
+
+                    if(i==2)
+                    {
+
+                    }
+                }
+
+                Prezision = i;
             }
 
             PointFiltr pointFiltr = new PointFiltr(goodPointList);
@@ -1488,6 +1600,7 @@ namespace ImgAssemblingLibOpenCV.Models
             if (goodPointList.Count >= 10) goodPointList = pointFiltr.AdditionalFilter();
             return goodPointList;
         }
+
         private EnumDirection? GetAverageDirection(List<EnumDirection?> directionList)// Определяем среднее направления движения
         {
             if (directionList == null) return null;
@@ -1538,30 +1651,35 @@ namespace ImgAssemblingLibOpenCV.Models
                 foreach (var info in ErrList) StitchingInfo += info + "\n";
             }
         }
+
         /// <summary>Пробуем прочитать старый план сборки если он есть</summary>
         /// <param name="from">Кадр с которого начать запись</param>
         /// <param name="to">последний кадр для записи</param>
         public bool TryReadMapPlan(int from = 0, int to = 100)
         {
-            StitchingPlan stitchingPlan = new StitchingPlan();
             try
-            {fileEdit.LoadeJson(GetPlanName(), out stitchingPlan);}
-            catch (IOException e)
-            {SetErr("The file could not be read: " + e.Message + "!!!");}
-
-            if(stitchingPlan == null) return false;
-
-            if (MainDir == stitchingPlan.Dir && stitchingPlan.SelectedFiles != null)
             {
-                if (from < 0 || to > stitchingPlan.SelectedFiles.Count - 1 || from > to) { from = 0; to = SelectedFiles.Count - 1; }
+                fileEdit.LoadeJson(GetPlanName(), out StitchingPlan stitchingPlan);
+                if (stitchingPlan == null) return false;
 
-                if (from == 0 && to == 100) SelectedFiles = stitchingPlan.SelectedFiles;
-                else SelectedFiles = stitchingPlan.SelectedFiles.Skip(from).Take(to - from).ToList();
-                Direction = stitchingPlan.Direction;
-                return true;
+                if (MainDir == stitchingPlan.Dir && stitchingPlan.SelectedFiles != null)
+                {
+                    if (from < 0 || to > stitchingPlan.SelectedFiles.Count - 1 || from > to) { from = 0; to = SelectedFiles.Count - 1; }
+
+                    if (from == 0 && to == 100) SelectedFiles = stitchingPlan.SelectedFiles;
+                    else SelectedFiles = stitchingPlan.SelectedFiles.Skip(from).Take(to - from).ToList();
+                    Direction = stitchingPlan.Direction;
+                    return true;
+                }
+                else return false;
             }
-            else return false;
+            catch (IOException e)
+            {
+                SetErr("The file could not be read: " + e.Message + "!!!"); 
+                return false;
+            }
         }
+
         /// <summary>Сохраняем план сборки</summary>
         public void TrySaveMapPlan()
         {

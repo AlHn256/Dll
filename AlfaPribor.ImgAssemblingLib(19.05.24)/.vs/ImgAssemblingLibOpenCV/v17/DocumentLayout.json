@@ -1,0 +1,140 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}|StartTestProject\\StartTestProject.csproj|d:\\cvs\\vs2022projects\\components\\alfapribor.imgassemblinglib(opencvversion)\\starttestproject\\testingform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}|StartTestProject\\StartTestProject.csproj|solutionrelative:starttestproject\\testingform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}|StartTestProject\\StartTestProject.csproj|D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\starttestproject\\testingform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}|StartTestProject\\StartTestProject.csproj|solutionrelative:starttestproject\\testingform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}|StartTestProject\\StartTestProject.csproj|D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\starttestproject\\autotest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}|StartTestProject\\StartTestProject.csproj|solutionrelative:starttestproject\\autotest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{78827561-4874-4841-AAF4-BF5316B63821}|ImgAssemblingLib.csproj|D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\aditionalforms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{78827561-4874-4841-AAF4-BF5316B63821}|ImgAssemblingLib.csproj|solutionrelative:aditionalforms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}|StartTestProject\\StartTestProject.csproj|D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\starttestproject\\autotest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{D0225B57-3457-45E8-A0BD-EF2F0F44ED3E}|StartTestProject\\StartTestProject.csproj|solutionrelative:starttestproject\\autotest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{78827561-4874-4841-AAF4-BF5316B63821}|ImgAssemblingLib.csproj|D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\models\\speed\u0441ounter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{78827561-4874-4841-AAF4-BF5316B63821}|ImgAssemblingLib.csproj|solutionrelative:models\\speed\u0441ounter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 8,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{a80febb4-e7e0-4147-b476-21aaf2453969}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{90243340-bd7a-11d0-93ef-00a0c90f2734}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0504ff91-9d61-11d0-a794-00a0c9110051}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AutoTest.cs",
+              "DocumentMoniker": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\AutoTest.cs",
+              "RelativeDocumentMoniker": "StartTestProject\\AutoTest.cs",
+              "ToolTip": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\AutoTest.cs",
+              "RelativeToolTip": "StartTestProject\\AutoTest.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAhwJUAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-31T08:51:31.335Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AutoTest.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "DocumentMoniker": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\AutoTest.cs",
+              "RelativeDocumentMoniker": "StartTestProject\\AutoTest.cs",
+              "ToolTip": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\AutoTest.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "RelativeToolTip": "StartTestProject\\AutoTest.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-31T06:12:39.01Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TestingForm.cs",
+              "DocumentMoniker": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\TestingForm.cs",
+              "RelativeDocumentMoniker": "StartTestProject\\TestingForm.cs",
+              "ToolTip": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\TestingForm.cs",
+              "RelativeToolTip": "StartTestProject\\TestingForm.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-20T09:34:30.831Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TestingForm.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "DocumentMoniker": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\TestingForm.cs",
+              "RelativeDocumentMoniker": "StartTestProject\\TestingForm.cs",
+              "ToolTip": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\StartTestProject\\TestingForm.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "RelativeToolTip": "StartTestProject\\TestingForm.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-20T09:34:30.986Z",
+              "EditorCaption": " [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\AditionalForms\\MainForm.cs",
+              "RelativeDocumentMoniker": "AditionalForms\\MainForm.cs",
+              "ToolTip": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\AditionalForms\\MainForm.cs",
+              "RelativeToolTip": "AditionalForms\\MainForm.cs",
+              "ViewState": "AgIAAAIBAAAAAAAAAAAUwCABAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-20T09:34:30.989Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Speed\u0421ounter.cs",
+              "DocumentMoniker": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\Models\\Speed\u0421ounter.cs",
+              "RelativeDocumentMoniker": "Models\\Speed\u0421ounter.cs",
+              "ToolTip": "D:\\CVS\\VS2022Projects\\Components\\AlfaPribor.ImgAssemblingLib(OpenCvVersion)\\Models\\Speed\u0421ounter.cs",
+              "RelativeToolTip": "Models\\Speed\u0421ounter.cs",
+              "ViewState": "AgIAACMBAAAAAAAAAAAqwDUBAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-20T09:34:30.99Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

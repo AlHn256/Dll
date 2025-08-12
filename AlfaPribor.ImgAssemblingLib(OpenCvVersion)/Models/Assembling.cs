@@ -692,6 +692,7 @@ namespace ImgAssemblingLibOpenCV.Models
             else stitchingBlock = new StitchingBlock(AssemblyPlan);
             stitchingBlock.ProcessChanged += worker_ProcessChang;
             stitchingBlock.TextChanged += worker_TextChang;
+            stitchingBlock.NewEngin = AssemblyPlan.NewEngin;
 
             if (AssemblyPlan.BitMap) stitchingBlock.FindKeyPoints(_context);
             else
@@ -720,6 +721,7 @@ namespace ImgAssemblingLibOpenCV.Models
             else stitchingBlock = new StitchingBlock(AssemblyPlan);
             stitchingBlock.ProcessChanged += worker_ProcessChang;
             stitchingBlock.TextChanged += worker_TextChang;
+            stitchingBlock.NewEngin = AssemblyPlan.NewEngin;
 
             if (AssemblyPlan.BitMap) await Task.Run(() => { stitchingBlock.FindKeyPoints(_context); });
             else

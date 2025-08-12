@@ -1,0 +1,30 @@
+{
+  "Diminish": 2.5,
+  "Zoom": 1.09,
+  "Rotation90": 0,
+  "BlackWhiteMode": false,
+  "Distortion": true,
+  "DistorSettings": {
+    "A": -1.54,
+    "B": 0.0,
+    "C": 0.02,
+    "D": 0.04,
+    "E": 10.0,
+    "Sm11": 1500.0,
+    "Sm12": 10.0,
+    "Sm13": 235.0,
+    "Sm21": -10.0,
+    "Sm22": 1500.0,
+    "Sm23": 418.0,
+    "Sm31": 0.0,
+    "Sm32": 0.0,
+    "Sm33": 1.0
+  },
+  "CropAfterChkBox": true,
+  "XAfter": 10,
+  "DXAfter": 440,
+  "YAfter": 0,
+  "DYAfter": 837,
+  "AutoReload": true,
+  "ShowGrid": false
+}

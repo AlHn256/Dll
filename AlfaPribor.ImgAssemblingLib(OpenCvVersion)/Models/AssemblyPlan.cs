@@ -9,6 +9,7 @@
         /// Работаем не через файлы, а через массивы Bitmapов
         /// </summary>
         public bool BitMap { get; set; } = true;
+        public bool NewEngin { get; set; }
         /// <summary>
         /// Принудительное сохранение исправленных кадров в фалы при работе с Bitmapами
         /// </summary>

@@ -64,6 +64,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.OpenDirDtn = new System.Windows.Forms.Button();
             this.UseBitmapChckBox = new System.Windows.Forms.CheckBox();
             this.FixImgChckBox = new System.Windows.Forms.CheckBox();
+            this.NewEnjChkBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_Display)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -75,7 +76,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picBox_Display.Location = new System.Drawing.Point(10, 78);
             this.picBox_Display.Name = "picBox_Display";
-            this.picBox_Display.Size = new System.Drawing.Size(1712, 688);
+            this.picBox_Display.Size = new System.Drawing.Size(1006, 635);
             this.picBox_Display.TabIndex = 1;
             this.picBox_Display.TabStop = false;
             // 
@@ -94,7 +95,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RTB.Location = new System.Drawing.Point(573, 10);
             this.RTB.Name = "RTB";
-            this.RTB.Size = new System.Drawing.Size(878, 62);
+            this.RTB.Size = new System.Drawing.Size(172, 62);
             this.RTB.TabIndex = 7;
             this.RTB.Text = "";
             // 
@@ -129,7 +130,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // ShowPointsBtn
             // 
             this.ShowPointsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShowPointsBtn.Location = new System.Drawing.Point(1458, 26);
+            this.ShowPointsBtn.Location = new System.Drawing.Point(752, 26);
             this.ShowPointsBtn.Name = "ShowPointsBtn";
             this.ShowPointsBtn.Size = new System.Drawing.Size(159, 21);
             this.ShowPointsBtn.TabIndex = 16;
@@ -140,7 +141,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // StitchImgsBtn
             // 
             this.StitchImgsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.StitchImgsBtn.Location = new System.Drawing.Point(1458, 49);
+            this.StitchImgsBtn.Location = new System.Drawing.Point(752, 49);
             this.StitchImgsBtn.Name = "StitchImgsBtn";
             this.StitchImgsBtn.Size = new System.Drawing.Size(159, 23);
             this.StitchImgsBtn.TabIndex = 22;
@@ -152,7 +153,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.AllPointsChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AllPointsChkBox.AutoSize = true;
-            this.AllPointsChkBox.Location = new System.Drawing.Point(1629, 28);
+            this.AllPointsChkBox.Location = new System.Drawing.Point(923, 28);
             this.AllPointsChkBox.Name = "AllPointsChkBox";
             this.AllPointsChkBox.Size = new System.Drawing.Size(76, 17);
             this.AllPointsChkBox.TabIndex = 23;
@@ -164,15 +165,15 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(10, 771);
+            this.progressBar.Location = new System.Drawing.Point(10, 718);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1643, 20);
+            this.progressBar.Size = new System.Drawing.Size(937, 20);
             this.progressBar.TabIndex = 26;
             // 
             // StopBtn
             // 
             this.StopBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.StopBtn.Location = new System.Drawing.Point(1659, 771);
+            this.StopBtn.Location = new System.Drawing.Point(953, 718);
             this.StopBtn.Name = "StopBtn";
             this.StopBtn.Size = new System.Drawing.Size(63, 20);
             this.StopBtn.TabIndex = 27;
@@ -186,7 +187,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBarLabel.AutoSize = true;
             this.progressBarLabel.Font = new System.Drawing.Font("Segoe UI Black", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.progressBarLabel.Location = new System.Drawing.Point(760, 775);
+            this.progressBarLabel.Location = new System.Drawing.Point(760, 722);
             this.progressBarLabel.Name = "progressBarLabel";
             this.progressBarLabel.Size = new System.Drawing.Size(39, 15);
             this.progressBarLabel.TabIndex = 28;
@@ -199,7 +200,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1734, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1028, 24);
             this.menuStrip1.TabIndex = 30;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -351,7 +352,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // GetSpeedBtn
             // 
             this.GetSpeedBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.GetSpeedBtn.Location = new System.Drawing.Point(1645, 48);
+            this.GetSpeedBtn.Location = new System.Drawing.Point(939, 48);
             this.GetSpeedBtn.Name = "GetSpeedBtn";
             this.GetSpeedBtn.Size = new System.Drawing.Size(67, 23);
             this.GetSpeedBtn.TabIndex = 40;
@@ -363,7 +364,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // RndBtn
             // 
             this.RndBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RndBtn.Location = new System.Drawing.Point(1687, 46);
+            this.RndBtn.Location = new System.Drawing.Point(981, 46);
             this.RndBtn.Name = "RndBtn";
             this.RndBtn.Size = new System.Drawing.Size(38, 23);
             this.RndBtn.TabIndex = 41;
@@ -397,7 +398,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             // 
             this.FixImgChckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.FixImgChckBox.AutoSize = true;
-            this.FixImgChckBox.Location = new System.Drawing.Point(1460, 7);
+            this.FixImgChckBox.Location = new System.Drawing.Point(754, 7);
             this.FixImgChckBox.Name = "FixImgChckBox";
             this.FixImgChckBox.Size = new System.Drawing.Size(200, 17);
             this.FixImgChckBox.TabIndex = 45;
@@ -405,12 +406,25 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.FixImgChckBox.UseVisualStyleBackColor = true;
             this.FixImgChckBox.CheckedChanged += new System.EventHandler(this.FixImgChckBox_CheckedChanged);
             // 
+            // NewEnjChkBox
+            // 
+            this.NewEnjChkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.NewEnjChkBox.AutoSize = true;
+            this.NewEnjChkBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.NewEnjChkBox.Location = new System.Drawing.Point(950, 8);
+            this.NewEnjChkBox.Name = "NewEnjChkBox";
+            this.NewEnjChkBox.Size = new System.Drawing.Size(83, 19);
+            this.NewEnjChkBox.TabIndex = 46;
+            this.NewEnjChkBox.Text = "New Eng";
+            this.NewEnjChkBox.UseVisualStyleBackColor = true;
+            // 
             // DebugingForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1734, 802);
+            this.ClientSize = new System.Drawing.Size(1028, 749);
+            this.Controls.Add(this.NewEnjChkBox);
             this.Controls.Add(this.FixImgChckBox);
             this.Controls.Add(this.UseBitmapChckBox);
             this.Controls.Add(this.OpenDirDtn);
@@ -439,7 +453,7 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
             this.Controls.Add(this.picBox_Display);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(1750, 600);
+            this.MinimumSize = new System.Drawing.Size(960, 600);
             this.Name = "DebugingForm";
             this.Text = "Debug Form";
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseClick);
@@ -487,5 +501,6 @@ namespace ImgAssemblingLibOpenCV.AditionalForms
         private ToolStripMenuItem SaveOriginalToolStripMenuItem;
         private ToolStripMenuItem SaveWindowImgToolStripMenuItem;
         private CheckBox FixImgChckBox;
+        private CheckBox NewEnjChkBox;
     }
 }

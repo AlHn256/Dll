@@ -124,3 +124,7 @@ dkms.conf
 /AlfaPribor.ImgAssemblingLib(19.05)/packages
 /AlfaPribor.ImgAssemblingLib(19.05)/StartTestProject/bin
 /AlfaPribor.ImgAssemblingLib(19.05)/StartTestProject/obj
+/AlfaPribor.ImgAssemblingLib(19.05.24)/obj
+/AlfaPribor.ImgAssemblingLib(19.05.24)/.vs
+/AlfaPribor.ImgAssemblingLib(19.05.24)/StartTestProject/obj
+/AlfaPribor.ImgAssemblingLib(19.05.24)/StartTestProject/bin
